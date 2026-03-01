@@ -32,6 +32,7 @@ docs/refs/
 
 # Build output
 src/bin/
+bin/
 
 # Editor/IDE
 # .idea/

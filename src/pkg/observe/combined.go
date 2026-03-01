@@ -15,7 +15,8 @@ type ObserveResult struct {
 
 // Observe captures both screenshot and UI tree in parallel.
 // Partial failure is tolerated — one failing doesn't block the other.
-func Observe(cmd adb.Commander) *ObserveResult {
+// If maxWidth > 0, the screenshot is downscaled proportionally.
+func Observe(cmd adb.Commander, maxWidth int) *ObserveResult {
 	result := &ObserveResult{}
 	var mu sync.Mutex
 	var wg sync.WaitGroup
@@ -25,7 +26,7 @@ func Observe(cmd adb.Commander) *ObserveResult {
 	// Screenshot goroutine
 	go func() {
 		defer wg.Done()
-		ss, err := ScreenshotAsBase64(cmd)
+		ss, err := ScreenshotAsBase64(cmd, maxWidth)
 		mu.Lock()
 		defer mu.Unlock()
 		if err != nil {

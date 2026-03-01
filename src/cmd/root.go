@@ -10,6 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Version is set via ldflags at build time: -ldflags "-X github.com/llm-net/adbclaw/cmd.Version=v0.1.0"
+var Version = "dev"
+
 var (
 	flagSerial  string
 	flagOutput  string
@@ -21,9 +24,10 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "adbclaw",
-	Short: "Android device control CLI for AI agents",
-	Long:  "adbclaw is a CLI tool for controlling Android devices via ADB, designed for AI agent automation.",
+	Use:     "adbclaw",
+	Short:   "Android device control CLI for AI agents",
+	Long:    "adbclaw is a CLI tool for controlling Android devices via ADB, designed for AI agent automation.",
+	Version: Version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		writer = output.NewWriter(flagOutput, flagVerbose)
 		client = adb.NewClient(flagSerial, time.Duration(flagTimeout)*time.Millisecond)
@@ -42,6 +46,9 @@ func init() {
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	if writer != nil && writer.HasFailed {
 		os.Exit(1)
 	}
 }

@@ -3,6 +3,7 @@ package input
 import (
 	"fmt"
 	"strings"
+	"unicode"
 
 	"github.com/llm-net/adbclaw/pkg/adb"
 )
@@ -66,7 +67,12 @@ func KeyEvent(cmd adb.Commander, key string) error {
 
 // TypeText inputs text via "adb shell input text".
 // Special characters are escaped for shell safety.
+// Returns an error if the text contains non-ASCII characters (CJK, emoji, etc.)
+// because "adb shell input text" does not support them.
 func TypeText(cmd adb.Commander, text string) error {
+	if HasNonASCII(text) {
+		return fmt.Errorf("text contains non-ASCII characters (CJK/emoji/etc.) which are not supported by 'adb shell input text'; consider using clipboard-based input instead")
+	}
 	escaped := escapeForInput(text)
 	result, err := cmd.Shell("input", "text", escaped)
 	if err != nil {
@@ -78,11 +84,23 @@ func TypeText(cmd adb.Commander, text string) error {
 	return nil
 }
 
+// HasNonASCII returns true if the string contains any non-ASCII character.
+func HasNonASCII(s string) bool {
+	for _, r := range s {
+		if r > unicode.MaxASCII {
+			return true
+		}
+	}
+	return false
+}
+
 // escapeForInput escapes text for "adb shell input text".
 // The input command requires spaces and special chars to be escaped.
 func escapeForInput(text string) string {
-	// Characters that need escaping for adb shell input text
+	// Characters that need escaping for adb shell input text.
+	// Backslash must be first to avoid double-escaping other replacements.
 	replacer := strings.NewReplacer(
+		"\\", "\\\\",
 		" ", "%s",
 		"'", "\\'",
 		"\"", "\\\"",
@@ -101,7 +119,6 @@ func escapeForInput(text string) string {
 		"}", "\\}",
 		"[", "\\[",
 		"]", "\\]",
-		"\\", "\\\\",
 	)
 	return replacer.Replace(text)
 }

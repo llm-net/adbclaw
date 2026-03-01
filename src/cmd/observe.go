@@ -9,6 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	observeMaxWidth int
+)
+
 var observeCmd = &cobra.Command{
 	Use:   "observe",
 	Short: "Capture screenshot + UI tree + device state",
@@ -17,7 +21,7 @@ var observeCmd = &cobra.Command{
 		start := time.Now()
 		writer.Verbose("starting observe (screenshot + ui tree in parallel)")
 
-		result := observe.Observe(client)
+		result := observe.Observe(client, observeMaxWidth)
 
 		// Check if we got at least something
 		if result.Screenshot == nil && result.UI == nil {
@@ -33,7 +37,8 @@ var observeCmd = &cobra.Command{
 }
 
 var (
-	screenshotOutput string
+	screenshotOutput   string
+	screenshotMaxWidth int
 )
 
 var screenshotCmd = &cobra.Command{
@@ -43,7 +48,7 @@ var screenshotCmd = &cobra.Command{
 		start := time.Now()
 		writer.Verbose("capturing screenshot")
 
-		data, err := observe.TakeScreenshot(client)
+		data, err := observe.TakeScreenshot(client, screenshotMaxWidth)
 		if err != nil {
 			writer.Fail("screenshot", "SCREENSHOT_FAILED", err.Error(),
 				"Ensure the device screen is on and unlocked", start)
@@ -76,6 +81,10 @@ var screenshotCmd = &cobra.Command{
 
 func init() {
 	screenshotCmd.Flags().StringVarP(&screenshotOutput, "file", "f", "", "Save screenshot to file instead of base64 output")
+	screenshotCmd.Flags().IntVar(&screenshotMaxWidth, "width", 0, "Max image width in pixels (0 = original size)")
+
+	observeCmd.Flags().IntVar(&observeMaxWidth, "width", 0, "Max screenshot width in pixels (0 = original size)")
+
 	rootCmd.AddCommand(observeCmd)
 	rootCmd.AddCommand(screenshotCmd)
 }

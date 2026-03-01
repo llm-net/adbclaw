@@ -103,23 +103,74 @@ var tapCmd = &cobra.Command{
 
 var (
 	longPressDuration int
+	longPressIndex    int
+	longPressID       string
+	longPressText     string
 )
 
 var longPressCmd = &cobra.Command{
-	Use:   "long-press <x> <y>",
-	Short: "Long press at a coordinate",
-	Args:  cobra.ExactArgs(2),
+	Use:   "long-press [x y]",
+	Short: "Long press at a coordinate or UI element",
+	Long: `Long press on a specific location. Can target by:
+  - Coordinates: adbclaw long-press 540 1200
+  - Element index: adbclaw long-press --index 3
+  - Resource ID: adbclaw long-press --id "btn_login"
+  - Text content: adbclaw long-press --text "Login"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
-		x, err := strconv.Atoi(args[0])
-		if err != nil {
-			writer.Fail("long-press", "INVALID_ARGS", "Invalid x: "+args[0], "", start)
-			return nil
-		}
-		y, err := strconv.Atoi(args[1])
-		if err != nil {
-			writer.Fail("long-press", "INVALID_ARGS", "Invalid y: "+args[1], "", start)
-			return nil
+
+		var x, y int
+		var targetInfo map[string]interface{}
+
+		switch {
+		case cmd.Flags().Changed("index"):
+			el, err := resolveElementByIndex(longPressIndex)
+			if err != nil {
+				writer.Fail("long-press", "ELEMENT_NOT_FOUND", err.Error(),
+					"Use 'adbclaw ui tree' to see available elements", start)
+				return nil
+			}
+			x, y = el.Center.X, el.Center.Y
+			targetInfo = elementInfo(el)
+
+		case longPressID != "":
+			el, err := resolveElementByID(longPressID)
+			if err != nil {
+				writer.Fail("long-press", "ELEMENT_NOT_FOUND", err.Error(),
+					"Use 'adbclaw ui tree' to see available elements", start)
+				return nil
+			}
+			x, y = el.Center.X, el.Center.Y
+			targetInfo = elementInfo(el)
+
+		case longPressText != "":
+			el, err := resolveElementByText(longPressText)
+			if err != nil {
+				writer.Fail("long-press", "ELEMENT_NOT_FOUND", err.Error(),
+					"Use 'adbclaw ui tree' to see available elements", start)
+				return nil
+			}
+			x, y = el.Center.X, el.Center.Y
+			targetInfo = elementInfo(el)
+
+		default:
+			if len(args) < 2 {
+				writer.Fail("long-press", "MISSING_ARGS",
+					"Specify coordinates (x y) or use --index/--id/--text",
+					"Example: adbclaw long-press 540 1200", start)
+				return nil
+			}
+			var err error
+			x, err = strconv.Atoi(args[0])
+			if err != nil {
+				writer.Fail("long-press", "INVALID_ARGS", "Invalid x: "+args[0], "", start)
+				return nil
+			}
+			y, err = strconv.Atoi(args[1])
+			if err != nil {
+				writer.Fail("long-press", "INVALID_ARGS", "Invalid y: "+args[1], "", start)
+				return nil
+			}
 		}
 
 		writer.Verbose("long-pressing at (%d, %d) for %dms", x, y, longPressDuration)
@@ -128,12 +179,16 @@ var longPressCmd = &cobra.Command{
 			return nil
 		}
 
-		writer.Success("long-press", map[string]interface{}{
+		data := map[string]interface{}{
 			"x":           x,
 			"y":           y,
 			"duration_ms": longPressDuration,
 			"method":      "adb_input",
-		}, start)
+		}
+		if targetInfo != nil {
+			data["element"] = targetInfo
+		}
+		writer.Success("long-press", data, start)
 		return nil
 	},
 }
@@ -231,6 +286,9 @@ func init() {
 	tapCmd.Flags().StringVar(&tapText, "text", "", "Tap element by text content")
 
 	longPressCmd.Flags().IntVar(&longPressDuration, "duration", 1000, "Long press duration in ms")
+	longPressCmd.Flags().IntVar(&longPressIndex, "index", -1, "Long press element by UI tree index")
+	longPressCmd.Flags().StringVar(&longPressID, "id", "", "Long press element by resource-id")
+	longPressCmd.Flags().StringVar(&longPressText, "text", "", "Long press element by text content")
 
 	swipeCmd.Flags().IntVar(&swipeDuration, "duration", 300, "Swipe duration in ms")
 

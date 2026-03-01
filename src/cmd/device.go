@@ -116,49 +116,50 @@ func parseDeviceList(output string) []DeviceEntry {
 }
 
 func getDeviceInfo() (*DeviceInfo, error) {
-	props := map[string]string{
-		"ro.product.model":        "",
-		"ro.product.brand":        "",
-		"ro.product.manufacturer": "",
-		"ro.build.version.release": "",
-		"ro.build.version.sdk":    "",
-		"ro.product.cpu.abilist":  "",
+	// Single getprop call to get all properties at once (instead of 6 separate calls).
+	// Output format: [key]: [value]
+	result, err := client.Shell("getprop")
+	if err != nil {
+		return nil, err
 	}
+	props := parseGetprop(result.Stdout)
 
-	for key := range props {
-		result, err := client.Shell("getprop", key)
-		if err != nil {
-			return nil, err
-		}
-		props[key] = strings.TrimSpace(result.Stdout)
-	}
-
-	// Get screen size
+	// Get screen size and density in parallel with a combined wm call
 	screenSize := ""
-	if result, err := client.Shell("wm", "size"); err == nil {
-		// Output: "Physical size: 1080x2400"
-		for _, line := range strings.Split(result.Stdout, "\n") {
-			if strings.Contains(line, "Physical size") {
-				parts := strings.SplitN(line, ":", 2)
-				if len(parts) == 2 {
-					screenSize = strings.TrimSpace(parts[1])
-				}
-			}
-		}
-	}
-
-	// Get density
 	density := ""
-	if result, err := client.Shell("wm", "density"); err == nil {
-		for _, line := range strings.Split(result.Stdout, "\n") {
-			if strings.Contains(line, "Physical density") {
-				parts := strings.SplitN(line, ":", 2)
-				if len(parts) == 2 {
-					density = strings.TrimSpace(parts[1])
+
+	type wmResult struct {
+		size    string
+		density string
+	}
+	wmCh := make(chan wmResult, 1)
+	go func() {
+		var r wmResult
+		if res, err := client.Shell("wm", "size"); err == nil {
+			for _, line := range strings.Split(res.Stdout, "\n") {
+				if strings.Contains(line, "Physical size") {
+					parts := strings.SplitN(line, ":", 2)
+					if len(parts) == 2 {
+						r.size = strings.TrimSpace(parts[1])
+					}
 				}
 			}
 		}
-	}
+		if res, err := client.Shell("wm", "density"); err == nil {
+			for _, line := range strings.Split(res.Stdout, "\n") {
+				if strings.Contains(line, "Physical density") {
+					parts := strings.SplitN(line, ":", 2)
+					if len(parts) == 2 {
+						r.density = strings.TrimSpace(parts[1])
+					}
+				}
+			}
+		}
+		wmCh <- r
+	}()
+	wm := <-wmCh
+	screenSize = wm.size
+	density = wm.density
 
 	info := &DeviceInfo{
 		Serial:       flagSerial,
@@ -172,4 +173,32 @@ func getDeviceInfo() (*DeviceInfo, error) {
 		Density:      density,
 	}
 	return info, nil
+}
+
+// parseGetprop parses the output of "adb shell getprop" into a map.
+// Each line has the format: [key]: [value]
+func parseGetprop(output string) map[string]string {
+	props := make(map[string]string)
+	for _, line := range strings.Split(output, "\n") {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, "[") {
+			continue
+		}
+		// Format: [key]: [value]
+		closeBracket := strings.Index(line, "]")
+		if closeBracket < 2 {
+			continue
+		}
+		key := line[1:closeBracket]
+		// Skip ": [" separator
+		rest := line[closeBracket+1:]
+		valStart := strings.Index(rest, "[")
+		valEnd := strings.LastIndex(rest, "]")
+		if valStart < 0 || valEnd <= valStart {
+			continue
+		}
+		value := rest[valStart+1 : valEnd]
+		props[key] = value
+	}
+	return props
 }

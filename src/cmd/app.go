@@ -99,9 +99,9 @@ var appLaunchCmd = &cobra.Command{
 				writer.Fail("app launch", "ADB_ERROR", err.Error(), "", start)
 				return nil
 			}
-			if strings.Contains(result.Stdout, "Error") {
-				writer.Fail("app launch", "LAUNCH_FAILED",
-					strings.TrimSpace(result.Stdout),
+			if result.ExitCode != 0 || strings.Contains(result.Stdout, "Error type") || strings.Contains(result.Stderr, "Exception") {
+				msg := strings.TrimSpace(result.Stdout + result.Stderr)
+				writer.Fail("app launch", "LAUNCH_FAILED", msg,
 					"Check the package/activity name", start)
 				return nil
 			}

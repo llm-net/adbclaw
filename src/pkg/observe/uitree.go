@@ -3,6 +3,7 @@ package observe
 import (
 	"encoding/xml"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
@@ -81,19 +82,37 @@ func parseBounds(s string) (Bounds, error) {
 	if len(m) != 5 {
 		return Bounds{}, fmt.Errorf("invalid bounds format: %s", s)
 	}
-	l, _ := strconv.Atoi(m[1])
-	t, _ := strconv.Atoi(m[2])
-	r, _ := strconv.Atoi(m[3])
-	b, _ := strconv.Atoi(m[4])
+	l, err := strconv.Atoi(m[1])
+	if err != nil {
+		return Bounds{}, fmt.Errorf("invalid bounds left value: %w", err)
+	}
+	t, err := strconv.Atoi(m[2])
+	if err != nil {
+		return Bounds{}, fmt.Errorf("invalid bounds top value: %w", err)
+	}
+	r, err := strconv.Atoi(m[3])
+	if err != nil {
+		return Bounds{}, fmt.Errorf("invalid bounds right value: %w", err)
+	}
+	b, err := strconv.Atoi(m[4])
+	if err != nil {
+		return Bounds{}, fmt.Errorf("invalid bounds bottom value: %w", err)
+	}
 	return Bounds{Left: l, Top: t, Right: r, Bottom: b}, nil
 }
 
 // isSignificant returns true if a node is "meaningful" for agent interaction.
+// Nodes with only a resource-id that are non-interactive containers (have children)
+// are excluded to reduce noise for AI agents.
 func isSignificant(n *xmlNode) bool {
-	if n.Text != "" || n.ResourceID != "" || n.ContentDesc != "" {
+	if n.Text != "" || n.ContentDesc != "" {
 		return true
 	}
 	if n.Clickable == "true" || n.Scrollable == "true" {
+		return true
+	}
+	// Keep resource-id nodes only if they are leaf nodes (no children)
+	if n.ResourceID != "" && len(n.Children) == 0 {
 		return true
 	}
 	return false
@@ -101,19 +120,32 @@ func isSignificant(n *xmlNode) bool {
 
 // DumpUITree runs "uiautomator dump" and returns the parsed XML.
 func DumpUITree(cmd adb.Commander) (*UITree, error) {
-	// Dump UI hierarchy to a file on device, then read it
-	result, err := cmd.Shell("uiautomator", "dump", "/dev/tty")
+	// Use a unique file path to avoid conflicts with concurrent calls.
+	devicePath := fmt.Sprintf("/sdcard/adbclaw_uidump_%d.xml", rand.Int())
+
+	// Dump UI hierarchy to a file on device, then cat it back.
+	// Using /dev/tty to stream XML to stdout no longer works on Android 16+.
+	result, err := cmd.Shell("uiautomator", "dump", devicePath)
 	if err != nil {
 		return nil, fmt.Errorf("uiautomator dump failed: %w", err)
 	}
+	if !strings.Contains(result.Stdout, "dumped to:") {
+		return nil, fmt.Errorf("uiautomator dump unexpected output: %s", truncate(result.Stdout, 200))
+	}
 
-	xmlData := result.Stdout
-	// uiautomator dump /dev/tty outputs the XML directly to stdout,
-	// but may prefix with "UI hierchary dumped to: /dev/tty" or similar.
-	// Find the XML start.
+	// Read the dumped file
+	catResult, err := cmd.Shell("cat", devicePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read UI dump file: %w", err)
+	}
+
+	// Best-effort cleanup
+	_, _ = cmd.Shell("rm", "-f", devicePath)
+
+	xmlData := catResult.Stdout
+	// Find the XML start — there may be leading whitespace or BOM.
 	idx := strings.Index(xmlData, "<?xml")
 	if idx < 0 {
-		// Try finding hierarchy tag directly
 		idx = strings.Index(xmlData, "<hierarchy")
 	}
 	if idx < 0 {

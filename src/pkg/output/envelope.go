@@ -27,9 +27,10 @@ type ErrorInfo struct {
 
 // Writer handles formatted output to a destination.
 type Writer struct {
-	out     io.Writer
-	format  string // "json", "text", "quiet"
-	verbose bool
+	out       io.Writer
+	format    string // "json", "text", "quiet"
+	verbose   bool
+	HasFailed bool // set to true when Fail() is called; callers can check for exit code
 }
 
 // NewWriter creates a Writer with the given format.
@@ -53,8 +54,9 @@ func (w *Writer) Success(command string, data interface{}, start time.Time) {
 	w.write(resp)
 }
 
-// Fail writes an error response.
+// Fail writes an error response and marks the writer as failed.
 func (w *Writer) Fail(command string, code, message, suggestion string, start time.Time) {
+	w.HasFailed = true
 	resp := Response{
 		OK:      false,
 		Command: command,
@@ -85,8 +87,7 @@ func (w *Writer) write(resp Response) {
 	case "text":
 		if resp.OK {
 			if resp.Data != nil {
-				b, _ := json.MarshalIndent(resp.Data, "", "  ")
-				fmt.Fprintln(w.out, string(b))
+				w.writeTextData(resp.Data)
 			}
 		} else if resp.Error != nil {
 			fmt.Fprintf(os.Stderr, "Error [%s]: %s\n", resp.Error.Code, resp.Error.Message)
@@ -98,5 +99,36 @@ func (w *Writer) write(resp Response) {
 		enc := json.NewEncoder(w.out)
 		enc.SetIndent("", "  ")
 		enc.Encode(resp)
+	}
+}
+
+// writeTextData writes data in a compact, human-readable format.
+// Falls back to JSON for complex nested structures.
+func (w *Writer) writeTextData(data interface{}) {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		for key, val := range v {
+			switch inner := val.(type) {
+			case string:
+				if len(inner) > 200 {
+					// Truncate long strings (e.g. base64 screenshots)
+					fmt.Fprintf(w.out, "%s: <%d chars>\n", key, len(inner))
+				} else {
+					fmt.Fprintf(w.out, "%s: %s\n", key, inner)
+				}
+			case []interface{}:
+				fmt.Fprintf(w.out, "%s: (%d items)\n", key, len(inner))
+				for _, item := range inner {
+					b, _ := json.Marshal(item)
+					fmt.Fprintf(w.out, "  %s\n", string(b))
+				}
+			default:
+				fmt.Fprintf(w.out, "%s: %v\n", key, val)
+			}
+		}
+	default:
+		// Fallback to JSON for complex types
+		b, _ := json.MarshalIndent(data, "", "  ")
+		fmt.Fprintln(w.out, string(b))
 	}
 }

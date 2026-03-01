@@ -65,18 +65,19 @@ func init() {
 }
 
 func checkADB() CheckResult {
-	path, err := exec.LookPath("adb")
+	adbPath := client.ADBPath
+	path, err := exec.LookPath(adbPath)
 	if err != nil {
 		return CheckResult{
 			Name:    "adb",
 			Status:  "error",
-			Message: "adb not found in PATH",
+			Message: fmt.Sprintf("adb not found (%s)", adbPath),
 			Detail:  "Install Android platform-tools: https://developer.android.com/tools/releases/platform-tools",
 		}
 	}
 
 	// Get version
-	out, err := exec.Command("adb", "version").Output()
+	out, err := exec.Command(path, "version").Output()
 	if err != nil {
 		return CheckResult{
 			Name:    "adb",

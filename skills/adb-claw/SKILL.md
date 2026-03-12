@@ -34,18 +34,22 @@ metadata:
 
 Control Android devices via the `adbclaw` CLI. Supports tap, swipe, type, screenshot, UI tree inspection, and app management through ADB.
 
-## When to Use
+## Triggers
 
 - User asks to control, interact with, or automate an Android device
 - User asks to test a mobile app or UI
 - User mentions tapping, swiping, screenshots, or app launching on Android
 - User wants to install, launch, or manage apps on a connected Android device
 
-## When NOT to Use
+## Binary
 
-- iOS devices — use peekaboo or other iOS tools
-- Desktop UI automation — use peekaboo (macOS)
-- ADB not available and user can't install it
+The adbclaw binary is located at `${CLAUDE_PLUGIN_ROOT}/bin/adbclaw`.
+
+If the binary is not found, the SessionStart hook will automatically download it. You can also run manually:
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh"
+```
 
 ## Setup
 
@@ -167,6 +171,19 @@ adbclaw ui find --id "com.app:id/title"  # Find by resource ID
 adbclaw ui find --index 3          # Find by index
 ```
 
+## App Profiles
+
+操作具体 App 前，先检查是否有对应的 App Profile。Profile 包含该 App 的深度链接、已知布局和常见问题，可大幅减少操作步骤。
+
+Profile 位于 `skills/apps/` 目录，按 App 英文名命名（如 `douyin.md`）。
+
+**使用流程**：
+1. `adbclaw app current` 获取前台 App 包名
+2. 读取 `skills/apps/` 目录下对应的 Profile 文件
+3. 有 Profile → 优先使用深度链接和已知布局
+4. 无 Profile → 常规 `observe` + 探索
+5. 注意设备形态差异：`adbclaw device info` 获取屏幕尺寸，短边 < 1200px 为 Phone，>= 1200px 为 Pad
+
 ## Workflow Patterns
 
 ### Always Observe First
@@ -217,42 +234,12 @@ Use `adbclaw device info` to get screen size, then determine form factor:
 
 Swipe coordinates and UI layouts differ between Phone and Pad.
 
-## App Profiles
+### Error Recovery
 
-For popular apps, pre-built profiles contain deep links, known layouts, and workarounds. Check the profile **before** operating an app — it can reduce 15 steps to 3.
-
-### Douyin (抖音) — `com.ss.android.ugc.aweme`
-
-**Deep links** (use these instead of manual UI navigation):
-
-```bash
-# Search (supports Chinese keywords natively)
-adb shell am start -a android.intent.action.VIEW \
-  -d 'snssdk1128://search/result?keyword={keyword}&type={type}'
-# type: 0=综合, 1=直播, 2=视频, 3=用户
-
-# User profile
-adb shell am start -a android.intent.action.VIEW \
-  -d 'snssdk1128://user/profile/{user_id}'
-
-# Live room
-adb shell am start -a android.intent.action.VIEW \
-  -d 'snssdk1128://live?room_id={room_id}'
-```
-
-**Known layout**:
-- Search button: `content_desc="搜索"`, top-right corner
-- Bottom nav: 首页 | 朋友 | 拍摄 | 消息 | 我
-- Top tabs: resource_id contains `5j4`, horizontally scrollable
-
-**Known issues**:
-- **UI dump fails during video playback** — Tap screen center to pause first, wait 1s, then dump
-- **Chinese input** — Always use deep links, never `adbclaw type` for Chinese
-- **First launch** — May show onboarding/login dialogs; look for "跳过" or "同意" buttons
-
-**Pad vs Phone**:
-- Pad (landscape): wider nav bar, single-column live search results, video area centered
-- Phone (portrait): full-screen immersive video, dual-column search results
+If an action fails or produces unexpected results:
+1. Run `observe` to see the current state
+2. Check if the screen changed unexpectedly (dialog, permission prompt)
+3. Adjust and retry
 
 ## Output Format
 

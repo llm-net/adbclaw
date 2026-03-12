@@ -2,57 +2,35 @@
 
 Android 设备控制 CLI，供 AI agent 自动化调用。纯工具层，不含 LLM/Agent 逻辑。
 
-## 两种发布渠道
+## 发布渠道
 
-adbclaw 同时作为两个平台的 Skill 发布，共享同一套 CLI 工具和 App Profile：
+adbclaw 同时作为两个平台的 Skill 发布，**共用一份 `skills/adb-claw/SKILL.md`**：
 
-### 1. Claude Code 插件（Plugin Marketplace）
+- **Claude Code**：通过插件市场安装（`.claude-plugin/`），按 `## Triggers` 触发，`## Binary` 指示二进制位置
+- **OpenClaw**：通过 ClawHub 安装，读取 YAML frontmatter 中的 `metadata.openclaw`（OS 要求、依赖、安装脚本）
 
-通过 Claude Code 插件市场安装，让 Claude Code 获得 Android 设备控制能力。
+两个平台读同一个文件，Claude Code 忽略 frontmatter，OpenClaw 忽略 `## Binary` 段落。
 
 ```
-.claude-plugin/              # 插件配置
-├── plugin.json              # 插件元数据（名称、版本、作者）
+.claude-plugin/              # Claude Code 插件配置
+├── plugin.json              # 插件元数据
 └── marketplace.json         # 市场发布配置
-skills/android-control/      # Claude Code Skill 定义
-└── SKILL.md                 # Skill 描述（触发条件、命令文档、工作流模式）
+skills/
+├── adb-claw/SKILL.md        # Skill 定义（两个平台共用）
+└── apps/                    # App Profile 知识库（运行时按需加载）
+    ├── README.md            # Profile 编写规范
+    └── douyin.md            # 抖音（深度链接、布局、已知问题）
 ```
 
-- **触发方式**：用户在 Claude Code 中提到 Android 控制/自动化时自动激活
-- **二进制分发**：SessionStart hook 自动下载 adbclaw，或手动运行 `scripts/setup.sh`
-- **Skill 路径**：`${CLAUDE_PLUGIN_ROOT}/bin/adbclaw`
+### App Profile
 
-### 2. OpenClaw Skill（ClawHub）
+App Profile 是针对具体 App 的操作知识库，Agent 运行时按需读取：
 
-作为 [OpenClaw](https://github.com/openclaw/openclaw) 平台的 Skill 发布在 ClawHub 上，为 OpenClaw agent 提供 Android 设备控制能力。
+1. `adbclaw app current` → 获取当前 App 包名
+2. 检查 `skills/apps/` 下有无对应 Profile
+3. 有 → 按 Profile 操作（深度链接、已知布局）；无 → 常规 observe 探索
 
-```
-skills/adb-claw/             # OpenClaw Skill 定义
-└── SKILL.md                 # YAML frontmatter（元数据 + 安装依赖）+ Skill 文档
-```
-
-- **Skill 格式**：`SKILL.md` 的 YAML frontmatter 包含 `metadata.openclaw`，定义 OS 要求、依赖二进制、安装脚本
-- **安装方式**：OpenClaw 自动检测 `requires.bins`，缺失时按 `install` 配置自动安装
-- **依赖**：`adbclaw`（curl 安装）+ `adb`（brew 安装）
-
-### 两者的关系
-
-| | Claude Code 插件 | OpenClaw Skill |
-|---|---|---|
-| Skill 定义 | `skills/android-control/SKILL.md` | `skills/adb-claw/SKILL.md` |
-| 配置文件 | `.claude-plugin/` | YAML frontmatter |
-| 安装方式 | setup.sh / hook 自动下载 | OpenClaw 自动安装 |
-| 内容差异 | 两者 Skill 文档内容基本一致，格式适配各自平台规范 |
-
-### 共享资源
-
-```
-skills/apps/                 # App Profile（两个渠道共享）
-├── README.md                # Profile 编写规范
-└── douyin.md                # 抖音操作知识（深度链接、布局、已知问题）
-```
-
-App Profile 是针对具体 App 的操作知识库，包含深度链接、已知布局、设备差异和常见问题。两个平台的 Skill 都引用同一套 Profile，新增 Profile 后两边同时受益。
+新增 App 支持只需往 `skills/apps/` 丢一个 `.md` 文件。
 
 ## 项目结构
 
@@ -159,7 +137,7 @@ adbclaw
 - 命令输出必须使用 `output.Writer` 写 JSON envelope
 - 测试文件与源码同目录，用 `_test.go` 后缀
 - 错误码用大写下划线格式，如 `ELEMENT_NOT_FOUND`、`DEVICE_NOT_FOUND`
-- 两个 Skill 的 `SKILL.md` 内容保持同步，修改一个时需同步更新另一个
+- `skills/adb-claw/SKILL.md` 同时服务 Claude Code 和 OpenClaw，修改时需兼顾两个平台的格式要求
 
 ## 技术方案
 

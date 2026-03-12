@@ -94,6 +94,13 @@ export const architectureSteps = [
 
 export const relatedProjects = [
   {
+    name: 'OpenClaw',
+    url: 'https://github.com/openclaw/openclaw',
+    description: 'Local-first personal AI assistant platform. adbclaw is published as an OpenClaw Skill on ClawHub.',
+    stars: '',
+    highlight: true,
+  },
+  {
     name: 'mobile-use',
     url: 'https://github.com/anthropics/mobile-use',
     description: 'Anthropic\'s AI agent for controlling real mobile devices, top performer on AndroidWorld benchmark.',
@@ -110,12 +117,6 @@ export const relatedProjects = [
     url: 'https://github.com/Genymobile/scrcpy',
     description: 'The gold standard for Android screen mirroring and control.',
     stars: '136k',
-  },
-  {
-    name: 'DroidClaw',
-    url: 'https://github.com/unitedbyai/droidclaw',
-    description: 'Natural language to ADB operations bridge in TypeScript.',
-    stars: '875',
   },
 ]
 

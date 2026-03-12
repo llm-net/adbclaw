@@ -1,5 +1,5 @@
 BINARY_NAME := adbclaw
-BUILD_DIR := bin
+BUILD_DIR := ../bin
 MODULE := github.com/llm-net/adbclaw
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 GO := go

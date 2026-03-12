@@ -27,7 +27,7 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/llm-net/adbclaw/blob/main/README.md" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
+                  <a href="https://github.com/llm-net/adbclaw/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
                     Documentation
                   </a>
                 </li>
@@ -36,6 +36,13 @@ export default function Footer() {
                     Issues
                   </a>
                 </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">Available on</h4>
+              <ul className="space-y-2.5">
+                <li><span className="text-sm text-stone-500">Claude Code Plugin</span></li>
+                <li><span className="text-sm text-stone-500">OpenClaw / ClawHub</span></li>
               </ul>
             </div>
             <div>
@@ -52,14 +59,23 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-stone-800/20 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-xs text-stone-700 font-mono">MIT License</span>
-          <a
-            href="https://github.com/llm-net"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-stone-700 hover:text-stone-500 transition-colors font-mono"
-          >
-            LLM.net
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://adbclaw.com"
+              className="text-xs text-stone-700 hover:text-stone-500 transition-colors font-mono"
+            >
+              adbclaw.com
+            </a>
+            <span className="text-stone-800">·</span>
+            <a
+              href="https://github.com/llm-net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-stone-700 hover:text-stone-500 transition-colors font-mono"
+            >
+              LLM.net
+            </a>
+          </div>
         </div>
       </div>
     </footer>

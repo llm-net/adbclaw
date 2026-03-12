@@ -15,6 +15,9 @@ adbclaw 同时作为两个平台的 Skill 发布，**共用一份 `skills/adb-cl
 .claude-plugin/              # Claude Code 插件配置
 ├── plugin.json              # 插件元数据
 └── marketplace.json         # 市场发布配置
+helper/                      # 设备端 Java 辅助程序源码
+├── ADBClawMonitor.java      # UI 文本监控（accessibility 框架）
+└── classes.dex              # 编译后的 DEX（make dex 重新构建）
 skills/
 ├── adb-claw/SKILL.md        # Skill 定义（两个平台共用）
 └── apps/                    # App Profile 知识库（运行时按需加载）
@@ -52,11 +55,16 @@ src/                    # Go 代码根目录（go.mod 在此）
 │   ├── shell.go        # shell（原始命令）
 │   ├── file.go         # file push / pull
 │   ├── app.go          # app list / current / launch / stop / install / uninstall / clear
+│   ├── monitor.go      # monitor（持续 UI 文本监控）
 │   ├── doctor.go       # 环境检查
 │   ├── skill.go        # 输出 skill.json (go:embed)
 │   └── skill.json      # 嵌入的 AI agent 能力描述
 └── pkg/
     ├── adb/shell.go        # Commander 接口 + Client 实现
+    ├── monitor/
+    │   ├── monitor.go      # DEX 推送 + 进程管理 + 行解析
+    │   ├── monitor_test.go # 单元测试
+    │   └── classes.dex     # 嵌入的 DEX（go:embed）
     ├── input/
     │   ├── adbinput.go     # Tap/Swipe/LongPress/Key/Type
     │   ├── clearfield.go   # ClearField/KeyCombination/GetSDKLevel
@@ -130,6 +138,7 @@ adbclaw
 │   [--index N] [--pages N] [--distance px]
 ├── wait --text/--id/--activity    # 等待 UI 元素或 Activity
 │   [--gone] [--timeout ms] [--interval ms]
+├── monitor [--duration ms] [--interval ms] [--stream]  # 持续监控 UI 文本
 ├── screen status                  # 屏幕状态（亮/灭/锁/旋转）
 ├── screen on/off                  # 亮屏/灭屏
 ├── screen unlock                  # 解锁（无密码）
@@ -168,7 +177,7 @@ adbclaw
 
 ## 技术方案
 
-所有操作通过标准 `adb` 命令完成（`adb shell input`、`adb exec-out screencap`、`adb shell uiautomator dump` 等），无需在设备上安装或运行任何额外程序。产品目标与技术调研见 `docs/product-and-research.md`，开发计划见 `docs/development-roadmap.md`。
+绝大多数操作通过标准 `adb` 命令完成（`adb shell input`、`adb exec-out screencap`、`adb shell uiautomator dump` 等），无需在设备上安装任何 APK。唯一例外是 `monitor` 命令：它将一个 ~7KB DEX 文件推送到设备 `/data/local/tmp/`，通过 `app_process` 运行，直接连接 Android accessibility 框架读取 UI 文本，绕过视频播放时 uiautomator dump 的超时问题。该 DEX 不是常驻服务，运行结束即退出。产品目标与技术调研见 `docs/product-and-research.md`，开发计划见 `docs/development-roadmap.md`。
 
 ## 第二轮迭代（已完成）
 

@@ -30,16 +30,16 @@ func TestNewClientCustom(t *testing.T) {
 
 func TestBaseArgsNoSerial(t *testing.T) {
 	c := NewClient("", 0)
-	args := c.baseArgs()
+	args := c.BaseArgs()
 	if args != nil {
-		t.Errorf("baseArgs() = %v, want nil", args)
+		t.Errorf("BaseArgs() = %v, want nil", args)
 	}
 }
 
 func TestBaseArgsWithSerial(t *testing.T) {
 	c := NewClient("device123", 0)
-	args := c.baseArgs()
+	args := c.BaseArgs()
 	if len(args) != 2 || args[0] != "-s" || args[1] != "device123" {
-		t.Errorf("baseArgs() = %v, want [-s device123]", args)
+		t.Errorf("BaseArgs() = %v, want [-s device123]", args)
 	}
 }

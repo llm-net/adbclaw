@@ -16,10 +16,11 @@ adbclaw wraps standard `adb` commands into a structured JSON API that AI agents 
 - **Wait for UI** — Block until an element appears/disappears, replacing fragile sleep/observe loops
 - **Screen management** — Status, on/off, unlock, rotation control
 - **Full app lifecycle** — List, launch, stop, install, uninstall, clear data
+- **Live stream monitoring** — `monitor` connects to Android accessibility framework, reads UI text even during video playback where `uiautomator dump` fails
 - **Shell & file transfer** — Escape hatch for raw commands + push/pull files
 - **App Profiles** — Pre-built knowledge (deep links, layouts, known issues) for popular apps
 - **Multi-device support** — Target specific devices via `-s <serial>`
-- **Zero device-side deps** — Pure `adb` commands, no APK or service to install on the phone
+- **Minimal device footprint** — Nearly all operations use pure `adb` commands; only `monitor` pushes a temporary ~7KB DEX helper that exits when done
 
 ## Install
 
@@ -62,12 +63,43 @@ adbclaw doctor    # verify setup
 
 ## Use as AI Skill
 
-adbclaw is published as an AI Skill on two platforms:
+adbclaw is published as an AI Skill on two platforms, sharing the same Skill definition (`skills/adb-claw/SKILL.md`).
 
-- **Claude Code Plugin** — Install from [Plugin Marketplace](https://adbclaw.com), gives Claude Code Android device control capabilities
-- **OpenClaw Skill** — Published on ClawHub, provides Android control for OpenClaw agents
+### Claude Code
 
-Both platforms share the same Skill definition (`skills/adb-claw/SKILL.md`).
+Install the plugin, then just talk to Claude — no slash commands needed.
+
+```bash
+# Install from Plugin Marketplace
+claude plugin add llm-net/adbclaw
+```
+
+After installation, Claude will automatically use adbclaw when you ask about Android devices. Examples:
+
+```
+"Take a screenshot of my Android device"
+"Open Douyin and search for 猫咪"
+"Tap the Login button on screen"
+"Monitor the live stream chat for 30 seconds"
+"Install this APK on my phone"
+```
+
+The plugin's SessionStart hook downloads the binary on first use. As long as adb is installed and a device is connected, everything works out of the box.
+
+### OpenClaw
+
+Install from ClawHub, then use naturally in conversation with your OpenClaw agent.
+
+```bash
+# Install from ClawHub
+claw install adb-claw
+```
+
+The same natural-language triggers apply — ask your agent to control an Android device and it will invoke adbclaw commands automatically.
+
+### How Triggering Works
+
+Both platforms use the **Triggers** list in `SKILL.md` to decide when to activate the skill. When your message matches any trigger (e.g., mentions tapping, screenshots, Android automation, live stream monitoring), the agent loads the skill and gains access to all adbclaw commands. No explicit invocation is needed — just describe what you want to do with the Android device.
 
 ## Commands
 
@@ -88,6 +120,8 @@ adbclaw
 │   [--index N] [--pages N] [--distance px]
 ├── wait --text/--id/--activity                 # Wait for UI state
 │   [--gone] [--timeout ms] [--interval ms]
+├── monitor [--duration ms] [--interval ms]     # Continuous UI text monitoring
+│   [--stream]                                  #   (accessibility framework)
 ├── screen status|on|off|unlock|rotation        # Screen management
 ├── app list|current|launch|stop                # App management
 ├── app install|uninstall|clear                 # App lifecycle
@@ -137,6 +171,16 @@ adbclaw open "https://www.google.com"
 adbclaw wait --text "Welcome" --timeout 10000
 adbclaw wait --text "Loading" --gone
 adbclaw wait --activity ".MainActivity"
+```
+
+### Monitor (Live Streams & Video)
+
+```bash
+# Read UI text via accessibility framework (works during video playback)
+adbclaw monitor                            # 10s bounded, JSON envelope
+adbclaw monitor --duration 30000           # 30s bounded
+adbclaw monitor --stream --duration 60000  # 60s streaming, JSON lines
+adbclaw monitor --interval 1000            # Faster polling (1s)
 ```
 
 ### Screen & App Management
@@ -214,7 +258,8 @@ Available profiles in `skills/apps/`:
 
 | App | File | Content |
 |-----|------|---------|
-| Douyin (抖音) | `douyin.md` | Search/user/live deep links, feed/search/profile layouts, Phone vs Pad differences |
+| Douyin (抖音) | `douyin.md` | Search/user/live deep links, feed/search/profile layouts, Phone vs Pad differences, live stream chat monitoring |
+| Meituan (美团) | `meituan.md` | Search/waimai deep links, homepage/menu/search layouts, WebView workarounds, popup chain handling |
 
 Usage:
 1. `adbclaw app current` → get package name
@@ -232,8 +277,9 @@ Contributions welcome — see `skills/apps/README.md` for the profile spec.
 4. **Wait, don't poll** — `wait --text "Done"` over sleep+observe loops
 5. **Deep link for CJK** — `open 'app://search?keyword=中文'` instead of `type`
 6. **Clear before type** — `clear-field` then `type` for input fields
-7. **Check App Profiles** — Load profile before exploring unfamiliar apps
-8. **Error recovery** — If action fails, re-observe, handle dialogs/permissions, retry
+7. **Monitor for video/live** — Use `monitor` instead of `ui tree` when video is playing
+8. **Check App Profiles** — Load profile before exploring unfamiliar apps
+9. **Error recovery** — If action fails, re-observe, handle dialogs/permissions, retry
 
 ## Architecture
 
@@ -248,6 +294,7 @@ src/
 │   ├── scroll.go         # scroll
 │   ├── open.go           # open (deep links)
 │   ├── wait.go           # wait (UI conditions)
+│   ├── monitor.go        # monitor (accessibility-based text monitoring)
 │   ├── screen.go         # screen management
 │   ├── app.go            # app lifecycle
 │   ├── shell.go          # shell command
@@ -256,6 +303,7 @@ src/
 ├── pkg/
 │   ├── adb/shell.go      # Commander interface (all ADB calls go through this)
 │   ├── input/             # Input injection + scroll + clear-field
+│   ├── monitor/           # DEX push + process management + text parsing
 │   ├── device/            # Screen status/control
 │   ├── observe/           # Screenshot + UI tree parsing
 │   └── output/            # JSON envelope formatting
@@ -266,7 +314,8 @@ Key design decisions:
 - **Input as top-level commands** — `adbclaw tap` instead of `adbclaw input tap`
 - **UI tree filtering** — Only indexes elements with text/resource-id/content-desc or clickable/scrollable attributes
 - **Partial failure tolerance** — `observe` succeeds if either screenshot or UI tree succeeds
-- **Pure adb** — All operations use standard `adb` commands, no device-side programs needed
+- **Accessibility fallback** — `monitor` uses a temporary DEX helper to read UI text via accessibility framework when `uiautomator dump` fails (video playback, live streams)
+- **Minimal device footprint** — Nearly all operations use pure `adb` commands; only `monitor` pushes a ~7KB temporary helper
 
 ## License
 

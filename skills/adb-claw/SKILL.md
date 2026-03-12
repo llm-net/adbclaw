@@ -1,16 +1,16 @@
 ---
 name: adb-claw
-version: 1.3.0
-description: "Your eyes and hands on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps. Zero device-side install — pure ADB."
+version: 1.4.0
+description: "Your eyes and hands on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, monitor live UI text via accessibility framework (works during video playback), manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps."
 homepage: https://github.com/llm-net/adbclaw
 metadata:
   {
     "openclaw":
       {
         "emoji": "📱",
-        "version": "1.3.0",
+        "version": "1.4.0",
         "os": ["darwin", "linux"],
-        "tags": ["android", "adb", "mobile", "automation", "ui-testing", "device-control", "deep-link", "screenshot"],
+        "tags": ["android", "adb", "mobile", "automation", "ui-testing", "device-control", "deep-link", "screenshot", "accessibility", "monitoring"],
         "requires": { "bins": ["adbclaw", "adb"] },
         "install":
           [
@@ -70,10 +70,46 @@ Your eyes and hands on Android. See what's on screen, tap any element, scroll th
 - **Smart scroll** — auto-calculates swipe coordinates from screen size; supports direction, page count, and scrolling within specific elements
 - **App Profiles** — pre-built knowledge (deep links, layouts, known issues) for popular apps like Douyin; load once, skip trial-and-error
 - **Full app lifecycle** — install, launch, stop, uninstall, clear data — no raw `adb` needed
-- **Zero device-side install** — pure ADB commands, nothing installed or running on the Android device
+- **Live stream monitoring** — `monitor` reads UI text via accessibility framework, works during video playback where `uiautomator dump` fails
+- **Minimal device footprint** — nearly all operations are pure ADB commands; only `monitor` pushes a temporary ~7KB helper that auto-exits
 - **Agent-optimized JSON** — every command returns `{ok, command, data, error, duration_ms}` with actionable `suggestion` on errors
 
+## Getting Started
+
+### Claude Code
+
+Install the plugin, then just talk to Claude — no slash commands needed:
+
+```bash
+claude plugin add llm-net/adbclaw
+```
+
+The plugin auto-downloads the adbclaw binary on first session. Make sure `adb` is installed and a device is connected via USB with debugging enabled.
+
+Then simply ask Claude to interact with your Android device:
+
+```
+"Take a screenshot of my phone"
+"Open Douyin and search for 猫咪"
+"Tap the Login button"
+"Monitor the live stream chat for 30 seconds"
+```
+
+Claude reads the Triggers list below and automatically activates this skill when your message matches — no explicit invocation required.
+
+### OpenClaw
+
+Install from ClawHub:
+
+```bash
+claw install adb-claw
+```
+
+Same natural-language triggers apply. Ask your agent to control an Android device and it will invoke adbclaw commands.
+
 ## Triggers
+
+These patterns tell the agent when to activate this skill:
 
 - User asks to control, interact with, or automate an Android device
 - User asks to test a mobile app or UI on Android
@@ -82,6 +118,7 @@ Your eyes and hands on Android. See what's on screen, tap any element, scroll th
 - User wants to wait for UI elements to appear/disappear on Android
 - User wants to manage screen state (on/off/unlock/rotation) on Android
 - User wants to push/pull files to/from an Android device
+- User wants to monitor live stream chat or read UI text during video playback on Android
 - User wants to run shell commands on an Android device
 
 ## Binary
@@ -153,7 +190,8 @@ App Profiles are pre-built knowledge bases for specific apps — deep links, UI 
 
 | App | File | Key Content |
 |-----|------|-------------|
-| Douyin (抖音) | `douyin.md` | Search/user/live deep links, feed/search/profile layouts, Phone vs Pad differences, UI dump workarounds |
+| Douyin (抖音) | `douyin.md` | Search/user/live deep links, feed/search/profile layouts, Phone vs Pad differences, live stream chat monitoring |
+| Meituan (美团) | `meituan.md` | Search/waimai deep links, homepage/menu/search layouts, WebView workarounds, popup chain handling |
 
 **Usage**:
 1. `adbclaw app current` → get foreground app package name
@@ -326,6 +364,25 @@ adbclaw app uninstall <pkg>            # Uninstall app
 adbclaw app clear <pkg>               # Clear app data/cache
 ```
 
+### monitor — Continuous UI Text Monitoring
+
+Monitor UI text by connecting directly to the Android accessibility framework. Unlike `ui tree` which uses `uiautomator dump`, this command skips video surface nodes and works reliably during live streams and video playback.
+
+```bash
+adbclaw monitor                            # 10s bounded, returns JSON envelope
+adbclaw monitor --duration 30000           # 30s bounded
+adbclaw monitor --stream --duration 60000  # 60s streaming, JSON lines
+adbclaw monitor --interval 1000            # Faster polling (1s)
+```
+
+**Bounded mode** (default): runs for `--duration` ms, returns all unique text entries in a JSON envelope.
+
+**Streaming mode** (`--stream`): outputs each new text as a JSON line in real time.
+
+Default duration: 10s. Default poll interval: 2s.
+
+Note: This command pushes a small (~7KB) DEX helper to the device on first use. The helper runs temporarily via `app_process` and exits when monitoring completes.
+
 ### shell — Run Raw Shell Command
 
 Escape hatch for anything `adbclaw` doesn't have a dedicated command for.
@@ -461,7 +518,7 @@ On error:
 **What adbclaw is**: A pure CLI wrapper around standard `adb` commands. It translates high-level instructions (e.g., `adbclaw tap --index 3`) into `adb shell input tap ...` calls. That's it.
 
 **What adbclaw does NOT do**:
-- Does not install anything on the Android device — zero device-side footprint
+- Does not install APKs or persistent services on the device — `monitor` pushes a temporary ~7KB DEX that runs briefly and auto-exits
 - Does not collect or transmit data — no telemetry, no analytics, no network requests
 - Does not request credentials or environment variables
 - Does not modify your host system beyond placing the binary
@@ -482,7 +539,8 @@ On error:
 | `type` doesn't work | Tap input field first to focus; ASCII only |
 | CJK text needed | Use `adbclaw open` with deep link containing the text as URL parameter |
 | UI dump fails | Pause animations (tap to pause video), wait 1s, retry |
-| UI dump fails on search pages | Search results may auto-play video previews; use `screenshot` instead |
+| UI dump fails on search pages | Search results may auto-play video previews; use `screenshot` instead or `monitor` to read text |
+| UI dump fails during live stream | Use `monitor` command — it bypasses video surfaces via accessibility framework |
 | Command timeout | Increase with `--timeout 60000` |
 | Permission dialog | Use `observe` to see it, tap the allow/skip button |
 | Screen is off | `adbclaw screen on` or `adbclaw screen unlock` |

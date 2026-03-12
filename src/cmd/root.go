@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Version is set via ldflags at build time: -ldflags "-X github.com/llm-net/adbclaw/cmd.Version=v1.3.0"
+// Version is set via ldflags at build time: -ldflags "-X github.com/llm-net/adbclaw/cmd.Version=v1.4.0"
 var Version = "dev"
 
 var (

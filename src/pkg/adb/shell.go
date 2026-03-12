@@ -46,7 +46,8 @@ func NewClient(serial string, timeout time.Duration) *Client {
 	}
 }
 
-func (c *Client) baseArgs() []string {
+// BaseArgs returns the base ADB arguments (e.g., -s serial) for this client.
+func (c *Client) BaseArgs() []string {
 	if c.Serial != "" {
 		return []string{"-s", c.Serial}
 	}
@@ -55,21 +56,21 @@ func (c *Client) baseArgs() []string {
 
 // Shell runs "adb [-s serial] shell <args...>".
 func (c *Client) Shell(args ...string) (*Result, error) {
-	full := append(c.baseArgs(), "shell")
+	full := append(c.BaseArgs(), "shell")
 	full = append(full, args...)
 	return c.run(full...)
 }
 
 // ExecOut runs "adb [-s serial] exec-out <args...>" returning raw bytes.
 func (c *Client) ExecOut(args ...string) ([]byte, error) {
-	full := append(c.baseArgs(), "exec-out")
+	full := append(c.BaseArgs(), "exec-out")
 	full = append(full, args...)
 	return c.runRaw(full...)
 }
 
 // RawCommand runs "adb [-s serial] <args...>".
 func (c *Client) RawCommand(args ...string) (*Result, error) {
-	full := append(c.baseArgs(), args...)
+	full := append(c.BaseArgs(), args...)
 	return c.run(full...)
 }
 

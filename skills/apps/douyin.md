@@ -170,6 +170,21 @@ adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
    - content_desc 含 "分享" → 分享数
 ```
 
+### 监控直播间聊天
+
+```
+1. adbclaw open 'snssdk1128://live?room_id={room_id}'   # 打开直播间
+2. adbclaw wait --text "说点什么" --timeout 10000         # 等待直播间加载
+3. adbclaw monitor --duration 30000 --interval 2000      # 持续读取 30 秒 UI 文本
+```
+
+直播间视频播放时 `ui tree` 会超时失败。`monitor` 命令通过 accessibility 框架直接读取文本，跳过视频表面节点，可在直播间正常工作。
+
+流式模式适合长时间监控：
+```
+adbclaw monitor --stream --duration 60000   # 60 秒流式输出，逐条 JSON line
+```
+
 ### 清空搜索框并重新输入
 
 ```

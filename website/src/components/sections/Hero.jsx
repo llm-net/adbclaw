@@ -92,6 +92,9 @@ export default function Hero() {
             <a href="#usage" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
               usage
             </a>
+            <a href="https://github.com/llm-net/adbclaw/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
+              docs
+            </a>
             <a
               href="https://github.com/llm-net/adbclaw"
               target="_blank"
@@ -108,9 +111,15 @@ export default function Hero() {
 
         <div className="grid gap-16 lg:grid-cols-[1.1fr_1fr] items-center">
           <div>
-            <div className="mb-5 inline-flex items-center gap-2.5 rounded-full border border-amber-500/20 bg-amber-500/5 px-4 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-              <span className="text-xs font-mono text-amber-500/80 tracking-wide">Phase 1 MVP</span>
+            <div className="mb-5 flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/5 px-4 py-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <span className="text-xs font-mono text-amber-500/80 tracking-wide">Claude Code Plugin</span>
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/5 px-4 py-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <span className="text-xs font-mono text-amber-500/80 tracking-wide">OpenClaw Skill</span>
+              </span>
             </div>
 
             <h1 className="mb-6 font-display text-5xl font-bold tracking-tight text-stone-50 sm:text-6xl lg:text-7xl leading-[1.05]">
@@ -119,7 +128,7 @@ export default function Hero() {
             </h1>
 
             <p className="mb-10 max-w-lg text-lg leading-relaxed text-stone-400 font-body">
-              A structured JSON API over adb shell. Screen observation, UI element indexing, input injection, and app management — everything an AI agent needs to control Android devices.
+              A structured JSON API over adb shell. Screen observation, UI element indexing, input injection, and app management — available as a Claude Code plugin and OpenClaw skill.
             </p>
 
             <div className="flex flex-wrap gap-4">

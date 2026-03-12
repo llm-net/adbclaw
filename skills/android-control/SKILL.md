@@ -162,6 +162,23 @@ adbclaw ui find --id "com.app:id/title"
 adbclaw ui find --index 3
 ```
 
+## App Profiles
+
+操作具体 App 前，先检查是否有对应的 App Profile。Profile 包含该 App 的深度链接、已知布局和常见问题，可大幅减少操作步骤。
+
+可用 Profile 位于 `skills/apps/` 目录：
+- `douyin.md` — 抖音（搜索、直播、Feed 浏览）
+- `wechat.md` — 微信（发消息、小程序、朋友圈）
+- `taobao.md` — 淘宝（搜索商品、下单）
+- `xiaohongshu.md` — 小红书（搜索、浏览笔记）
+- `bilibili.md` — 哔哩哔哩（搜索、播放视频）
+
+**使用流程**：
+1. `adbclaw app current` 获取前台 App 包名
+2. 按包名匹配 Profile 文件
+3. 有 Profile → 优先使用深度链接和已知布局；无 → 常规 observe 探索
+4. 注意设备形态差异：通过 `adbclaw device info` 获取屏幕尺寸，短边 < 1200px 为 Phone，>= 1200px 为 Pad
+
 ## Workflow Patterns
 
 ### Always Observe First

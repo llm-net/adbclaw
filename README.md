@@ -2,7 +2,9 @@
 
 Android device control CLI for AI agent automation. Pure tool layer — no LLM/Agent logic included.
 
-adbclaw wraps `adb shell` commands into a structured JSON API that AI agents can reliably call. It handles screen observation, UI element indexing, input injection, and app management.
+**Website: [adbclaw.com](https://adbclaw.com)**
+
+adbclaw wraps standard `adb` commands into a structured JSON API that AI agents can reliably call. It handles screen observation, UI element indexing, input injection, and app management — with zero dependencies on the Android device side.
 
 ## Features
 
@@ -11,6 +13,14 @@ adbclaw wraps `adb shell` commands into a structured JSON API that AI agents can
 - **Parallel observation** — Screenshot + UI tree captured concurrently with partial failure tolerance
 - **Multi-device support** — Target specific devices via `-s <serial>`
 - **AI-native design** — `skill` command outputs machine-readable capability description
+- **Zero device-side deps** — Pure `adb` commands, no APK or service to install on the phone
+
+## Use as AI Skill
+
+adbclaw is published as an AI Skill on two platforms:
+
+- **Claude Code Plugin** — Install from [Plugin Marketplace](https://adbclaw.com), gives Claude Code Android device control capabilities
+- **OpenClaw Skill** — Published on ClawHub, provides Android control for OpenClaw agents
 
 ## Quick Start
 
@@ -27,7 +37,7 @@ cd src
 make build
 ```
 
-Binary outputs to `src/bin/adbclaw`.
+Binary outputs to `bin/adbclaw` (project root).
 
 ### Verify Setup
 
@@ -193,15 +203,7 @@ Key design decisions:
 - **Input as top-level commands** — `adbclaw tap` instead of `adbclaw input tap`
 - **UI tree filtering** — Only indexes elements with text/resource-id/content-desc or clickable/scrollable attributes
 - **Partial failure tolerance** — `observe` succeeds if either screenshot or UI tree succeeds
-
-## Roadmap
-
-Currently at **Phase 1 MVP** (pure `adb shell` implementation).
-
-See [`docs/adbclaw-technical-plan.md`](docs/adbclaw-technical-plan.md) for the full roadmap including:
-- Phase 2: Device-side service (adbclawd), sendevent input, JPEG screenshots
-- Phase 3: Input humanization, gesture support, MCP server
-- Phase 4: Deep stealth mode, advanced observation
+- **Pure adb** — All operations use standard `adb` commands, no device-side programs needed
 
 ## License
 

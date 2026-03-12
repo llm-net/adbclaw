@@ -25,18 +25,22 @@ export default function RelatedProjects() {
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative rounded-xl border border-stone-800/60 bg-surface-900/30 p-5 transition-all duration-300 hover:border-amber-500/20 hover:bg-surface-900/50"
+              className={`group relative rounded-xl border p-5 transition-all duration-300 hover:bg-surface-900/50 ${project.highlight ? 'border-amber-500/30 bg-surface-900/40 hover:border-amber-500/40' : 'border-stone-800/60 bg-surface-900/30 hover:border-amber-500/20'}`}
             >
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-stone-300 group-hover:text-stone-100 transition-colors font-display">
                   {project.name}
                 </h3>
-                <span className="flex items-center gap-1 text-[11px] text-stone-600 font-mono">
-                  <svg className="h-3 w-3 text-amber-500/40" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z" />
-                  </svg>
-                  {project.stars}
-                </span>
+                {project.stars ? (
+                  <span className="flex items-center gap-1 text-[11px] text-stone-600 font-mono">
+                    <svg className="h-3 w-3 text-amber-500/40" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z" />
+                    </svg>
+                    {project.stars}
+                  </span>
+                ) : project.highlight ? (
+                  <span className="text-[10px] font-mono text-amber-500/60 uppercase tracking-wider">Skill Platform</span>
+                ) : null}
               </div>
               <p className="text-xs leading-relaxed text-stone-600 group-hover:text-stone-500 transition-colors">{project.description}</p>
 

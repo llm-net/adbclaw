@@ -198,99 +198,10 @@ adbclaw
 
 ## 发布流程
 
-发布涉及三个平台：**GitHub Releases**（二进制）、**ClawHub**（OpenClaw 技能市场）、**GitHub Pages**（官网）。
-
-当用户说「正式发布 X.Y.Z」时，按以下步骤**完整执行**：
-
-### 1. 同步版本号
-
-以下 4 处版本号必须一致：
+使用 `/release <版本号>` 命令执行完整发布流程（GitHub Releases + ClawHub + 官网），详见 `.claude/commands/release.md`。
 
 ```
-.claude-plugin/plugin.json      → "version": "X.Y.Z"
-skills/adb-claw/SKILL.md        → version: X.Y.Z (frontmatter 第 3 行)
-                                 → metadata.openclaw.version: "X.Y.Z" (第 11 行)
-src/cmd/root.go                  → 注释中的 ldflags 示例版本
-```
-
-### 2. 更新文档
-
-- `SKILL.md` — 新增/修改的命令、Getting Started、Troubleshooting（**此文件同时发布到 Claude Code 和 ClawHub**）
-- `README.md` — 与 SKILL.md 保持对齐（Features、命令树、Usage、Architecture、App Profiles 表）
-- `CLAUDE.md` — 命令树、项目结构、迭代状态
-- `skills/apps/*.md` — 如有 App Profile 变更
-
-### 3. 运行测试 & 构建
-
-```bash
-cd src && make test && make build
-```
-
-确认所有测试通过、构建成功后再继续。Go 路径：`/Users/dionren/go-sdk/go/bin`。
-
-### 4. 提交 & 推送
-
-```bash
-git add <所有变更文件>
-git commit -m "feat: vX.Y.Z — 简要描述"
-git push origin main
-```
-
-### 5. 打 tag 触发 GitHub Release
-
-```bash
-git tag vX.Y.Z
-git push origin vX.Y.Z
-```
-
-推送 tag 后 GitHub Actions 自动执行两个 workflow：
-
-- **Release**（`.github/workflows/release.yml`）：test → 交叉编译 4 平台 → 创建 GitHub Release
-- **Deploy Website**（`.github/workflows/deploy-website.yml`）：构建 website/ → 部署到 GitHub Pages（adbclaw.com）
-
-### 6. 发布到 ClawHub
-
-GitHub Release 只覆盖二进制分发，**ClawHub 需要单独发布**：
-
-```bash
-clawhub publish skills/adb-claw --version X.Y.Z --changelog "变更摘要"
-```
-
-- CLI 位于 `/Users/dionren/.nvm/versions/node/v24.14.0/bin/clawhub`
-- 已登录账号：`dionren`（`clawhub whoami` 验证）
-- 发布后 ClawHub 会做安全扫描，通常几分钟后自动上线
-
-### 7. 验证
-
-```bash
-# GitHub Release — 查看 CI 进度
-gh run list --repo llm-net/adbclaw --limit 2
-
-# GitHub Release — 确认 assets（应有 6 个文件）
-gh release view vX.Y.Z --repo llm-net/adbclaw
-
-# ClawHub — 确认版本（安全扫描中会暂时 hidden，几分钟后可查）
-clawhub inspect adb-claw
-
-# 官网 — 确认 Deploy Website workflow 完成
-# 访问 https://adbclaw.com 验证
-```
-
-### Release Assets
-
-每个 GitHub Release 包含：
-
-| 文件 | 说明 |
-|------|------|
-| `adbclaw-darwin-arm64` | macOS Apple Silicon |
-| `adbclaw-darwin-amd64` | macOS Intel |
-| `adbclaw-linux-amd64` | Linux x86_64 |
-| `adbclaw-linux-arm64` | Linux ARM64 |
-| `install.sh` | 一键安装脚本（检测平台 + 下载 + SHA256 校验） |
-| `checksums.txt` | SHA256 校验文件 |
-
-### Git Remote
-
-```
-origin → llm-net/adbclaw（主仓库，CI 和 Release 在此）
+Git remote: origin → llm-net/adbclaw（主仓库，CI 和 Release 在此）
+ClawHub:    https://clawhub.ai/dionren/adb-claw
+官网:       https://adbclaw.com
 ```

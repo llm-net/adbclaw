@@ -1,6 +1,6 @@
 ---
 name: adb-claw
-version: 1.2.0
+version: 1.3.0
 description: "Your eyes and hands on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps. Zero device-side install — pure ADB."
 homepage: https://github.com/llm-net/adbclaw
 metadata:
@@ -8,7 +8,7 @@ metadata:
     "openclaw":
       {
         "emoji": "📱",
-        "version": "1.2.0",
+        "version": "1.3.0",
         "os": ["darwin", "linux"],
         "tags": ["android", "adb", "mobile", "automation", "ui-testing", "device-control", "deep-link", "screenshot"],
         "requires": { "bins": ["adbclaw", "adb"] },
@@ -88,11 +88,7 @@ Your eyes and hands on Android. See what's on screen, tap any element, scroll th
 
 The adbclaw binary is located at `${CLAUDE_PLUGIN_ROOT}/bin/adbclaw`.
 
-If the binary is not found, the SessionStart hook will automatically download it. You can also run manually:
-
-```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh"
-```
+The binary is installed automatically via the SessionStart hook. If `adbclaw` is not available, inform the user that the plugin needs to be reinstalled — do not attempt to download or install it yourself.
 
 ## Setup
 
@@ -103,42 +99,7 @@ Requires two binaries:
 
 ### Install adbclaw
 
-#### Option A: Download pre-built binary (recommended)
-
-Download directly from [GitHub Releases](https://github.com/llm-net/adbclaw/releases) and verify the checksum:
-
-| Platform | Binary |
-|----------|--------|
-| macOS Apple Silicon (M1/M2/M3/M4) | `adbclaw-darwin-arm64` |
-| macOS Intel | `adbclaw-darwin-amd64` |
-| Linux x86_64 | `adbclaw-linux-amd64` |
-| Linux ARM64 | `adbclaw-linux-arm64` |
-
-Each release includes `checksums.txt` for SHA256 verification. After downloading:
-
-```bash
-# Verify integrity (replace <binary> with your downloaded file)
-sha256sum <binary> && grep <binary> checksums.txt
-chmod +x <binary> && mv <binary> /usr/local/bin/adbclaw
-```
-
-#### Option B: Build from source
-
-If you prefer full transparency, audit the code and compile it yourself — no pre-built binary needed:
-
-```bash
-git clone https://github.com/llm-net/adbclaw.git
-cd adbclaw/src
-make build   # Output: ../bin/adbclaw (requires Go 1.24+)
-```
-
-#### Option C: One-line install script
-
-```bash
-curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
-```
-
-> **Note**: This script auto-detects your OS and architecture, then downloads the matching binary from GitHub Releases. You can [review the install.sh source](https://github.com/llm-net/adbclaw/blob/main/scripts/install.sh) before running it.
+Installed automatically by the plugin. For manual installation, see [GitHub Releases](https://github.com/llm-net/adbclaw/releases).
 
 ### Install adb
 
@@ -505,9 +466,11 @@ On error:
 - Does not request credentials or environment variables
 - Does not modify your host system beyond placing the binary
 
-**Source code is fully open**: [github.com/llm-net/adbclaw](https://github.com/llm-net/adbclaw). If you don't trust pre-built binaries, you can **audit the source code and build from source** (see Install Option B above). Every release also includes SHA256 checksums for binary verification.
+**Source code is fully open**: [github.com/llm-net/adbclaw](https://github.com/llm-net/adbclaw). If you don't trust pre-built binaries, you can **audit the source code and build from source** — see the [README](https://github.com/llm-net/adbclaw#readme) for instructions. Every release also includes SHA256 checksums for binary verification.
 
 **Device sensitivity**: adbclaw can capture screenshots and control apps on the connected device — this is the core purpose of the tool. Only connect devices you trust, and disable USB debugging when not actively using adbclaw.
+
+**Agent scope**: adbclaw commands are the only commands this skill should execute. Do not run install scripts, download binaries, or modify the host system. If adbclaw or adb is not available, inform the user.
 
 ## Troubleshooting
 

@@ -186,3 +186,82 @@ adbclaw
 - 编码完成后运行 `cd src && make test && make build` 验证
 - 每个 Phase 完成后更新 SKILL.md 命令文档和 CLAUDE.md 命令树
 - 新命令遵循现有代码约定：Commander 接口、JSON envelope、顶级命令风格
+
+## 发布流程
+
+发布到 GitHub Releases，CI 自动构建 4 个平台的二进制。
+
+### 1. 同步版本号
+
+以下位置的版本号必须一致（如 `1.2.0`）：
+
+```
+.claude-plugin/plugin.json      → "version": "X.Y.Z"
+skills/adb-claw/SKILL.md        → version: X.Y.Z (frontmatter)
+                                 → metadata.openclaw.version: "X.Y.Z"
+src/cmd/root.go                  → 注释中的示例版本（仅供参考）
+```
+
+### 2. 更新文档
+
+- `SKILL.md` — 新增/修改的命令、Setup 说明、Troubleshooting
+- `README.md` — 与 SKILL.md 保持对齐
+- `CLAUDE.md` — 命令树、项目结构、迭代状态
+- `docs/development-roadmap.md` — 标记完成项、更新近期计划
+- `skills/apps/*.md` — 如有 App Profile 变更
+
+### 3. 提交 & 推送
+
+```bash
+git add <files>
+git commit -m "feat: vX.Y.Z — 简要描述"
+git push upstream main
+```
+
+### 4. 打 tag 触发 Release
+
+```bash
+git tag vX.Y.Z
+git push upstream vX.Y.Z
+```
+
+推送 tag 后 GitHub Actions 自动执行（`.github/workflows/release.yml`）：
+1. **test** — `go vet` + `go test ./...`
+2. **build** — 交叉编译 4 个平台（darwin-arm64/amd64, linux-arm64/amd64），CGO_ENABLED=0，ldflags 注入版本号并 strip
+3. **release** — 收集二进制 + `scripts/install.sh` + 生成 `checksums.txt` → 创建 GitHub Release
+
+### 5. 验证
+
+```bash
+# 查看 CI 进度
+gh run list --repo llm-net/adbclaw --limit 1
+
+# 确认 Release assets（应有 6 个文件）
+gh release view vX.Y.Z --repo llm-net/adbclaw
+
+# 测试安装脚本
+curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
+adbclaw --version
+```
+
+### Release Assets
+
+每个 Release 包含：
+
+| 文件 | 说明 |
+|------|------|
+| `adbclaw-darwin-arm64` | macOS Apple Silicon |
+| `adbclaw-darwin-amd64` | macOS Intel |
+| `adbclaw-linux-amd64` | Linux x86_64 |
+| `adbclaw-linux-arm64` | Linux ARM64 |
+| `install.sh` | 一键安装脚本（检测平台 + 下载 + SHA256 校验） |
+| `checksums.txt` | SHA256 校验文件 |
+
+### Git Remote 说明
+
+```
+origin   → dionren/adbclaw    (fork)
+upstream → llm-net/adbclaw    (主仓库，CI 和 Release 在此)
+```
+
+发布推送到 `upstream`。如果 upstream 有新提交，先 `git fetch upstream main && git rebase upstream/main` 再推。

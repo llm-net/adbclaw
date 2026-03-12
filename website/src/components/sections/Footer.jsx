@@ -12,8 +12,9 @@ export default function Footer() {
               </span>
             </div>
             <p className="max-w-xs text-sm text-stone-600 leading-relaxed">
-              Android device control CLI for AI agent automation. Pure tool layer — no LLM/Agent logic included.
+              Android device control CLI for AI agent automation. 30+ commands over ADB. Pure tool layer — no LLM/Agent logic included.
             </p>
+            <span className="inline-block mt-3 text-[10px] font-mono text-stone-700 tracking-wider">v1.3.0 · darwin-arm64 · darwin-amd64 · linux-arm64 · linux-amd64</span>
           </div>
 
           {/* Links */}
@@ -24,6 +25,11 @@ export default function Footer() {
                 <li>
                   <a href="https://github.com/llm-net/adbclaw" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
                     GitHub
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/llm-net/adbclaw/releases" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
+                    Releases
                   </a>
                 </li>
                 <li>
@@ -43,6 +49,7 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 <li><span className="text-sm text-stone-500">Claude Code Plugin</span></li>
                 <li><span className="text-sm text-stone-500">OpenClaw / ClawHub</span></li>
+                <li><span className="text-sm text-stone-500">Standalone CLI</span></li>
               </ul>
             </div>
             <div>

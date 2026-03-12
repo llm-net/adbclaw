@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 
 const terminalLines = [
-  { cmd: 'adbclaw doctor', delay: 0 },
-  { out: 'adb: /usr/local/bin/adb (v1.0.41)', delay: 600 },
-  { out: 'device: Pixel 7 (adb-XXX) — connected', delay: 900 },
-  { out: 'status: all checks passed', delay: 1200 },
-  { cmd: 'adbclaw observe --width 720', delay: 2000 },
-  { out: '{"ok":true,"command":"observe","data":{...}}', delay: 2800 },
-  { cmd: 'adbclaw tap --text "Sign in"', delay: 3600 },
-  { out: '{"ok":true,"command":"tap","duration_ms":38}', delay: 4200 },
+  { cmd: 'adbclaw observe --width 720', delay: 0 },
+  { out: '{"ok":true,"command":"observe","data":{...}}', delay: 800 },
+  { cmd: 'adbclaw tap --text "Search"', delay: 1600 },
+  { out: '{"ok":true,"command":"tap","duration_ms":38}', delay: 2200 },
+  { cmd: 'adbclaw type "cat videos"', delay: 3000 },
+  { out: '{"ok":true,"command":"type","duration_ms":52}', delay: 3600 },
+  { cmd: 'adbclaw scroll down --pages 2', delay: 4400 },
+  { out: '{"ok":true,"command":"scroll","duration_ms":680}', delay: 5000 },
+  { cmd: 'adbclaw wait --text "Results" --timeout 5000', delay: 5800 },
+  { out: '{"ok":true,"command":"wait","data":{"found":true}}', delay: 6600 },
 ]
 
 function TerminalAnimation() {
@@ -89,11 +91,14 @@ export default function Hero() {
             <a href="#features" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
               features
             </a>
+            <a href="#install" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
+              install
+            </a>
+            <a href="#commands" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
+              commands
+            </a>
             <a href="#usage" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
               usage
-            </a>
-            <a href="https://github.com/llm-net/adbclaw/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
-              docs
             </a>
             <a
               href="https://github.com/llm-net/adbclaw"
@@ -128,7 +133,7 @@ export default function Hero() {
             </h1>
 
             <p className="mb-10 max-w-lg text-lg leading-relaxed text-stone-400 font-body">
-              A structured JSON API over adb shell. Screen observation, UI element indexing, input injection, and app management — available as a Claude Code plugin and OpenClaw skill.
+              30+ commands over ADB — observe screens, tap by element index, scroll smartly, open deep links, wait for UI state, manage apps, transfer files. Structured JSON in, structured JSON out. Available as a Claude Code plugin and OpenClaw skill.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -152,10 +157,10 @@ export default function Hero() {
             </div>
 
             {/* Quick install */}
-            <div className="mt-10 flex items-center gap-3 rounded-lg border border-stone-800/60 bg-surface-900/50 px-4 py-2.5 max-w-md">
+            <div className="mt-10 flex items-center gap-3 rounded-lg border border-stone-800/60 bg-surface-900/50 px-4 py-2.5 max-w-lg">
               <span className="text-amber-500/60 font-mono text-sm select-none">$</span>
-              <code className="text-sm font-mono text-stone-400">cd src && make build</code>
-              <span className="ml-auto text-[10px] text-stone-600 font-mono uppercase tracking-wider">Go 1.24+</span>
+              <code className="text-sm font-mono text-stone-400 truncate">curl -fsSL https://adbclaw.com/install.sh | bash</code>
+              <span className="ml-auto text-[10px] text-stone-600 font-mono uppercase tracking-wider shrink-0">v1.3.0</span>
             </div>
           </div>
 

@@ -12,13 +12,13 @@ export default function CodeDemo() {
             Usage
           </span>
           <h2 className="text-3xl font-display font-bold tracking-tight text-stone-100 sm:text-4xl">
-            Clean, composable commands
+            30+ commands, one binary
           </h2>
           <p className="mt-4 max-w-xl text-stone-500 leading-relaxed">
-            Input as top-level commands. Observe before acting. Prefer element index over coordinates.
+            Observe, navigate, wait, and manage — all as top-level commands with structured JSON output. Prefer element index over coordinates.
           </p>
         </div>
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {cliExamples.map((example) => (
             <CodeBlock key={example.title} title={example.title} commands={example.commands} />
           ))}
@@ -37,7 +37,7 @@ export default function CodeDemo() {
               <span className="text-stone-500">{'  '}"command"</span><span className="text-stone-600">: </span><span className="text-amber-600/60">"tap"</span><span className="text-stone-600">,</span>{'\n'}
               <span className="text-stone-500">{'  '}"data"</span><span className="text-stone-600">: {'{'} </span><span className="text-stone-500">"x"</span><span className="text-stone-600">: </span><span className="text-amber-500/80">540</span><span className="text-stone-600">, </span><span className="text-stone-500">"y"</span><span className="text-stone-600">: </span><span className="text-amber-500/80">960</span><span className="text-stone-600">{' }'}</span><span className="text-stone-600">,</span>{'\n'}
               <span className="text-stone-500">{'  '}"duration_ms"</span><span className="text-stone-600">: </span><span className="text-amber-500/80">38</span><span className="text-stone-600">,</span>{'\n'}
-              <span className="text-stone-500">{'  '}"timestamp"</span><span className="text-stone-600">: </span><span className="text-amber-600/60">"2025-03-01T10:00:00.123Z"</span>{'\n'}
+              <span className="text-stone-500">{'  '}"timestamp"</span><span className="text-stone-600">: </span><span className="text-amber-600/60">"2026-03-12T10:00:00.123Z"</span>{'\n'}
               <span className="text-stone-600">{'}'}</span>
             </pre>
           </div>

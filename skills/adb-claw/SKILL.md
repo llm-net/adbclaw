@@ -1,6 +1,6 @@
 ---
 name: adb-claw
-version: 0.2.0
+version: 1.2.0
 description: "Your eyes and hands on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps. Zero device-side install — pure ADB."
 homepage: https://github.com/llm-net/adbclaw
 metadata:
@@ -8,18 +8,43 @@ metadata:
     "openclaw":
       {
         "emoji": "📱",
-        "version": "0.2.0",
+        "version": "1.2.0",
         "os": ["darwin", "linux"],
         "tags": ["android", "adb", "mobile", "automation", "ui-testing", "device-control", "deep-link", "screenshot"],
         "requires": { "bins": ["adbclaw", "adb"] },
         "install":
           [
             {
-              "id": "adbclaw-curl",
-              "kind": "script",
-              "script": "curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash",
+              "id": "adbclaw-darwin-arm64",
+              "kind": "download",
+              "url": "https://github.com/llm-net/adbclaw/releases/latest/download/adbclaw-darwin-arm64",
               "bins": ["adbclaw"],
-              "label": "Install adbclaw (curl)",
+              "os": "darwin",
+              "label": "Download adbclaw (macOS Apple Silicon)",
+            },
+            {
+              "id": "adbclaw-darwin-amd64",
+              "kind": "download",
+              "url": "https://github.com/llm-net/adbclaw/releases/latest/download/adbclaw-darwin-amd64",
+              "bins": ["adbclaw"],
+              "os": "darwin",
+              "label": "Download adbclaw (macOS Intel)",
+            },
+            {
+              "id": "adbclaw-linux-amd64",
+              "kind": "download",
+              "url": "https://github.com/llm-net/adbclaw/releases/latest/download/adbclaw-linux-amd64",
+              "bins": ["adbclaw"],
+              "os": "linux",
+              "label": "Download adbclaw (Linux x86_64)",
+            },
+            {
+              "id": "adbclaw-linux-arm64",
+              "kind": "download",
+              "url": "https://github.com/llm-net/adbclaw/releases/latest/download/adbclaw-linux-arm64",
+              "bins": ["adbclaw"],
+              "os": "linux",
+              "label": "Download adbclaw (Linux ARM64)",
             },
             {
               "id": "adb-brew",
@@ -78,14 +103,9 @@ Requires two binaries:
 
 ### Install adbclaw
 
-Pre-built binaries are available for **macOS** and **Linux** (amd64 / arm64). No Go toolchain needed.
+#### Option A: Download pre-built binary (recommended)
 
-```bash
-# One-line install (auto-detects OS and architecture)
-curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
-```
-
-Or download a specific binary directly from [GitHub Releases](https://github.com/llm-net/adbclaw/releases):
+Download directly from [GitHub Releases](https://github.com/llm-net/adbclaw/releases) and verify the checksum:
 
 | Platform | Binary |
 |----------|--------|
@@ -94,7 +114,31 @@ Or download a specific binary directly from [GitHub Releases](https://github.com
 | Linux x86_64 | `adbclaw-linux-amd64` |
 | Linux ARM64 | `adbclaw-linux-arm64` |
 
-Each release includes `checksums.txt` for SHA256 verification.
+Each release includes `checksums.txt` for SHA256 verification. After downloading:
+
+```bash
+# Verify integrity (replace <binary> with your downloaded file)
+sha256sum <binary> && grep <binary> checksums.txt
+chmod +x <binary> && mv <binary> /usr/local/bin/adbclaw
+```
+
+#### Option B: Build from source
+
+If you prefer full transparency, audit the code and compile it yourself — no pre-built binary needed:
+
+```bash
+git clone https://github.com/llm-net/adbclaw.git
+cd adbclaw/src
+make build   # Output: ../bin/adbclaw (requires Go 1.24+)
+```
+
+#### Option C: One-line install script
+
+```bash
+curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
+```
+
+> **Note**: This script auto-detects your OS and architecture, then downloads the matching binary from GitHub Releases. You can [review the install.sh source](https://github.com/llm-net/adbclaw/blob/main/scripts/install.sh) before running it.
 
 ### Install adb
 
@@ -450,6 +494,20 @@ On error:
   }
 }
 ```
+
+## Security & Trust
+
+**What adbclaw is**: A pure CLI wrapper around standard `adb` commands. It translates high-level instructions (e.g., `adbclaw tap --index 3`) into `adb shell input tap ...` calls. That's it.
+
+**What adbclaw does NOT do**:
+- Does not install anything on the Android device — zero device-side footprint
+- Does not collect or transmit data — no telemetry, no analytics, no network requests
+- Does not request credentials or environment variables
+- Does not modify your host system beyond placing the binary
+
+**Source code is fully open**: [github.com/llm-net/adbclaw](https://github.com/llm-net/adbclaw). If you don't trust pre-built binaries, you can **audit the source code and build from source** (see Install Option B above). Every release also includes SHA256 checksums for binary verification.
+
+**Device sensitivity**: adbclaw can capture screenshots and control apps on the connected device — this is the core purpose of the tool. Only connect devices you trust, and disable USB debugging when not actively using adbclaw.
 
 ## Troubleshooting
 

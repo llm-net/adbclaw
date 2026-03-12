@@ -198,7 +198,7 @@ adbclaw
 
 ## 发布流程
 
-使用 `/release <版本号>` 命令执行完整发布流程（GitHub Releases + ClawHub + 官网），详见 `.claude/commands/release.md`。
+使用 `/adbclaw-release <版本号>` 命令执行完整发布流程（GitHub Releases + ClawHub + 官网），详见 `.claude/commands/adbclaw-release.md`。
 
 ```
 Git remote: origin → llm-net/adbclaw（主仓库，CI 和 Release 在此）

@@ -198,64 +198,87 @@ adbclaw
 
 ## 发布流程
 
-发布到 GitHub Releases，CI 自动构建 4 个平台的二进制。
+发布涉及三个平台：**GitHub Releases**（二进制）、**ClawHub**（OpenClaw 技能市场）、**GitHub Pages**（官网）。
+
+当用户说「正式发布 X.Y.Z」时，按以下步骤**完整执行**：
 
 ### 1. 同步版本号
 
-以下位置的版本号必须一致（如 `1.2.0`）：
+以下 4 处版本号必须一致：
 
 ```
 .claude-plugin/plugin.json      → "version": "X.Y.Z"
-skills/adb-claw/SKILL.md        → version: X.Y.Z (frontmatter)
-                                 → metadata.openclaw.version: "X.Y.Z"
-src/cmd/root.go                  → 注释中的示例版本（仅供参考）
+skills/adb-claw/SKILL.md        → version: X.Y.Z (frontmatter 第 3 行)
+                                 → metadata.openclaw.version: "X.Y.Z" (第 11 行)
+src/cmd/root.go                  → 注释中的 ldflags 示例版本
 ```
 
 ### 2. 更新文档
 
-- `SKILL.md` — 新增/修改的命令、Setup 说明、Troubleshooting
-- `README.md` — 与 SKILL.md 保持对齐
+- `SKILL.md` — 新增/修改的命令、Getting Started、Troubleshooting（**此文件同时发布到 Claude Code 和 ClawHub**）
+- `README.md` — 与 SKILL.md 保持对齐（Features、命令树、Usage、Architecture、App Profiles 表）
 - `CLAUDE.md` — 命令树、项目结构、迭代状态
-- `docs/development-roadmap.md` — 标记完成项、更新近期计划
 - `skills/apps/*.md` — 如有 App Profile 变更
 
-### 3. 提交 & 推送
+### 3. 运行测试 & 构建
 
 ```bash
-git add <files>
-git commit -m "feat: vX.Y.Z — 简要描述"
-git push upstream main
+cd src && make test && make build
 ```
 
-### 4. 打 tag 触发 Release
+确认所有测试通过、构建成功后再继续。Go 路径：`/Users/dionren/go-sdk/go/bin`。
+
+### 4. 提交 & 推送
+
+```bash
+git add <所有变更文件>
+git commit -m "feat: vX.Y.Z — 简要描述"
+git push origin main
+```
+
+### 5. 打 tag 触发 GitHub Release
 
 ```bash
 git tag vX.Y.Z
-git push upstream vX.Y.Z
+git push origin vX.Y.Z
 ```
 
-推送 tag 后 GitHub Actions 自动执行（`.github/workflows/release.yml`）：
-1. **test** — `go vet` + `go test ./...`
-2. **build** — 交叉编译 4 个平台（darwin-arm64/amd64, linux-arm64/amd64），CGO_ENABLED=0，ldflags 注入版本号并 strip
-3. **release** — 收集二进制 + `scripts/install.sh` + 生成 `checksums.txt` → 创建 GitHub Release
+推送 tag 后 GitHub Actions 自动执行两个 workflow：
 
-### 5. 验证
+- **Release**（`.github/workflows/release.yml`）：test → 交叉编译 4 平台 → 创建 GitHub Release
+- **Deploy Website**（`.github/workflows/deploy-website.yml`）：构建 website/ → 部署到 GitHub Pages（adbclaw.com）
+
+### 6. 发布到 ClawHub
+
+GitHub Release 只覆盖二进制分发，**ClawHub 需要单独发布**：
 
 ```bash
-# 查看 CI 进度
-gh run list --repo llm-net/adbclaw --limit 1
+clawhub publish skills/adb-claw --version X.Y.Z --changelog "变更摘要"
+```
 
-# 确认 Release assets（应有 6 个文件）
+- CLI 位于 `/Users/dionren/.nvm/versions/node/v24.14.0/bin/clawhub`
+- 已登录账号：`dionren`（`clawhub whoami` 验证）
+- 发布后 ClawHub 会做安全扫描，通常几分钟后自动上线
+
+### 7. 验证
+
+```bash
+# GitHub Release — 查看 CI 进度
+gh run list --repo llm-net/adbclaw --limit 2
+
+# GitHub Release — 确认 assets（应有 6 个文件）
 gh release view vX.Y.Z --repo llm-net/adbclaw
 
-# 测试安装脚本
-curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
-adbclaw --version
+# ClawHub — 确认版本（安全扫描中会暂时 hidden，几分钟后可查）
+clawhub inspect adb-claw
+
+# 官网 — 确认 Deploy Website workflow 完成
+# 访问 https://adbclaw.com 验证
 ```
 
 ### Release Assets
 
-每个 Release 包含：
+每个 GitHub Release 包含：
 
 | 文件 | 说明 |
 |------|------|
@@ -266,11 +289,8 @@ adbclaw --version
 | `install.sh` | 一键安装脚本（检测平台 + 下载 + SHA256 校验） |
 | `checksums.txt` | SHA256 校验文件 |
 
-### Git Remote 说明
+### Git Remote
 
 ```
-origin   → dionren/adbclaw    (fork)
-upstream → llm-net/adbclaw    (主仓库，CI 和 Release 在此)
+origin → llm-net/adbclaw（主仓库，CI 和 Release 在此）
 ```
-
-发布推送到 `upstream`。如果 upstream 有新提交，先 `git fetch upstream main && git rebase upstream/main` 再推。

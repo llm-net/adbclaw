@@ -14,7 +14,7 @@ export default function Footer() {
             <p className="max-w-xs text-sm text-stone-600 leading-relaxed">
               Android device control CLI for AI agent automation. 30+ commands over ADB. Pure tool layer — no LLM/Agent logic included.
             </p>
-            <span className="inline-block mt-3 text-[10px] font-mono text-stone-700 tracking-wider">v1.3.0 · darwin-arm64 · darwin-amd64 · linux-arm64 · linux-amd64</span>
+            <span className="inline-block mt-3 text-[10px] font-mono text-stone-700 tracking-wider">v1.4.1 · darwin-arm64 · darwin-amd64 · linux-arm64 · linux-amd64</span>
           </div>
 
           {/* Links */}

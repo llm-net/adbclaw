@@ -103,7 +103,7 @@ export const architectureSteps = [
   },
   {
     label: 'adbclaw',
-    sublabel: 'Go CLI · v1.3.0',
+    sublabel: 'Go CLI · v1.4.1',
     description: 'Translates 30+ commands to ADB operations. Returns structured JSON with error codes and suggestions',
   },
   {

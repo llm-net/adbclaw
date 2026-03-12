@@ -148,6 +148,16 @@ func resolveKeycode(key string) string {
 		"SPACE":       "KEYCODE_SPACE",
 		"ESCAPE":      "KEYCODE_ESCAPE",
 		"RECENTS":     "KEYCODE_APP_SWITCH",
+		"PASTE":       "KEYCODE_PASTE",
+		"COPY":        "KEYCODE_COPY",
+		"CUT":         "KEYCODE_CUT",
+		"FORWARD_DEL": "KEYCODE_FORWARD_DEL",
+		"MOVE_HOME":   "KEYCODE_MOVE_HOME",
+		"MOVE_END":    "KEYCODE_MOVE_END",
+		"PAGE_UP":     "KEYCODE_PAGE_UP",
+		"PAGE_DOWN":   "KEYCODE_PAGE_DOWN",
+		"WAKEUP":      "KEYCODE_WAKEUP",
+		"SLEEP":       "KEYCODE_SLEEP",
 	}
 	if code, ok := aliases[upper]; ok {
 		return code

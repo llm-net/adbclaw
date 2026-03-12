@@ -1,12 +1,12 @@
 {
   "name": "adbclaw",
-  "version": "0.1.0",
-  "description": "Android device control CLI for AI agent automation. Control Android devices via ADB for automated testing, UI interaction, and app management.",
+  "version": "0.2.0",
+  "description": "Android device control CLI for AI agent automation. Tap, swipe, scroll, type, screenshot, UI inspection, deep links, wait for UI state, screen management, app lifecycle, shell commands, and file transfer — all via ADB.",
   "author": {
     "name": "llm-net",
     "url": "https://github.com/llm-net"
   },
   "repository": "https://github.com/llm-net/adbclaw",
   "license": "MIT",
-  "keywords": ["android", "adb", "automation", "mobile", "testing"]
+  "keywords": ["android", "adb", "automation", "mobile", "testing", "deep-link", "ui-testing"]
 }

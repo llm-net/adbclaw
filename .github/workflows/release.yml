@@ -9,7 +9,24 @@ permissions:
   contents: write
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Test
+        working-directory: src
+        run: |
+          go mod tidy
+          go vet ./...
+          go test ./...
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -39,7 +56,7 @@ jobs:
           VERSION="${GITHUB_REF_NAME}"
           mkdir -p bin
           go mod tidy
-          go build -ldflags "-X github.com/llm-net/adbclaw/cmd.Version=${VERSION}" \
+          go build -ldflags "-s -w -X github.com/llm-net/adbclaw/cmd.Version=${VERSION}" \
             -o "bin/adbclaw-${{ matrix.goos }}-${{ matrix.goarch }}" .
 
       - uses: actions/upload-artifact@v4
@@ -51,19 +68,57 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      - name: Collect binaries
+      - name: Collect binaries and generate checksums
         run: |
           mkdir -p release
+
+          # Collect binaries
           find artifacts -type f -name 'adbclaw-*' -exec cp {} release/ \;
-          chmod +x release/*
-          ls -lh release/
+          chmod +x release/adbclaw-*
+
+          # Copy install script
+          cp scripts/install.sh release/install.sh
+
+          # Generate SHA256 checksums
+          cd release
+          sha256sum adbclaw-* > checksums.txt
+          echo ""
+          echo "=== Release Assets ==="
+          ls -lh
+          echo ""
+          echo "=== Checksums ==="
+          cat checksums.txt
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
+          body: |
+            ## Install
+
+            ```bash
+            # One-line install (macOS / Linux)
+            curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
+
+            # Or download binary directly
+            # macOS Apple Silicon:
+            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-darwin-arm64
+            # macOS Intel:
+            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-darwin-amd64
+            # Linux x86_64:
+            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-linux-amd64
+            # Linux ARM64:
+            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-linux-arm64
+
+            chmod +x adbclaw
+            ./adbclaw doctor
+            ```
+
+            Also requires `adb` — install via `brew install android-platform-tools` (macOS) or `apt install android-tools-adb` (Linux).
           files: release/*

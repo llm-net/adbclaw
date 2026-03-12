@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "adbclaw-marketplace",
-  "description": "Android device control CLI for AI agent automation",
+  "description": "Android device control CLI for AI agent automation — tap, scroll, screenshot, deep links, UI wait, screen/app management, shell, and file transfer via ADB",
   "owner": {
     "name": "llm-net",
     "url": "https://github.com/llm-net"

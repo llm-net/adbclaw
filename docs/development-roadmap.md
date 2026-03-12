@@ -2,7 +2,9 @@
 
 ## 已完成
 
-核心功能已实现，跑通 `observe → decide → act` 循环：
+### 第一轮迭代 — 核心功能
+
+跑通 `observe → decide → act` 循环：
 
 - Go CLI 骨架（cobra + JSON envelope + 全局选项）
 - `device list` / `device info`
@@ -12,9 +14,26 @@
 - `tap` / `long-press` / `swipe` / `key` / `type`（支持 `--index`/`--id`/`--text` 元素定位）
 - `app list` / `current` / `launch` / `stop`
 - `skill` / `doctor`
-- Claude Code 插件发布配置（`.claude-plugin/` + `skills/android-control/`）
-- OpenClaw Skill 定义（`skills/adb-claw/`）
+- Claude Code 插件发布配置（`.claude-plugin/` + `skills/adb-claw/`）
+- OpenClaw Skill 定义（YAML frontmatter + `metadata.openclaw`）
 - App Profile 机制 + 抖音 Profile
+
+### 第二轮迭代 — 高级命令 (v0.2.0)
+
+详细方案见 `docs/iteration-2-advanced-commands.md`。
+
+| Phase | 内容 | 状态 |
+|-------|------|------|
+| 1 | `clear-field` + key 别名扩展（PASTE/COPY/CUT/WAKEUP/SLEEP 等） | ✅ |
+| 2 | `open`（深度链接/URL）+ `scroll`（智能滚动，支持方向/页数/元素内滚动） | ✅ |
+| 3 | `wait`（等待 UI 元素/Activity 出现或消失）+ `screen`（状态/亮灭/解锁/旋转） | ✅ |
+| 4 | `app install` / `uninstall` / `clear` | ✅ |
+| 5 | `shell`（原始 shell 命令）+ `file push` / `pull` | ✅ |
+
+同步更新：
+- SKILL.md 命令文档完善（两平台共用）
+- 抖音 App Profile 基于 Phone + Pad 真机验证更新
+- plugin.json / marketplace.json 版本和描述更新
 
 ---
 
@@ -33,21 +52,13 @@
 
 每个 Profile 需基于真机验证，标注 Phone/Pad 差异。
 
-### Skill 完善
-
-- 同步两个 SKILL.md 的内容，确保命令文档、工作流模式、App Profile 引用一致
-- 补充更多 Troubleshooting 条目（基于实际使用中遇到的问题）
-- 优化 Skill 触发条件描述
-
 ### CLI 功能增强
 
 | 任务 | 说明 |
 |------|------|
-| 截屏体积优化 | 支持 `--format jpeg` 输出（Mac 端 PNG→JPEG 转换），减少 base64 体积 |
-| observe 重试机制 | `uiautomator dump` 失败时自动重试，返回上一次成功的 UI 树 |
-| 更多 key 别名 | 补充常用按键别名（APP_SWITCH、MENU 等） |
+| 截屏体积优化 | 支持 `--format jpeg` 输出，减少 base64 体积 |
+| observe 重试机制 | `uiautomator dump` 失败时自动重试 |
 | `device connect` | 无线 ADB 连接（`adb tcpip` + `adb connect`） |
-| `device shell` | 直接执行 shell 命令并返回 JSON envelope |
 
 ### 测试覆盖
 
@@ -58,6 +69,6 @@
 ### 发布与分发
 
 - 设置 GitHub Actions CI（build + test + lint）
-- 配置 GoReleaser 自动构建多平台 binary
+- 配置 GoReleaser 自动构建多平台 binary（darwin-arm64/amd64, linux-arm64/amd64）
 - 发布到 Claude Code Plugin Marketplace
 - 发布到 ClawHub

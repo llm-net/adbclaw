@@ -8,13 +8,13 @@
 优先使用深度链接，可跳过多步 UI 操作，且天然支持中文参数（adb input text 不支持中文）。
 
 ```bash
-# 通用调用方式
-adb shell am start -a android.intent.action.VIEW -d '{link}'
+# 通用调用方式（推荐使用 adbclaw open）
+adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
 ```
 
 | 动作 | 链接 | 参数说明 |
 |------|------|----------|
-| 搜索 | `snssdk1128://search/result?keyword={keyword}&type={type}` | type: 0=综合, 1=直播, 2=视频, 3=用户 |
+| 搜索 | `snssdk1128://search/result?keyword={keyword}&type={type}` | type: 0=综合, 1=直播, 2=视频, 3=用户（注意：type 参数可能不生效，见已知问题） |
 | 用户主页 | `snssdk1128://user/profile/{user_id}` | user_id 为数字 ID |
 | 直播间 | `snssdk1128://live?room_id={room_id}` | |
 | 视频详情 | `snssdk1128://detail/{video_id}` | |
@@ -25,7 +25,7 @@ adb shell am start -a android.intent.action.VIEW -d '{link}'
 
 ```
 ┌─────────────────────────────────────────────────┐
-│ [侧栏]  经验│免费看剧│游戏│...│推荐(默认)  [搜索] │  ← 顶部导航
+│ [侧栏] 热点│直播│团购│{城市}│关注│商城│推荐 [搜索] │  ← 顶部导航（水平可滚动）
 ├─────────────────────────────────────────────────┤
 │                                                   │
 │                 视频内容区                          │
@@ -36,6 +36,7 @@ adb shell am start -a android.intent.action.VIEW -d '{link}'
 │                              [评论]               │
 │                              [收藏]               │
 │                              [分享]               │
+│                              [音乐]               │
 │  @用户名                                          │
 │  视频描述文字...                                   │
 ├─────────────────────────────────────────────────┤
@@ -45,25 +46,66 @@ adb shell am start -a android.intent.action.VIEW -d '{link}'
 
 **关键元素定位**：
 - 搜索按钮: `content_desc="搜索"`，右上角
-- 侧栏按钮: `content_desc` 含 "侧边栏"，左上角
+- 侧栏按钮: `content_desc` 含 "侧边栏"，左上角（可能带未读消息数）
 - 底部导航项: `resource_id` 含 `0tn`，text 为 "首页"/"朋友"/"消息"/"我"
-- 用户头像: `content_desc` 含用户名，resource_id 含 `user_avatar`
-- 关注按钮: text="关注"
-- 顶部 Tab: resource_id 含 `5j4`，水平可滚动
+- 拍摄按钮: `resource_id` 含 `1ps`，`content_desc="拍摄，按钮"`
+- 用户头像: `content_desc` 含用户名，`resource_id` 含 `user_avatar`
+- 关注按钮（视频右侧）: `content_desc="关注"`
+- 点赞按钮: `content_desc` 含 "点赞" 和 "喜欢{数量}"（如 "未点赞，喜欢438，按钮"）
+- 评论按钮: `content_desc` 含 "评论{数量}"（如 "评论742，按钮"）
+- 收藏按钮: `content_desc` 含 "收藏{数量}"（如 "未选中，收藏53，按钮"）
+- 分享按钮: `content_desc` 含 "分享{数量}"（如 "分享154，按钮"）
+- 音乐按钮: `content_desc` 含 "音乐" 和创作者信息
+- 用户名: `resource_id` 含 `title`，text 为 "@用户名"
+- 视频描述: `resource_id` 含 `desc`
+- 顶部 Tab: `resource_id` 含 `5j4`，水平可滚动（Tab 内容和顺序可能随版本/地区变化）
 
 ### 搜索结果页
 
 ```
 ┌─────────────────────────────────────────────────┐
-│ [<]  搜索关键词                          [搜索]   │
+│ [<]  搜索关键词                     [X]  [搜索]   │
 ├─────────────────────────────────────────────────┤
-│  综合 │ 直播 │ 商品 │ 视频 │ 图文 │ 用户 │ ...    │  ← 分类 Tab
+│  综合 │ 视频 │ 直播 │ 图文 │ 商品 │ ...          │  ← 分类 Tab（顺序可能因搜索词变化）
 ├─────────────────────────────────────────────────┤
 │                                                   │
-│                 搜索结果列表                        │
+│                 搜索结果卡片                        │
+│                 （含视频预览、点赞/评论/收藏数）      │
 │                                                   │
+│  ┌─ 大家都在搜 ────────────────────────┐          │
+│  │  标签1  │  标签2  │  标签3  │ ...   │          │
+│  └─────────────────────────────────────┘          │
+│                                                   │
+│                 更多搜索结果...                     │
+│                                    [AI 继续追问]   │
 └─────────────────────────────────────────────────┘
 ```
+
+### 个人主页（"我"页面）
+
+```
+┌─────────────────────────────────────────────────┐
+│ [添加朋友]         [新访客 N]  [搜索]  [更多]      │
+├─────────────────────────────────────────────────┤
+│  [头像]    用户名                                  │
+│            抖音号：xxx                              │
+│                                                   │
+│  获赞 N  │  互关 N  │  关注 N  │  粉丝 N  [编辑]   │
+│                                                   │
+│  我的订单 │ 我的钱包 │ 我的小程序 │ 全部功能         │
+├─────────────────────────────────────────────────┤
+│  作品  │  日常  │  收藏  │  喜欢                    │  ← 内容 Tab
+├─────────────────────────────────────────────────┤
+│                 作品列表                            │
+└─────────────────────────────────────────────────┘
+```
+
+**关键元素定位**：
+- 用户头像: `content_desc="用户头像"`
+- 用户名: `resource_id` 含 `tne`
+- 抖音号: `resource_id` 含 `547`
+- 编辑主页: `resource_id` 含 `wdl`，text="编辑主页"
+- 内容 Tab: `content_desc` 含 "作品"/"日常"/"收藏"/"喜欢"
 
 ## 设备差异
 
@@ -78,20 +120,19 @@ adb shell am start -a android.intent.action.VIEW -d '{link}'
 ### Phone（短边 < 1200px）
 
 - 竖屏为主要使用模式
-- 搜索结果页：直播 Tab 下可能为双列小卡片
+- 搜索结果页：综合 Tab 为图文卡片流，含视频预览自动播放
 - 首页为全屏沉浸式视频
 - 底部导航栏铺满屏幕宽度
-- 屏幕坐标系：宽 < 高（如 1080x2400）
+- 屏幕坐标系：宽 < 高（如 1080x2340）
 
 ## 常见工作流
 
 ### 搜索内容
 
 ```
-1. adb shell am start -a android.intent.action.VIEW \
-   -d 'snssdk1128://search/result?keyword=遥控车&type=0'
-2. 等待 3 秒加载
-3. 根据需要点击分类 Tab（直播/视频/用户等）
+1. adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
+2. adbclaw wait --text "综合" --timeout 5000    # 等待搜索结果加载
+3. 根据需要点击分类 Tab（视频/直播/图文等）
 ```
 
 不要尝试用 `adbclaw type` 输入中文，直接用深度链接。
@@ -99,28 +140,43 @@ adb shell am start -a android.intent.action.VIEW -d '{link}'
 ### 搜索直播
 
 ```
-1. adb shell am start -a android.intent.action.VIEW \
-   -d 'snssdk1128://search/result?keyword={关键词}&type=1'
-2. 等待 3 秒
-3. 页面直接展示直播结果，纵向滚动浏览
+1. adbclaw open 'snssdk1128://search/result?keyword={关键词}&type=0'
+2. adbclaw wait --text "直播" --timeout 5000
+3. 手动点击"直播"Tab 切换（type=1 参数可能不生效）
+4. 纵向滚动浏览直播列表
 ```
 
 ### 浏览推荐 Feed
 
 ```
 1. adbclaw app launch com.ss.android.ugc.aweme
-2. 等待 3 秒
-3. 上滑切换下一个视频:
-   - Pad:  adbclaw swipe 1600 1500 1600 400 --duration 300
-   - Phone: adbclaw swipe 540 1800 540 600 --duration 300
+2. adbclaw wait --text "推荐" --timeout 5000    # 等待首页加载
+3. adbclaw scroll up                             # 切换下一个视频
+4. adbclaw scroll up --pages 3                   # 连续看 3 个视频
 ```
 
 ### 获取当前视频信息
 
 ```
 1. adbclaw tap {屏幕中心}     → 暂停视频（重要！否则 UI dump 会失败）
-2. adbclaw ui tree             → 获取 UI 元素
-3. 查找 content_desc 含用户名的元素、desc 含视频描述的元素
+2. sleep 1
+3. adbclaw ui tree             → 获取 UI 元素
+4. 查找：
+   - resource_id 含 "title" → 用户名（如 "@Rouoii."）
+   - resource_id 含 "desc" → 视频描述
+   - content_desc 含 "喜欢" → 点赞数
+   - content_desc 含 "评论" → 评论数
+   - content_desc 含 "收藏" → 收藏数
+   - content_desc 含 "分享" → 分享数
+```
+
+### 清空搜索框并重新输入
+
+```
+1. 点击搜索框获得焦点
+2. adbclaw clear-field                            # 清空已有文本
+3. adbclaw type "new search"                       # 仅限 ASCII
+4. 或者直接用深度链接搜索新关键词（推荐）
 ```
 
 ## 已知问题
@@ -134,10 +190,26 @@ adb shell am start -a android.intent.action.VIEW -d '{link}'
 **解决**: 先 tap 屏幕中心暂停视频，等待 1 秒后再 dump。
 
 ```bash
-adbclaw tap 1600 1046    # Pad 屏幕中心（根据 device info 调整）
+adbclaw tap 540 1170    # Phone 屏幕中心（根据 device info 调整）
 sleep 1
 adbclaw ui tree
 ```
+
+### UI dump 在搜索结果页失败
+
+**现象**: 搜索结果页执行 `adbclaw ui tree` 返回 `UI_DUMP_FAILED`。
+
+**原因**: 搜索结果页的视频预览卡片会自动播放，导致 uiautomator dump 超时。
+
+**解决**: 搜索结果页建议依赖截屏而非 UI 树。如必须 dump，可尝试快速向下滚动使视频预览离开可视区域后再 dump。
+
+### 暂停视频可能打开评论面板
+
+**现象**: tap 屏幕中心想暂停视频，但打开了评论输入面板。
+
+**原因**: 连续 tap 或在视频已暂停状态再次 tap 可能触发评论面板。
+
+**解决**: 如果打开了评论面板，按 `adbclaw key BACK` 关闭。首次 tap 暂停视频后不要再次 tap 同一位置。
 
 ### 中文输入不可用
 
@@ -153,18 +225,25 @@ adbclaw ui tree
 
 **解决**:
 1. 如果通过深度链接搜索则无此问题
-2. 如果必须手动输入，先点击清除按钮（输入框右侧 X 图标），或全选后删除:
-   ```bash
-   adb shell input keyevent KEYCODE_MOVE_END
-   adb shell input keyevent --longpress KEYCODE_DEL KEYCODE_DEL ...
-   ```
+2. 如果必须手动输入，用 `adbclaw clear-field` 清空输入框后再输入
+
+### 搜索深度链接 type 参数可能不生效
+
+**现象**: `snssdk1128://search/result?keyword={kw}&type=1` 打开后仍显示"综合"Tab，未切换到"直播"。
+
+**原因**: 新版抖音可能不再支持 type 参数自动切 Tab。
+
+**解决**: 使用 `type=0` 或不带 type 参数搜索，然后手动点击目标分类 Tab。
 
 ### 新安装首次启动有引导页
 
 **现象**: 首次打开抖音会有登录/权限引导页，不是直接进入 Feed。
 
-**解决**: 观察屏幕，查找 "跳过"、"以后再说"、"同意" 等按钮并点击。
+**解决**: 观察屏幕，查找 "跳过"、"以后再说"、"同意"、"我知道了" 等按钮并点击。
 
 ---
 
-> 测试信息: Xiaomi Pad (25097RP43C), Android 16 (SDK 36), 屏幕 2136x3200, 密度 440dpi。App 版本: 2026 年 3 月安装。
+> 测试设备:
+> - Xiaomi Pad (25097RP43C), Android 16 (SDK 36), 屏幕 2136x3200, 密度 440dpi
+> - Xiaomi M2007J1SC (Phone), Android 13 (SDK 33), 屏幕 1080x2340, 密度 440dpi
+> App 版本: 2026 年 3 月。

@@ -37,6 +37,17 @@ func TestResolveKeycode(t *testing.T) {
 		{"VOLUME_UP", "KEYCODE_VOLUME_UP"},
 		{"SPACE", "KEYCODE_SPACE"},
 		{"UNKNOWN_KEY", "KEYCODE_UNKNOWN_KEY"},
+		// New aliases added in iteration 2
+		{"PASTE", "KEYCODE_PASTE"},
+		{"COPY", "KEYCODE_COPY"},
+		{"CUT", "KEYCODE_CUT"},
+		{"FORWARD_DEL", "KEYCODE_FORWARD_DEL"},
+		{"MOVE_HOME", "KEYCODE_MOVE_HOME"},
+		{"MOVE_END", "KEYCODE_MOVE_END"},
+		{"PAGE_UP", "KEYCODE_PAGE_UP"},
+		{"PAGE_DOWN", "KEYCODE_PAGE_DOWN"},
+		{"WAKEUP", "KEYCODE_WAKEUP"},
+		{"SLEEP", "KEYCODE_SLEEP"},
 	}
 
 	for _, tt := range tests {

@@ -155,13 +155,113 @@ var appStopCmd = &cobra.Command{
 	},
 }
 
+var appInstallReplace bool
+
+var appInstallCmd = &cobra.Command{
+	Use:   "install <apk_path>",
+	Short: "Install an APK",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		start := time.Now()
+		apkPath := args[0]
+
+		installArgs := []string{"install"}
+		if appInstallReplace {
+			installArgs = append(installArgs, "-r")
+		}
+		installArgs = append(installArgs, apkPath)
+
+		writer.Verbose("installing %s", apkPath)
+		result, err := client.RawCommand(installArgs...)
+		if err != nil {
+			writer.Fail("app install", "ADB_ERROR", err.Error(), "", start)
+			return nil
+		}
+
+		output := strings.TrimSpace(result.Stdout + result.Stderr)
+		if !strings.Contains(output, "Success") {
+			writer.Fail("app install", "INSTALL_FAILED", output,
+				"Check the APK path and device compatibility", start)
+			return nil
+		}
+
+		writer.Success("app install", map[string]interface{}{
+			"apk":     apkPath,
+			"replace": appInstallReplace,
+		}, start)
+		return nil
+	},
+}
+
+var appUninstallCmd = &cobra.Command{
+	Use:   "uninstall <package>",
+	Short: "Uninstall an app",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		start := time.Now()
+		pkg := args[0]
+
+		writer.Verbose("uninstalling %s", pkg)
+		result, err := client.RawCommand("uninstall", pkg)
+		if err != nil {
+			writer.Fail("app uninstall", "ADB_ERROR", err.Error(), "", start)
+			return nil
+		}
+
+		output := strings.TrimSpace(result.Stdout + result.Stderr)
+		if !strings.Contains(output, "Success") {
+			writer.Fail("app uninstall", "UNINSTALL_FAILED", output,
+				"Check the package name: adbclaw app list", start)
+			return nil
+		}
+
+		writer.Success("app uninstall", map[string]interface{}{
+			"package": pkg,
+		}, start)
+		return nil
+	},
+}
+
+var appClearCmd = &cobra.Command{
+	Use:   "clear <package>",
+	Short: "Clear app data and cache",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		start := time.Now()
+		pkg := args[0]
+
+		writer.Verbose("clearing data for %s", pkg)
+		result, err := client.Shell("pm", "clear", pkg)
+		if err != nil {
+			writer.Fail("app clear", "ADB_ERROR", err.Error(), "", start)
+			return nil
+		}
+
+		output := strings.TrimSpace(result.Stdout)
+		if !strings.Contains(output, "Success") {
+			writer.Fail("app clear", "CLEAR_FAILED", output,
+				"Check the package name: adbclaw app list", start)
+			return nil
+		}
+
+		writer.Success("app clear", map[string]interface{}{
+			"package": pkg,
+		}, start)
+		return nil
+	},
+}
+
 func init() {
 	appListCmd.Flags().BoolVar(&appListAll, "all", false, "Include system apps")
+	appInstallCmd.Flags().BoolVar(&appInstallReplace, "replace", false, "Replace existing app (-r)")
 
 	appCmd.AddCommand(appListCmd)
 	appCmd.AddCommand(appCurrentCmd)
 	appCmd.AddCommand(appLaunchCmd)
 	appCmd.AddCommand(appStopCmd)
+	appCmd.AddCommand(appInstallCmd)
+	appCmd.AddCommand(appUninstallCmd)
+	appCmd.AddCommand(appClearCmd)
 	rootCmd.AddCommand(appCmd)
 }
 

@@ -80,6 +80,39 @@ get_latest_version() {
     echo "$tag"
 }
 
+# --- Verify checksum ---
+verify_checksum() {
+    local binary="$1"
+    local version="$2"
+    local platform="$3"
+    local checksums_url="https://github.com/${REPO}/releases/download/${version}/checksums.txt"
+    local expected actual checksums
+
+    if command -v curl &>/dev/null; then
+        checksums="$(curl -fsSL "$checksums_url" 2>/dev/null)" || { warn "Checksum file not available, skipping."; return 0; }
+    else
+        checksums="$(wget -qO- "$checksums_url" 2>/dev/null)" || { warn "Checksum file not available, skipping."; return 0; }
+    fi
+
+    expected="$(echo "$checksums" | grep "adbclaw-${platform}" | awk '{print $1}')"
+    if [ -z "$expected" ]; then return 0; fi
+
+    if command -v sha256sum &>/dev/null; then
+        actual="$(sha256sum "$binary" | awk '{print $1}')"
+    elif command -v shasum &>/dev/null; then
+        actual="$(shasum -a 256 "$binary" | awk '{print $1}')"
+    else
+        return 0
+    fi
+
+    if [ "$expected" != "$actual" ]; then
+        error "Checksum mismatch! Removing downloaded binary."
+        rm -f "$binary"
+        return 1
+    fi
+    info "Checksum verified."
+}
+
 # --- Download binary ---
 download_binary() {
     local platform="$1"
@@ -98,6 +131,10 @@ download_binary() {
     fi
 
     chmod +x "$BINARY"
+
+    # Verify checksum
+    verify_checksum "$BINARY" "$version" "$platform" || return 1
+
     info "Downloaded to $BINARY"
 }
 

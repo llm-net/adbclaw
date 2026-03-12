@@ -44,13 +44,24 @@ src/                    # Go 代码根目录（go.mod 在此）
 │   ├── observe.go      # observe / screenshot
 │   ├── ui.go           # ui tree / find
 │   ├── input.go        # tap / long-press / swipe / key / type
-│   ├── app.go          # app list / current / launch / stop
+│   ├── clearfield.go   # clear-field（清空输入框）
+│   ├── scroll.go       # scroll（智能滚动）
+│   ├── open.go         # open（深度链接）
+│   ├── wait.go         # wait（等待 UI 元素/Activity）
+│   ├── screen.go       # screen status / on / off / unlock / rotation
+│   ├── shell.go        # shell（原始命令）
+│   ├── file.go         # file push / pull
+│   ├── app.go          # app list / current / launch / stop / install / uninstall / clear
 │   ├── doctor.go       # 环境检查
 │   ├── skill.go        # 输出 skill.json (go:embed)
 │   └── skill.json      # 嵌入的 AI agent 能力描述
 └── pkg/
     ├── adb/shell.go        # Commander 接口 + Client 实现
-    ├── input/adbinput.go   # Tap/Swipe/LongPress/Key/Type
+    ├── input/
+    │   ├── adbinput.go     # Tap/Swipe/LongPress/Key/Type
+    │   ├── clearfield.go   # ClearField/KeyCombination/GetSDKLevel
+    │   └── scroll.go       # GetScreenSize/ScrollDirection
+    ├── device/screen.go    # ScreenStatus/On/Off/Unlock/Rotation
     ├── output/envelope.go  # JSON 响应 envelope + Writer
     └── observe/
         ├── screenshot.go   # 截屏 + 缩放
@@ -111,12 +122,28 @@ adbclaw
 ├── tap <x> <y> | --index/--id/--text     # 点击
 ├── long-press <x> <y> [--duration ms]    # 长按
 ├── swipe <x1> <y1> <x2> <y2> [--duration ms]  # 滑动
-├── key <HOME|BACK|ENTER|...>      # 按键（20+ 别名）
+├── key <HOME|BACK|ENTER|...>      # 按键（30+ 别名）
 ├── type <text>                    # 输入文本（仅 ASCII）
+├── clear-field [--index/--id/--text]     # 清空输入框
+├── open <uri>                     # 打开 URI（深度链接/URL）
+├── scroll <up|down|left|right>    # 智能滚动
+│   [--index N] [--pages N] [--distance px]
+├── wait --text/--id/--activity    # 等待 UI 元素或 Activity
+│   [--gone] [--timeout ms] [--interval ms]
+├── screen status                  # 屏幕状态（亮/灭/锁/旋转）
+├── screen on/off                  # 亮屏/灭屏
+├── screen unlock                  # 解锁（无密码）
+├── screen rotation <auto|0-3>     # 旋转设置
 ├── app list [--all]               # 应用列表（默认三方）
 ├── app current                    # 当前前台应用
 ├── app launch <package>           # 启动应用
 ├── app stop <package>             # 停止应用
+├── app install <apk> [--replace]  # 安装 APK
+├── app uninstall <package>        # 卸载应用
+├── app clear <package>            # 清除应用数据
+├── shell <command>                # 执行 adb shell 命令
+├── file push <local> <remote>     # 推送文件到设备
+├── file pull <remote> <local>     # 从设备拉取文件
 ├── skill                          # 输出 skill.json
 └── doctor                         # 环境检查（adb/设备/能力）
 ```
@@ -142,3 +169,20 @@ adbclaw
 ## 技术方案
 
 所有操作通过标准 `adb` 命令完成（`adb shell input`、`adb exec-out screencap`、`adb shell uiautomator dump` 等），无需在设备上安装或运行任何额外程序。产品目标与技术调研见 `docs/product-and-research.md`，开发计划见 `docs/development-roadmap.md`。
+
+## 第二轮迭代（已完成）
+
+详细方案见 `docs/iteration-2-advanced-commands.md`，分 5 个 Phase：
+
+1. **Phase 1 — 文本输入增强**：clear-field、key 别名扩展 ✅
+2. **Phase 2 — 导航增强**：open（深度链接）、scroll（智能滚动） ✅
+3. **Phase 3 — 状态感知**：wait（UI 等待）、screen（屏幕管理） ✅
+4. **Phase 4 — App 管理增强**：app install/uninstall/clear ✅
+5. **Phase 5 — 通用能力**：shell、file push/pull ✅
+
+## 开发工作流
+
+- 每个 Phase 开始前先 plan，对齐实现方案后再编码
+- 编码完成后运行 `cd src && make test && make build` 验证
+- 每个 Phase 完成后更新 SKILL.md 命令文档和 CLAUDE.md 命令树
+- 新命令遵循现有代码约定：Commander 接口、JSON envelope、顶级命令风格

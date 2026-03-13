@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Version is set via ldflags at build time: -ldflags "-X github.com/llm-net/adb-claw/cmd.Version=v1.5.3"
+// Version is set via ldflags at build time: -ldflags "-X github.com/llm-net/adb-claw/cmd.Version=v1.5.4"
 var Version = "dev"
 
 var (

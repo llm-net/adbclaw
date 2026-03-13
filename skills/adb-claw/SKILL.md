@@ -1,6 +1,6 @@
 ---
 name: adb-claw
-version: 1.5.3
+version: 1.5.4
 description: "Your eyes, hands, and ears on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, monitor live UI text via accessibility framework (works during video playback), capture system audio (Android 11+, WAV stream for piping to ASR tools), manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps."
 homepage: https://github.com/llm-net/adb-claw
 metadata:
@@ -8,7 +8,7 @@ metadata:
     "openclaw":
       {
         "emoji": "📱",
-        "version": "1.5.3",
+        "version": "1.5.4",
         "os": ["darwin", "linux"],
         "tags": ["android", "adb", "mobile", "automation", "ui-testing", "device-control", "deep-link", "screenshot", "accessibility", "monitoring"],
         "requires": { "bins": ["adb-claw", "adb"] },

@@ -104,7 +104,7 @@ export default {
       },
       {
         label: 'adb-claw',
-        sublabel: 'Go CLI · v1.5.3',
+        sublabel: 'Go CLI · v1.5.4',
         description: '将 30+ 条命令转换为 ADB 操作。返回带有错误码和建议的结构化 JSON',
       },
       {

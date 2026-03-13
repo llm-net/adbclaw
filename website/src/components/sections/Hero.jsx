@@ -164,12 +164,12 @@ export default function Hero() {
             {/* Version badge */}
             <div className="mb-8 flex items-center gap-3">
               <a
-                href="https://github.com/llm-net/adb-claw/releases/tag/v1.5.3"
+                href="https://github.com/llm-net/adb-claw/releases/tag/v1.5.4"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-2 transition-all hover:border-amber-500/40 hover:bg-amber-500/10"
               >
-                <span className="font-mono text-sm font-semibold text-amber-500">v1.5.3</span>
+                <span className="font-mono text-sm font-semibold text-amber-500">v1.5.4</span>
                 <span className="h-3.5 w-px bg-stone-700" />
                 <span className="text-xs text-stone-500 font-mono">Mar 13, 2026</span>
                 <svg className="w-3.5 h-3.5 text-stone-600 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -203,7 +203,7 @@ export default function Hero() {
             <div className="mt-10 flex items-center gap-3 rounded-lg border border-stone-800/60 bg-surface-900/50 px-4 py-2.5 max-w-lg">
               <span className="text-amber-500/60 font-mono text-sm select-none">$</span>
               <code className="text-sm font-mono text-stone-400 truncate">curl -fsSL https://github.com/llm-net/adb-claw/releases/latest/download/install.sh | bash</code>
-              <span className="ml-auto text-[10px] text-stone-600 font-mono uppercase tracking-wider shrink-0">v1.5.3</span>
+              <span className="ml-auto text-[10px] text-stone-600 font-mono uppercase tracking-wider shrink-0">v1.5.4</span>
             </div>
           </div>
 

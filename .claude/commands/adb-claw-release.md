@@ -130,19 +130,34 @@ git push origin v$ARGUMENTS
 - **Release** workflow：test → 交叉编译 4 平台 → 创建 GitHub Release（含 6 个 assets）
 - **Deploy Website** workflow：构建 website/ → 部署到 GitHub Pages（adb-claw.llm.net）
 
-## Step 7: 同步 SKILL.md 到 OpenClaw Workspace
+## Step 7: 同步 SKILL.md + _meta.json 到 OpenClaw Workspace
 
-**关键步骤！** `clawhub publish` 从 `~/.openclaw/workspace/skills/adb-claw/` 读取文件，而非项目目录。如果 workspace 中有旧版 SKILL.md，publish 会上传旧内容，导致 ClawHub 页面和安全扫描永远停留在旧版。
+**关键步骤！** `clawhub publish` 从 `~/.openclaw/workspace/skills/adb-claw/` 读取文件，而非项目目录。workspace 中有两个文件需要同步：
+
+### 7.1 同步 SKILL.md
+
+如果 workspace 中有旧版 SKILL.md，publish 会上传旧内容，导致 ClawHub 页面和安全扫描永远停留在旧版。
 
 ```bash
-# 用项目中的最新 SKILL.md 覆盖 workspace 中的旧文件
 cp skills/adb-claw/SKILL.md ~/.openclaw/workspace/skills/adb-claw/SKILL.md
-
-# 验证两个文件 hash 一致
 shasum -a 256 skills/adb-claw/SKILL.md ~/.openclaw/workspace/skills/adb-claw/SKILL.md
 ```
 
 两个 hash 必须相同，不同则说明覆盖失败。
+
+### 7.2 同步 _meta.json 版本号
+
+**⚠️ 踩坑记录（v1.5.3）：** `clawhub publish` 不会自动更新 workspace 中 `_meta.json` 的 `version` 字段。安全扫描会对比 `_meta.json.version` 和 `SKILL.md` frontmatter 中的 `version`，如果不一致会触发 "metadata/version mismatch" 告警，导致整体评级为 Suspicious。
+
+```bash
+# 检查当前 _meta.json 版本
+cat ~/.openclaw/workspace/skills/adb-claw/_meta.json
+
+# 如果 version 字段不是当前发布版本，手动更新
+# 用 Edit 工具将 "version": "旧版本" 改为 "version": "$ARGUMENTS"
+```
+
+**必须确认** `_meta.json` 中的 `version` 与 SKILL.md frontmatter 中的 `version` 一致，否则安全扫描必定报 Suspicious。
 
 ## Step 8: 发布到 ClawHub
 
@@ -192,3 +207,4 @@ gh run list --repo llm-net/adb-claw --workflow deploy-website.yml --limit 1
 - 如果 `clawhub publish` 报 "Version already exists"，说明该版本已发布过，需要 bump 版本号
 - 如果 ClawHub 安全扫描标记为 Suspicious，检查 Step 3 的规则并修复后 bump 版本重发
 - **ClawHub workspace 陷阱**：`clawhub publish` 从 `~/.openclaw/workspace/skills/adb-claw/` 读取文件，不是项目目录。每次发布前必须执行 Step 7 同步，否则上传的是旧内容。可用 `clawhub inspect adb-claw --files` 对比 hash 验证
+- **_meta.json 版本陷阱**：`clawhub publish` 不更新 workspace 中 `_meta.json` 的 version 字段。安全扫描对比 `_meta.json.version` vs `SKILL.md version`，不匹配 → Suspicious。每次发布前必须在 Step 7.2 手动同步该字段

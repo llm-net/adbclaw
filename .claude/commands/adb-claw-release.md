@@ -15,7 +15,7 @@ allowed-tools: "Bash, Read, Edit, Grep, Glob, Write, Agent"
 
 ## Step 1: 同步版本号
 
-将以下 4 处版本号更新为 `$ARGUMENTS`：
+将以下版本号更新为 `$ARGUMENTS`：
 
 ```
 .claude-plugin/plugin.json      → "version": "$ARGUMENTS"
@@ -23,6 +23,23 @@ skills/adb-claw/SKILL.md        → version: $ARGUMENTS (frontmatter 第 3 行)
                                  → metadata.openclaw.version: "$ARGUMENTS" (第 11 行)
 src/cmd/root.go                  → 注释中的 ldflags 示例版本
 ```
+
+同时更新官网版本号和发布日期（共 6 处）：
+
+```
+website/src/components/sections/Hero.jsx:
+  → releases/tag/v{VERSION}         (href 链接)
+  → v{VERSION}                      (显示文字，2 处)
+  → {发布日期, 如 Mar 13, 2026}     (日期文字)
+
+website/src/i18n/en.js:
+  → sublabel: 'Go CLI · v{VERSION}' (howItWorks.architectureSteps)
+
+website/src/i18n/zh.js:
+  → sublabel: 'Go CLI · v{VERSION}' (howItWorks.architectureSteps)
+```
+
+用 `replace_all` 批量替换旧版本号即可。日期使用发布当天日期，格式 `Mon DD, YYYY`。
 
 ## Step 2: 更新文档
 
@@ -113,7 +130,21 @@ git push origin v$ARGUMENTS
 - **Release** workflow：test → 交叉编译 4 平台 → 创建 GitHub Release（含 6 个 assets）
 - **Deploy Website** workflow：构建 website/ → 部署到 GitHub Pages（adb-claw.llm.net）
 
-## Step 7: 发布到 ClawHub
+## Step 7: 同步 SKILL.md 到 OpenClaw Workspace
+
+**关键步骤！** `clawhub publish` 从 `~/.openclaw/workspace/skills/adb-claw/` 读取文件，而非项目目录。如果 workspace 中有旧版 SKILL.md，publish 会上传旧内容，导致 ClawHub 页面和安全扫描永远停留在旧版。
+
+```bash
+# 用项目中的最新 SKILL.md 覆盖 workspace 中的旧文件
+cp skills/adb-claw/SKILL.md ~/.openclaw/workspace/skills/adb-claw/SKILL.md
+
+# 验证两个文件 hash 一致
+shasum -a 256 skills/adb-claw/SKILL.md ~/.openclaw/workspace/skills/adb-claw/SKILL.md
+```
+
+两个 hash 必须相同，不同则说明覆盖失败。
+
+## Step 8: 发布到 ClawHub
 
 **GitHub Release 只覆盖二进制分发，ClawHub 必须单独发布：**
 
@@ -126,7 +157,17 @@ clawhub publish skills/adb-claw --version $ARGUMENTS --changelog "变更摘要"
 - 发布后有安全扫描，通常几分钟后上线
 - **同版本号不可重复发布**，如需重发必须 bump 版本
 
-## Step 8: 验证
+### 验证文件已正确上传
+
+```bash
+# 检查服务端 SKILL.md hash 是否与本地一致
+clawhub inspect adb-claw --files --version $ARGUMENTS
+shasum -a 256 skills/adb-claw/SKILL.md
+```
+
+如果 hash 不一致，说明 workspace 同步失败，需回到 Step 7 重新同步后 bump 版本重发。
+
+## Step 9: 验证
 
 ```bash
 # GitHub CI 进度
@@ -150,3 +191,4 @@ gh run list --repo llm-net/adb-claw --workflow deploy-website.yml --limit 1
 - 每步执行前确认上一步成功，不要跳步
 - 如果 `clawhub publish` 报 "Version already exists"，说明该版本已发布过，需要 bump 版本号
 - 如果 ClawHub 安全扫描标记为 Suspicious，检查 Step 3 的规则并修复后 bump 版本重发
+- **ClawHub workspace 陷阱**：`clawhub publish` 从 `~/.openclaw/workspace/skills/adb-claw/` 读取文件，不是项目目录。每次发布前必须执行 Step 7 同步，否则上传的是旧内容。可用 `clawhub inspect adb-claw --files` 对比 hash 验证

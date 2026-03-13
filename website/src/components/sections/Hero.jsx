@@ -4,14 +4,14 @@ import { useLanguage } from '../../i18n/context'
 const terminalLines = [
   { cmd: 'adb-claw observe --width 720', delay: 0 },
   { out: '{"ok":true,"command":"observe","data":{...}}', delay: 800 },
-  { cmd: 'adb-claw tap --text "Search"', delay: 1600 },
+  { cmd: 'adb-claw tap --index 5', delay: 1600 },
   { out: '{"ok":true,"command":"tap","duration_ms":38}', delay: 2200 },
-  { cmd: 'adb-claw type "cat videos"', delay: 3000 },
-  { out: '{"ok":true,"command":"type","duration_ms":52}', delay: 3600 },
-  { cmd: 'adb-claw scroll down --pages 2', delay: 4400 },
-  { out: '{"ok":true,"command":"scroll","duration_ms":680}', delay: 5000 },
-  { cmd: 'adb-claw wait --text "Results" --timeout 5000', delay: 5800 },
-  { out: '{"ok":true,"command":"wait","data":{"found":true}}', delay: 6600 },
+  { cmd: 'adb-claw monitor --stream --duration 30000', delay: 3000 },
+  { out: '{"text":["Live chat msg..."],"timestamp":"..."}', delay: 3800 },
+  { cmd: 'adb-claw audio capture --stream | asrclaw transcribe', delay: 4600 },
+  { out: '{"ok":true,"command":"audio_capture","streaming":true}', delay: 5400 },
+  { cmd: 'adb-claw scroll down --pages 2', delay: 6200 },
+  { out: '{"ok":true,"command":"scroll","duration_ms":680}', delay: 6800 },
 ]
 
 function TerminalAnimation() {
@@ -164,14 +164,14 @@ export default function Hero() {
             {/* Version badge */}
             <div className="mb-8 flex items-center gap-3">
               <a
-                href="https://github.com/llm-net/adb-claw/releases/tag/v1.4.1"
+                href="https://github.com/llm-net/adb-claw/releases/tag/v1.5.3"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-2 transition-all hover:border-amber-500/40 hover:bg-amber-500/10"
               >
-                <span className="font-mono text-sm font-semibold text-amber-500">v1.4.1</span>
+                <span className="font-mono text-sm font-semibold text-amber-500">v1.5.3</span>
                 <span className="h-3.5 w-px bg-stone-700" />
-                <span className="text-xs text-stone-500 font-mono">Mar 12, 2026</span>
+                <span className="text-xs text-stone-500 font-mono">Mar 13, 2026</span>
                 <svg className="w-3.5 h-3.5 text-stone-600 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
@@ -203,7 +203,7 @@ export default function Hero() {
             <div className="mt-10 flex items-center gap-3 rounded-lg border border-stone-800/60 bg-surface-900/50 px-4 py-2.5 max-w-lg">
               <span className="text-amber-500/60 font-mono text-sm select-none">$</span>
               <code className="text-sm font-mono text-stone-400 truncate">curl -fsSL https://github.com/llm-net/adb-claw/releases/latest/download/install.sh | bash</code>
-              <span className="ml-auto text-[10px] text-stone-600 font-mono uppercase tracking-wider shrink-0">v1.4.1</span>
+              <span className="ml-auto text-[10px] text-stone-600 font-mono uppercase tracking-wider shrink-0">v1.5.3</span>
             </div>
           </div>
 

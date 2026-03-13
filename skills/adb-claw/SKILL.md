@@ -1,6 +1,6 @@
 ---
 name: adb-claw
-version: 1.5.2
+version: 1.5.3
 description: "Your eyes, hands, and ears on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, monitor live UI text via accessibility framework (works during video playback), capture system audio (Android 11+, WAV stream for piping to ASR tools), manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps."
 homepage: https://github.com/llm-net/adb-claw
 metadata:
@@ -8,7 +8,7 @@ metadata:
     "openclaw":
       {
         "emoji": "📱",
-        "version": "1.5.2",
+        "version": "1.5.3",
         "os": ["darwin", "linux"],
         "tags": ["android", "adb", "mobile", "automation", "ui-testing", "device-control", "deep-link", "screenshot", "accessibility", "monitoring"],
         "requires": { "bins": ["adb-claw", "adb"] },
@@ -64,16 +64,21 @@ Your eyes, hands, and ears on Android. See what's on screen, tap any element, sc
 
 ## Why ADB Claw
 
+**Superpowers — What You Can't Get Elsewhere:**
+- **Live stream intelligence** — `monitor` connects to Android's accessibility framework, reading all UI text in real-time — even during video playback and live streams where `uiautomator dump` hangs. Chat messages, captions, dynamic overlays — data no other tool exposes to agents.
+- **System audio capture** — `audio capture` records device audio via REMOTE_SUBMIX (Android 11+); streams WAV to stdout for piping to ASR tools. Combined with `monitor`, you get full sensory coverage: visual text + audio.
+
+**Core Strengths:**
 - **Observe → Act → Verify loop** — `observe` returns screenshot + indexed UI tree in one call; use element indices to target precisely across any screen size
 - **Deep links bypass CJK limits** — `adb input text` can't type Chinese/Japanese/Korean; `adb-claw open 'app://search?keyword=中文'` can
 - **Wait, don't poll** — `wait --text "Done"` blocks until the UI element appears, replacing fragile sleep/observe loops
 - **Smart scroll** — auto-calculates swipe coordinates from screen size; supports direction, page count, and scrolling within specific elements
 - **App Profiles** — pre-built knowledge (deep links, layouts, known issues) for popular apps like Douyin; load once, skip trial-and-error
 - **Full app lifecycle** — install, launch, stop, uninstall, clear data — no raw `adb` needed
-- **Live stream monitoring** — `monitor` reads UI text via accessibility framework, works during video playback where `uiautomator dump` fails
-- **System audio capture** — `audio capture` records device audio via REMOTE_SUBMIX (Android 11+); streams WAV to stdout for piping to ASR tools or saves to file
-- **Minimal device footprint** — nearly all operations are pure ADB commands; only `monitor` and `audio capture` push temporary ~7KB helpers that auto-exit
 - **Agent-optimized JSON** — every command returns `{ok, command, data, error, duration_ms}` with actionable `suggestion` on errors
+- **Minimal device footprint** — nearly all operations are pure ADB commands; only `monitor` and `audio capture` push temporary ~7KB helpers that auto-exit
+
+**Actively Evolving** — new capabilities ship regularly. Each release expands what you can perceive and control on Android devices.
 
 ## Getting Started
 

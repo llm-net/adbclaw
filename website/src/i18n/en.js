@@ -6,24 +6,36 @@ export default {
     usage: 'usage',
   },
   hero: {
-    title: 'Android control',
-    titleHighlight: 'for AI agents',
+    title: 'Eyes, hands & ears',
+    titleHighlight: 'on Android',
     description:
-      '30+ commands over ADB — observe screens, tap by element index, scroll smartly, open deep links, wait for UI state, manage apps, transfer files. Structured JSON in, structured JSON out. Available as a Claude Code plugin and OpenClaw skill.',
-    getStarted: 'Get Started',
+      'Built for agents, claws, bots, and LLMs. 30+ structured commands — observe screens, tap by element index, read live chat during video playback, capture system audio for speech recognition, manage apps. JSON in, JSON out. Your bridge to the physical world.',
+    getStarted: 'Install Skill',
     seeExamples: 'See examples',
-    versionNote: 'monitor + Meituan profile + ClawHub',
+    versionNote: 'audio capture + monitor + actively shipping',
   },
   features: {
     label: 'Capabilities',
-    title: 'Everything an AI agent needs',
+    title: 'Superpowers for agents',
     description:
-      'Pure tool layer. No LLM logic. No agent framework. Just reliable, structured commands that any AI can call over adb shell.',
+      'Pure tool layer. No LLM logic. No agent framework. Just reliable, structured commands that give you sensory and motor capabilities on Android devices.',
     items: [
+      {
+        title: 'Live Stream Intelligence',
+        description:
+          'monitor connects to Android\'s accessibility framework, reading all UI text in real-time — even during video playback where uiautomator dump hangs. Chat messages, captions, dynamic overlays. See what no other tool can expose to you.',
+        icon: 'zap',
+      },
+      {
+        title: 'System Audio Capture',
+        description:
+          'audio capture records device audio via REMOTE_SUBMIX (Android 11+), streaming WAV to stdout. Pipe to ASR for speech-to-text. Combined with monitor, you get full sensory coverage — visual text AND audio from any live stream.',
+        icon: 'layers',
+      },
       {
         title: 'Structured JSON API',
         description:
-          'Every command returns {ok, command, data, error, duration_ms, timestamp}. Parse responses reliably. Errors include codes and actionable suggestions. Three output modes: json, text, quiet.',
+          'Every command returns {ok, command, data, error, duration_ms, timestamp}. Parse with confidence. Errors include codes and actionable suggestions. No guesswork, no regex scraping.',
         icon: 'json',
       },
       {
@@ -35,7 +47,7 @@ export default {
       {
         title: 'Deep Link Navigation',
         description:
-          'Jump directly to any app screen via URI. Open web pages, trigger WeChat scan, search Taobao — skip multi-step navigation entirely. One command, instant arrival.',
+          'Jump directly to any app screen via URI. Open web pages, trigger WeChat scan, search Taobao — skip multi-step navigation entirely. One command, instant arrival. The key to CJK text input.',
         icon: 'link',
       },
       {
@@ -45,33 +57,21 @@ export default {
         icon: 'clock',
       },
       {
-        title: 'Zero Device Setup',
-        description:
-          'Pure ADB-based control. No APK to install, no accessibility service, no permissions dialogs. Connect a device over USB or WiFi and start automating immediately.',
-        icon: 'zap',
-      },
-      {
-        title: 'Pre-built Binaries',
-        description:
-          'Download a single compiled binary for your platform — darwin-arm64, darwin-amd64, linux-arm64, or linux-amd64. No Go toolchain required. curl | bash one-liner install available.',
-        icon: 'package',
-      },
-      {
         title: 'Full Device Control',
         description:
-          '30+ commands covering screen observation, input injection, smart scrolling, app lifecycle, screen management, shell access, and file transfer. Everything over standard ADB.',
-        icon: 'layers',
+          '30+ commands covering screen observation, input injection, smart scrolling, app lifecycle, screen management, shell access, and file transfer. Everything over standard ADB. No APK needed.',
+        icon: 'package',
       },
       {
         title: 'App Knowledge Profiles',
         description:
-          'Pre-built profiles for popular apps (Douyin, WeChat, etc.) with deep links, UI layouts, and known issues. Your agent gets expert-level app knowledge out of the box.',
+          'Pre-built profiles for popular apps (Douyin, Meituan, etc.) with deep links, UI layouts, and known issues. Load once, skip trial-and-error. New profiles ship with every release.',
         icon: 'book',
       },
       {
-        title: 'Agent-First Design',
+        title: 'Actively Evolving',
         description:
-          'Built as a Skill for AI agents — available on Claude Code and OpenClaw/ClawHub. Machine-readable skill descriptions. Designed for LLM consumption, usable by humans.',
+          'New capabilities ship regularly. monitor, audio capture, App Profiles — each release expands what you can perceive and control. Install once, gain new abilities as they land. Built by agents, for agents.',
         icon: 'bot',
       },
     ],
@@ -105,7 +105,7 @@ export default {
       },
       {
         label: 'adb-claw',
-        sublabel: 'Go CLI · v1.4.1',
+        sublabel: 'Go CLI · v1.5.3',
         description: 'Translates 30+ commands to ADB operations. Returns structured JSON with error codes and suggestions',
       },
       {
@@ -160,6 +160,15 @@ export default {
           { cmd: 'adb-claw wait --text "Loading" --gone', comment: 'Wait until gone' },
           { cmd: 'adb-claw screen status', comment: 'On/off/lock/rotation' },
           { cmd: 'adb-claw screen unlock', comment: 'Wake + swipe unlock' },
+        ],
+      },
+      {
+        title: 'Monitor & Audio',
+        commands: [
+          { cmd: 'adb-claw monitor --stream', comment: 'Live UI text (video-safe)' },
+          { cmd: 'adb-claw monitor --duration 30000', comment: '30s bounded capture' },
+          { cmd: 'adb-claw audio capture --file out.wav', comment: 'Record system audio' },
+          { cmd: 'adb-claw audio capture --stream | asrclaw transcribe', comment: 'Pipe to ASR' },
         ],
       },
       {
@@ -225,6 +234,13 @@ export default {
           { cmd: 'app install', desc: 'Install APK', flags: '--replace' },
           { cmd: 'app uninstall', desc: 'Remove app' },
           { cmd: 'app clear', desc: 'Clear app data' },
+        ],
+      },
+      {
+        category: 'Sensing',
+        items: [
+          { cmd: 'monitor', desc: 'Live UI text via accessibility (video-safe)', flags: '--duration, --interval, --stream' },
+          { cmd: 'audio capture', desc: 'System audio → WAV stream (Android 11+)', flags: '--file, --duration, --rate, --stream' },
         ],
       },
       {

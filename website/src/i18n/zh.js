@@ -6,23 +6,35 @@ export default {
     usage: '用法',
   },
   hero: {
-    title: 'Android 设备控制',
-    titleHighlight: '为 AI Agent 而生',
+    title: '你在 Android 上的',
+    titleHighlight: '眼、手与耳',
     description:
-      '30+ 条 ADB 命令 — 截屏观察、按元素索引点击、智能滚动、打开深度链接、等待 UI 状态变化、管理应用、传输文件。结构化 JSON 输入，结构化 JSON 输出。支持 Claude Code 插件和 OpenClaw Skill。',
-    getStarted: '立即开始',
+      '为 Agent、Claw、Bot 和 LLM 而生。30+ 结构化命令 — 截屏观察、元素精准定位、视频播放中读取直播弹幕、采集系统音频用于语音识别、全生命周期应用管理。JSON 输入，JSON 输出。连接物理世界的桥梁。',
+    getStarted: '安装 Skill',
     seeExamples: '查看示例',
-    versionNote: 'monitor + 美团 Profile + ClawHub',
+    versionNote: '音频采集 + monitor + 持续迭代中',
   },
   features: {
     label: '核心能力',
-    title: 'AI Agent 所需的一切',
-    description: '纯工具层。不含 LLM 逻辑，不含 Agent 框架。只有可靠的、结构化的命令，任何 AI 都可以通过 adb shell 调用。',
+    title: 'Agent 的超级能力',
+    description: '纯工具层。不含 LLM 逻辑，不含 Agent 框架。只有可靠的、结构化的命令，赋予你在 Android 设备上的感知与操控能力。',
     items: [
+      {
+        title: '直播流智能感知',
+        description:
+          'monitor 直连 Android 无障碍框架，实时读取所有 UI 文本 — 即使在视频播放和直播期间（此时 uiautomator dump 会超时挂起）。弹幕、字幕、动态内容，其他工具看不到的你都能看到。',
+        icon: 'zap',
+      },
+      {
+        title: '系统音频采集',
+        description:
+          'audio capture 通过 REMOTE_SUBMIX（Android 11+）录制设备音频，WAV 流输出到 stdout。管道接入 ASR 即可语音转文字。配合 monitor，视觉文本 + 音频双通道全感知。',
+        icon: 'layers',
+      },
       {
         title: '结构化 JSON API',
         description:
-          '每条命令返回 {ok, command, data, error, duration_ms, timestamp}。可靠地解析响应。错误包含错误码和可操作的建议。三种输出模式：json、text、quiet。',
+          '每条命令返回 {ok, command, data, error, duration_ms, timestamp}。可靠解析，无需猜测。错误包含错误码和可操作的建议。',
         icon: 'json',
       },
       {
@@ -34,7 +46,7 @@ export default {
       {
         title: '深度链接导航',
         description:
-          '通过 URI 直接跳转到任意应用页面。打开网页、触发微信扫一扫、搜索淘宝 — 完全跳过多步导航。一条命令，即刻到达。',
+          '通过 URI 直接跳转到任意应用页面。打开网页、触发微信扫一扫、搜索淘宝 — 完全跳过多步导航。一条命令，即刻到达。CJK 文本输入的关键方案。',
         icon: 'link',
       },
       {
@@ -44,33 +56,21 @@ export default {
         icon: 'clock',
       },
       {
-        title: '零设备配置',
-        description:
-          '纯 ADB 控制。无需安装 APK，无需无障碍服务，无需权限弹窗。通过 USB 或 WiFi 连接设备即可立即开始自动化。',
-        icon: 'zap',
-      },
-      {
-        title: '预编译二进制',
-        description:
-          '下载适合你平台的单个编译二进制文件 — darwin-arm64、darwin-amd64、linux-arm64 或 linux-amd64。无需 Go 工具链。支持 curl | bash 一键安装。',
-        icon: 'package',
-      },
-      {
         title: '完整设备控制',
         description:
-          '30+ 条命令覆盖屏幕观察、输入注入、智能滚动、应用生命周期、屏幕管理、shell 访问和文件传输。一切通过标准 ADB 实现。',
-        icon: 'layers',
+          '30+ 条命令覆盖屏幕观察、输入注入、智能滚动、应用生命周期、屏幕管理、shell 访问和文件传输。一切通过标准 ADB。无需安装 APK。',
+        icon: 'package',
       },
       {
         title: 'App 知识档案',
         description:
-          '预置热门应用（抖音、微信等）的操作档案，包含深度链接、UI 布局和已知问题。你的 Agent 开箱即获专家级应用知识。',
+          '预置热门应用（抖音、美团等）的操作档案，包含深度链接、UI 布局和已知问题。加载一次，跳过试错。每次发版都有新 Profile。',
         icon: 'book',
       },
       {
-        title: 'Agent 优先设计',
+        title: '持续进化',
         description:
-          '作为 AI Agent 的 Skill 构建 — 可在 Claude Code 和 OpenClaw/ClawHub 上使用。机器可读的技能描述。为 LLM 消费设计，人类也可使用。',
+          '新能力持续交付中。monitor、音频采集、App 档案 — 每次发版都扩展你的感知和控制范围。安装一次，自动获得新能力。为 Agent 打造，由 Agent 驱动。',
         icon: 'bot',
       },
     ],
@@ -104,7 +104,7 @@ export default {
       },
       {
         label: 'adb-claw',
-        sublabel: 'Go CLI · v1.4.1',
+        sublabel: 'Go CLI · v1.5.3',
         description: '将 30+ 条命令转换为 ADB 操作。返回带有错误码和建议的结构化 JSON',
       },
       {
@@ -158,6 +158,15 @@ export default {
           { cmd: 'adb-claw wait --text "Loading" --gone', comment: '等待元素消失' },
           { cmd: 'adb-claw screen status', comment: '亮屏/灭屏/锁定/旋转' },
           { cmd: 'adb-claw screen unlock', comment: '唤醒 + 滑动解锁' },
+        ],
+      },
+      {
+        title: '监控与音频',
+        commands: [
+          { cmd: 'adb-claw monitor --stream', comment: '实时 UI 文本（视频安全）' },
+          { cmd: 'adb-claw monitor --duration 30000', comment: '30 秒定时采集' },
+          { cmd: 'adb-claw audio capture --file out.wav', comment: '录制系统音频' },
+          { cmd: 'adb-claw audio capture --stream | asrclaw transcribe', comment: '管道接 ASR' },
         ],
       },
       {
@@ -223,6 +232,13 @@ export default {
           { cmd: 'app install', desc: '安装 APK', flags: '--replace' },
           { cmd: 'app uninstall', desc: '卸载应用' },
           { cmd: 'app clear', desc: '清除应用数据' },
+        ],
+      },
+      {
+        category: '感知',
+        items: [
+          { cmd: 'monitor', desc: '无障碍实时 UI 文本（视频安全）', flags: '--duration, --interval, --stream' },
+          { cmd: 'audio capture', desc: '系统音频 → WAV 流（Android 11+）', flags: '--file, --duration, --rate, --stream' },
         ],
       },
       {

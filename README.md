@@ -1,10 +1,10 @@
-# adbclaw
+# adb-claw
 
 Android device control CLI for AI agent automation. Pure tool layer — no LLM/Agent logic included.
 
-**Website: [adbclaw.com](https://adbclaw.com)**
+**Website: [adb-claw.llm.net](https://adb-claw.llm.net)**
 
-adbclaw wraps standard `adb` commands into a structured JSON API that AI agents can reliably call. It handles screen observation, UI element indexing, input injection, navigation, state management, app lifecycle, and file transfer — with zero dependencies on the Android device side.
+adb-claw wraps standard `adb` commands into a structured JSON API that AI agents can reliably call. It handles screen observation, UI element indexing, input injection, navigation, state management, app lifecycle, and file transfer — with zero dependencies on the Android device side.
 
 ## Features
 
@@ -29,23 +29,23 @@ adbclaw wraps standard `adb` commands into a structured JSON API that AI agents 
 Pre-built binaries are available for macOS and Linux (amd64 / arm64). No Go toolchain needed.
 
 ```bash
-curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
+curl -fsSL https://github.com/llm-net/adb-claw/releases/latest/download/install.sh | bash
 ```
 
-Or download directly from [GitHub Releases](https://github.com/llm-net/adbclaw/releases):
+Or download directly from [GitHub Releases](https://github.com/llm-net/adb-claw/releases):
 
 | Platform | Binary |
 |----------|--------|
-| macOS Apple Silicon | `adbclaw-darwin-arm64` |
-| macOS Intel | `adbclaw-darwin-amd64` |
-| Linux x86_64 | `adbclaw-linux-amd64` |
-| Linux ARM64 | `adbclaw-linux-arm64` |
+| macOS Apple Silicon | `adb-claw-darwin-arm64` |
+| macOS Intel | `adb-claw-darwin-amd64` |
+| Linux x86_64 | `adb-claw-linux-amd64` |
+| Linux ARM64 | `adb-claw-linux-arm64` |
 
 ### Build from source
 
 ```bash
 cd src
-make build    # outputs to bin/adbclaw (project root)
+make build    # outputs to bin/adb-claw (project root)
 ```
 
 Requires Go 1.24+.
@@ -58,12 +58,12 @@ Requires Go 1.24+.
 - Android device connected via USB with **USB debugging enabled**
 
 ```bash
-adbclaw doctor    # verify setup
+adb-claw doctor    # verify setup
 ```
 
 ## Use as AI Skill
 
-adbclaw is published as an AI Skill on two platforms, sharing the same Skill definition (`skills/adb-claw/SKILL.md`).
+adb-claw is published as an AI Skill on two platforms, sharing the same Skill definition (`skills/adb-claw/SKILL.md`).
 
 ### Claude Code
 
@@ -71,10 +71,10 @@ Install the plugin, then just talk to Claude — no slash commands needed.
 
 ```bash
 # Install from Plugin Marketplace
-claude plugin add llm-net/adbclaw
+claude plugin add llm-net/adb-claw
 ```
 
-After installation, Claude will automatically use adbclaw when you ask about Android devices. Examples:
+After installation, Claude will automatically use adb-claw when you ask about Android devices. Examples:
 
 ```
 "Take a screenshot of my Android device"
@@ -95,16 +95,16 @@ Install from ClawHub, then use naturally in conversation with your OpenClaw agen
 claw install adb-claw
 ```
 
-The same natural-language triggers apply — ask your agent to control an Android device and it will invoke adbclaw commands automatically.
+The same natural-language triggers apply — ask your agent to control an Android device and it will invoke adb-claw commands automatically.
 
 ### How Triggering Works
 
-Both platforms use the **Triggers** list in `SKILL.md` to decide when to activate the skill. When your message matches any trigger (e.g., mentions tapping, screenshots, Android automation, live stream monitoring), the agent loads the skill and gains access to all adbclaw commands. No explicit invocation is needed — just describe what you want to do with the Android device.
+Both platforms use the **Triggers** list in `SKILL.md` to decide when to activate the skill. When your message matches any trigger (e.g., mentions tapping, screenshots, Android automation, live stream monitoring), the agent loads the skill and gains access to all adb-claw commands. No explicit invocation is needed — just describe what you want to do with the Android device.
 
 ## Commands
 
 ```
-adbclaw
+adb-claw
 ├── observe [--width px]                        # Screenshot + UI tree (primary command)
 ├── screenshot [--file path] [--width px]       # Screenshot only
 ├── ui tree                                     # UI element tree
@@ -138,72 +138,72 @@ adbclaw
 
 ```bash
 # Screenshot + UI tree (always start here)
-adbclaw observe --width 540
+adb-claw observe --width 540
 
 # Tap by element index (preferred) or coordinates
-adbclaw tap --index 5
-adbclaw tap --text "Login"
-adbclaw tap 540 960
+adb-claw tap --index 5
+adb-claw tap --text "Login"
+adb-claw tap 540 960
 
 # Type text, press keys
-adbclaw type "hello world"
-adbclaw key ENTER
-adbclaw key BACK
+adb-claw type "hello world"
+adb-claw key ENTER
+adb-claw key BACK
 
 # Clear an input field then retype
-adbclaw clear-field --index 7
-adbclaw type "new text"
+adb-claw clear-field --index 7
+adb-claw type "new text"
 ```
 
 ### Navigate
 
 ```bash
 # Smart scroll (auto-calculates coordinates)
-adbclaw scroll down
-adbclaw scroll up --pages 3
-adbclaw scroll down --index 5    # within a specific scrollable element
+adb-claw scroll down
+adb-claw scroll up --pages 3
+adb-claw scroll down --index 5    # within a specific scrollable element
 
 # Open deep links (key for CJK text — bypasses input text limits)
-adbclaw open "snssdk1128://search/result?keyword=猫咪"
-adbclaw open "https://www.google.com"
+adb-claw open "snssdk1128://search/result?keyword=猫咪"
+adb-claw open "https://www.google.com"
 
 # Wait for UI state instead of sleep+observe polling
-adbclaw wait --text "Welcome" --timeout 10000
-adbclaw wait --text "Loading" --gone
-adbclaw wait --activity ".MainActivity"
+adb-claw wait --text "Welcome" --timeout 10000
+adb-claw wait --text "Loading" --gone
+adb-claw wait --activity ".MainActivity"
 ```
 
 ### Monitor (Live Streams & Video)
 
 ```bash
 # Read UI text via accessibility framework (works during video playback)
-adbclaw monitor                            # 10s bounded, JSON envelope
-adbclaw monitor --duration 30000           # 30s bounded
-adbclaw monitor --stream --duration 60000  # 60s streaming, JSON lines
-adbclaw monitor --interval 1000            # Faster polling (1s)
+adb-claw monitor                            # 10s bounded, JSON envelope
+adb-claw monitor --duration 30000           # 30s bounded
+adb-claw monitor --stream --duration 60000  # 60s streaming, JSON lines
+adb-claw monitor --interval 1000            # Faster polling (1s)
 ```
 
 ### Screen & App Management
 
 ```bash
 # Screen control
-adbclaw screen status
-adbclaw screen on
-adbclaw screen unlock
-adbclaw screen rotation auto
+adb-claw screen status
+adb-claw screen on
+adb-claw screen unlock
+adb-claw screen rotation auto
 
 # App lifecycle
-adbclaw app current
-adbclaw app launch com.example.app
-adbclaw app stop com.example.app
-adbclaw app install ./app.apk --replace
-adbclaw app uninstall com.example.app
-adbclaw app clear com.example.app
+adb-claw app current
+adb-claw app launch com.example.app
+adb-claw app stop com.example.app
+adb-claw app install ./app.apk --replace
+adb-claw app uninstall com.example.app
+adb-claw app clear com.example.app
 
 # Shell & file transfer
-adbclaw shell "settings get system screen_brightness"
-adbclaw file push ./test.txt /sdcard/Download/
-adbclaw file pull /sdcard/photo.jpg ./
+adb-claw shell "settings get system screen_brightness"
+adb-claw file push ./test.txt /sdcard/Download/
+adb-claw file pull /sdcard/photo.jpg ./
 ```
 
 ## Output Format
@@ -229,7 +229,7 @@ Error responses include actionable suggestions:
   "error": {
     "code": "ELEMENT_NOT_FOUND",
     "message": "No element found with text 'Login'",
-    "suggestion": "Try 'adbclaw ui tree' to see available elements"
+    "suggestion": "Try 'adb-claw ui tree' to see available elements"
   }
 }
 ```
@@ -237,8 +237,8 @@ Error responses include actionable suggestions:
 Output format can be changed with `-o`:
 
 ```bash
-adbclaw observe -o text       # Human-readable
-adbclaw tap 100 200 -o quiet  # Errors only
+adb-claw observe -o text       # Human-readable
+adb-claw tap 100 200 -o quiet  # Errors only
 ```
 
 ## Global Flags
@@ -262,7 +262,7 @@ Available profiles in `skills/apps/`:
 | Meituan (美团) | `meituan.md` | Search/waimai deep links, homepage/menu/search layouts, WebView workarounds, popup chain handling |
 
 Usage:
-1. `adbclaw app current` → get package name
+1. `adb-claw app current` → get package name
 2. Check `skills/apps/` for a matching profile
 3. Has profile → use deep links and known layouts
 4. No profile → `observe` + explore
@@ -311,7 +311,7 @@ src/
 
 Key design decisions:
 - **Commander interface** — All packages call ADB through an interface, enabling mock-based testing
-- **Input as top-level commands** — `adbclaw tap` instead of `adbclaw input tap`
+- **Input as top-level commands** — `adb-claw tap` instead of `adb-claw input tap`
 - **UI tree filtering** — Only indexes elements with text/resource-id/content-desc or clickable/scrollable attributes
 - **Partial failure tolerance** — `observe` succeeds if either screenshot or UI tree succeeds
 - **Accessibility fallback** — `monitor` uses a temporary DEX helper to read UI text via accessibility framework when `uiautomator dump` fails (video playback, live streams)

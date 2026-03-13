@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/monitor"
+	"github.com/llm-net/adb-claw/pkg/monitor"
 	"github.com/spf13/cobra"
 )
 
@@ -28,10 +28,10 @@ Two modes:
   Streaming (--stream): outputs each new text as a JSON line in real time
 
 Examples:
-  adbclaw monitor                          # 10s bounded, returns JSON envelope
-  adbclaw monitor --duration 30000         # 30s bounded
-  adbclaw monitor --stream --duration 60000  # 60s streaming, JSON lines
-  adbclaw monitor --stream                 # 10s streaming`,
+  adb-claw monitor                          # 10s bounded, returns JSON envelope
+  adb-claw monitor --duration 30000         # 30s bounded
+  adb-claw monitor --stream --duration 60000  # 60s streaming, JSON lines
+  adb-claw monitor --stream                 # 10s streaming`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
 

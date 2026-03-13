@@ -7,7 +7,7 @@ import (
 	"image"
 	"image/png"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/adb"
 
 	"golang.org/x/image/draw"
 )

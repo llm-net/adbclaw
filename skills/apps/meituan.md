@@ -9,7 +9,7 @@
 
 ```bash
 # 通用调用方式
-adbclaw open 'imeituan://www.meituan.com/search?query=火锅'
+adb-claw open 'imeituan://www.meituan.com/search?query=火锅'
 ```
 
 | 动作 | 链接 | 参数说明 |
@@ -98,7 +98,7 @@ adbclaw open 'imeituan://www.meituan.com/search?query=火锅'
 └──────────────────────────────────────────────────┘
 ```
 
-进入方式：`adbclaw open 'imeituan://www.meituan.com/waimai'` 或首页点"外卖"宫格。
+进入方式：`adb-claw open 'imeituan://www.meituan.com/waimai'` 或首页点"外卖"宫格。
 
 ### 餐厅菜单页（WMRestaurantActivity）
 
@@ -162,8 +162,8 @@ adbclaw open 'imeituan://www.meituan.com/search?query=火锅'
 ### 启动并进入首页
 
 ```bash
-adbclaw app launch com.sankuai.meituan
-adbclaw wait --activity "com.meituan.android.pt.homepage.activity.MainActivity" --timeout 10000
+adb-claw app launch com.sankuai.meituan
+adb-claw wait --activity "com.meituan.android.pt.homepage.activity.MainActivity" --timeout 10000
 # 如有弹窗，用 observe 检测并逐一关闭（见首次启动弹窗链）
 ```
 
@@ -171,29 +171,29 @@ adbclaw wait --activity "com.meituan.android.pt.homepage.activity.MainActivity" 
 
 ```bash
 # 方式 1: 深度链接（推荐，绕过中文输入限制）
-adbclaw open 'imeituan://www.meituan.com/search?query=火锅'
+adb-claw open 'imeituan://www.meituan.com/search?query=火锅'
 
 # 方式 2: 手动搜索（仅限 ASCII 关键词）
-adbclaw tap --text "搜索"
-adbclaw type "coffee"
-adbclaw key ENTER
+adb-claw tap --text "搜索"
+adb-claw type "coffee"
+adb-claw key ENTER
 ```
 
 ### 查找外卖餐厅
 
 ```bash
 # 方式 1: 进入外卖频道浏览（推荐）
-adbclaw open 'imeituan://www.meituan.com/waimai'
+adb-claw open 'imeituan://www.meituan.com/waimai'
 # 外卖首页按距离/评分自动推荐附近餐厅，向下滚动浏览
-adbclaw scroll down          # 查看更多餐厅
-adbclaw scroll down --pages 3  # 连续滚动
+adb-claw scroll down          # 查看更多餐厅
+adb-claw scroll down --pages 3  # 连续滚动
 
 # 方式 2: 搜索特定餐厅/菜品（ASCII 关键词）
 # 在外卖首页点击搜索栏
-adbclaw tap --text "搜索"
-adbclaw clear-field           # 清空已有文字
-adbclaw type "coffee"
-adbclaw key ENTER
+adb-claw tap --text "搜索"
+adb-claw clear-field           # 清空已有文字
+adb-claw type "coffee"
+adb-claw key ENTER
 # 搜索结果页有 Tab：全部/外卖/团购/地点/笔记
 
 # 方式 3: 按分类浏览
@@ -211,16 +211,16 @@ adbclaw key ENTER
 # 2. 浏览菜单
 #    左侧分类栏 + 右侧菜品列表（WebView）
 #    向下滚动查看更多菜品
-adbclaw scroll down
+adb-claw scroll down
 
 # 3. 加购菜品（两种方式）
 #    方式 A: 点击菜品进入详情页 → 点"加入购物车"（原生按钮）
-adbclaw tap {菜品区域坐标}      # 进入菜品详情
-adbclaw tap --text "加入购物车"  # UI tree 可定位
-adbclaw key BACK                # 返回菜单继续选
+adb-claw tap {菜品区域坐标}      # 进入菜品详情
+adb-claw tap --text "加入购物车"  # UI tree 可定位
+adb-claw key BACK                # 返回菜单继续选
 
 #    方式 B: 直接点菜品右侧的"+"按钮（WebView 中，需坐标）
-adbclaw tap {加号按钮坐标}
+adb-claw tap {加号按钮坐标}
 
 # 4. 检查购物车
 #    底部栏显示：总价 + 配送费 + 起送差额
@@ -237,38 +237,38 @@ adbclaw tap {加号按钮坐标}
 ### 进入外卖频道
 
 ```bash
-adbclaw open 'imeituan://www.meituan.com/waimai'
+adb-claw open 'imeituan://www.meituan.com/waimai'
 # 或在首页点击"外卖"宫格入口
 ```
 
 ### 查看底部各 Tab
 
 ```bash
-adbclaw tap --text "视频"      # 视频 Tab
-adbclaw tap --text "购物车"    # 购物车 Tab
-adbclaw tap --text "我的"      # 个人中心
+adb-claw tap --text "视频"      # 视频 Tab
+adb-claw tap --text "购物车"    # 购物车 Tab
+adb-claw tap --text "我的"      # 个人中心
 ```
 
 ### 关闭营销弹窗（通用策略）
 
 ```bash
 # 策略 1: 通过 UI tree 找关闭按钮
-adbclaw ui tree   # 查找 text 含"关闭"/"残忍离开"/"取消"/"以后再说" 的元素
-adbclaw tap --text "残忍离开"
+adb-claw ui tree   # 查找 text 含"关闭"/"残忍离开"/"取消"/"以后再说" 的元素
+adb-claw tap --text "残忍离开"
 
 # 策略 2: 按返回键
-adbclaw key BACK
+adb-claw key BACK
 
 # 策略 3: 查找 LightBoxActivity 并按返回
-adbclaw app current   # 如果 activity 含 "LightBox"，说明是弹窗
-adbclaw key BACK
+adb-claw app current   # 如果 activity 含 "LightBox"，说明是弹窗
+adb-claw key BACK
 ```
 
 ## 已知问题
 
 ### 大量页面为 WebView，UI tree 返回 0 元素
 
-**现象**: `adbclaw ui tree` 在首页、外卖频道、餐厅菜单等页面仅能获取少量原生元素（搜索栏、底部 Tab），核心内容区返回 0 元素。
+**现象**: `adb-claw ui tree` 在首页、外卖频道、餐厅菜单等页面仅能获取少量原生元素（搜索栏、底部 Tab），核心内容区返回 0 元素。
 
 **原因**: 美团广泛使用 WebView 渲染内容（`KNBWebViewActivity` + 内嵌 WebView），uiautomator 无法穿透 WebView。
 
@@ -288,7 +288,7 @@ adbclaw key BACK
 **解决**:
 1. 控制操作频率，关键操作之间加 1-2 秒间隔
 2. 优先使用深度链接减少 UI 操作次数
-3. 如触发验证码，滑块拼图可尝试 `adbclaw swipe` 拖动解决；图标点选需人工介入
+3. 如触发验证码，滑块拼图可尝试 `adb-claw swipe` 拖动解决；图标点选需人工介入
 4. 验证码弹窗可通过 `resource_id` 含 `ffv` 的 ImageView 关闭（X 按钮）
 
 ### 营销弹窗数量多且随机
@@ -298,8 +298,8 @@ adbclaw key BACK
 **原因**: 美团的 `LightBoxActivity` 管理营销弹窗，特别针对新用户推送大量促销。
 
 **解决**:
-1. 每次操作后 `adbclaw app current` 检查是否进入了 `LightBoxActivity`
-2. 如果是弹窗，用 `adbclaw key BACK` 或找关闭按钮处理
+1. 每次操作后 `adb-claw app current` 检查是否进入了 `LightBoxActivity`
+2. 如果是弹窗，用 `adb-claw key BACK` 或找关闭按钮处理
 3. 常见关闭按钮: `id=btn_left`（残忍离开）、X 按钮
 
 ### 大部分功能要求登录
@@ -323,7 +323,7 @@ adbclaw key BACK
 
 ### 中文输入不可用
 
-**现象**: `adbclaw type "火锅"` 报错或输入乱码。
+**现象**: `adb-claw type "火锅"` 报错或输入乱码。
 
 **原因**: `adb shell input text` 不支持非 ASCII 字符。
 

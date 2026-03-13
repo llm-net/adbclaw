@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/audio"
+	"github.com/llm-net/adb-claw/pkg/audio"
 	"github.com/spf13/cobra"
 )
 
@@ -38,11 +38,11 @@ Use --file to save to a local file instead.
 WARNING: Device speakers are muted while capturing.
 
 Examples:
-  adbclaw audio capture                          # Stream WAV to stdout (10s)
-  adbclaw audio capture --duration 30000         # Stream 30s
-  adbclaw audio capture --duration 0             # Stream until killed
-  adbclaw audio capture --file recording.wav     # Save to file
-  adbclaw audio capture --stream | asr-claw transcribe --stream`,
+  adb-claw audio capture                          # Stream WAV to stdout (10s)
+  adb-claw audio capture --duration 30000         # Stream 30s
+  adb-claw audio capture --duration 0             # Stream until killed
+  adb-claw audio capture --file recording.wav     # Save to file
+  adb-claw audio capture --stream | asr-claw transcribe --stream`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
 

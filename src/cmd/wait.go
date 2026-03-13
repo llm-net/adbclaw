@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/observe"
+	"github.com/llm-net/adb-claw/pkg/observe"
 	"github.com/spf13/cobra"
 )
 
@@ -22,18 +22,18 @@ var waitCmd = &cobra.Command{
 	Short: "Wait for a UI element or activity to appear/disappear",
 	Long: `Wait for a condition to be met on the device screen.
 Examples:
-  adbclaw wait --text "Login"                 # Wait for text to appear
-  adbclaw wait --id "btn_submit"              # Wait for element by ID
-  adbclaw wait --text "Loading" --gone        # Wait for text to disappear
-  adbclaw wait --activity ".MainActivity"     # Wait for activity
-  adbclaw wait --text "Done" --timeout 20000  # Custom timeout (20s)`,
+  adb-claw wait --text "Login"                 # Wait for text to appear
+  adb-claw wait --id "btn_submit"              # Wait for element by ID
+  adb-claw wait --text "Loading" --gone        # Wait for text to disappear
+  adb-claw wait --activity ".MainActivity"     # Wait for activity
+  adb-claw wait --text "Done" --timeout 20000  # Custom timeout (20s)`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
 
 		if waitText == "" && waitID == "" && waitActivity == "" {
 			writer.Fail("wait", "MISSING_ARGS",
 				"Specify --text, --id, or --activity",
-				"Example: adbclaw wait --text \"Login\"", start)
+				"Example: adb-claw wait --text \"Login\"", start)
 			return nil
 		}
 

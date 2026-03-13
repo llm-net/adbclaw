@@ -33,7 +33,7 @@ export default function Install() {
               <div className="rounded-lg border border-stone-800/60 bg-surface-950/80 p-3 overflow-x-auto">
                 <code className="text-[13px] font-mono text-stone-300 whitespace-nowrap">
                   <span className="text-amber-500/60 select-none">$ </span>
-                  curl -fsSL https://adbclaw.com/install.sh | bash
+                  curl -fsSL https://github.com/llm-net/adb-claw/releases/latest/download/install.sh | bash
                 </code>
               </div>
             </div>
@@ -51,13 +51,13 @@ export default function Install() {
                 {['darwin-arm64', 'darwin-amd64', 'linux-arm64', 'linux-amd64'].map((platform) => (
                   <a
                     key={platform}
-                    href={`https://github.com/llm-net/adbclaw/releases/latest/download/adbclaw-${platform}`}
+                    href={`https://github.com/llm-net/adb-claw/releases/latest/download/adb-claw-${platform}`}
                     className="flex items-center gap-2 text-sm font-mono text-stone-500 hover:text-amber-500/80 transition-colors"
                   >
                     <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
-                    adbclaw-{platform}
+                    adb-claw-{platform}
                   </a>
                 ))}
               </div>
@@ -73,8 +73,8 @@ export default function Install() {
                 {t.install.buildWithGoDesc}
               </p>
               <div className="rounded-lg border border-stone-800/60 bg-surface-950/80 p-3 space-y-1">
-                <div><code className="text-[13px] font-mono text-stone-400"><span className="text-amber-500/60 select-none">$ </span>git clone https://github.com/llm-net/adbclaw</code></div>
-                <div><code className="text-[13px] font-mono text-stone-400"><span className="text-amber-500/60 select-none">$ </span>cd adbclaw/src && make build</code></div>
+                <div><code className="text-[13px] font-mono text-stone-400"><span className="text-amber-500/60 select-none">$ </span>git clone https://github.com/llm-net/adb-claw</code></div>
+                <div><code className="text-[13px] font-mono text-stone-400"><span className="text-amber-500/60 select-none">$ </span>cd adb-claw/src && make build</code></div>
               </div>
             </div>
           </div>

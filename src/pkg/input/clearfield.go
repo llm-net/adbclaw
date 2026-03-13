@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/adb"
 )
 
 // ClearField clears the text in the currently focused input field.

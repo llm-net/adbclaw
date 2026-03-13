@@ -95,7 +95,7 @@ export default {
   howItWorks: {
     label: 'Architecture',
     title: 'How it works',
-    description: 'Commands flow from AI agent through adbclaw to the device. Every response is structured JSON.',
+    description: 'Commands flow from AI agent through adb-claw to the device. Every response is structured JSON.',
     agentLoop: 'Recommended Agent Loop',
     architectureSteps: [
       {
@@ -104,7 +104,7 @@ export default {
         description: 'Reads skill description, sends structured commands, parses JSON responses to decide next actions',
       },
       {
-        label: 'adbclaw',
+        label: 'adb-claw',
         sublabel: 'Go CLI · v1.4.1',
         description: 'Translates 30+ commands to ADB operations. Returns structured JSON with error codes and suggestions',
       },
@@ -137,38 +137,38 @@ export default {
       {
         title: 'Observe & Inspect',
         commands: [
-          { cmd: 'adbclaw observe', comment: 'Screenshot + UI tree' },
-          { cmd: 'adbclaw screenshot --width 720', comment: 'Downscaled capture' },
-          { cmd: 'adbclaw ui tree', comment: 'Indexed elements' },
-          { cmd: 'adbclaw ui find --text "Login"', comment: 'Find by text' },
+          { cmd: 'adb-claw observe', comment: 'Screenshot + UI tree' },
+          { cmd: 'adb-claw screenshot --width 720', comment: 'Downscaled capture' },
+          { cmd: 'adb-claw ui tree', comment: 'Indexed elements' },
+          { cmd: 'adb-claw ui find --text "Login"', comment: 'Find by text' },
         ],
       },
       {
         title: 'Input & Navigate',
         commands: [
-          { cmd: 'adbclaw tap --index 5', comment: 'Tap by element index' },
-          { cmd: 'adbclaw type "hello world"', comment: 'Input text' },
-          { cmd: 'adbclaw scroll down --pages 3', comment: 'Smart scroll' },
-          { cmd: 'adbclaw open "weixin://dl/scan"', comment: 'Deep link' },
-          { cmd: 'adbclaw clear-field --index 2', comment: 'Clear input' },
+          { cmd: 'adb-claw tap --index 5', comment: 'Tap by element index' },
+          { cmd: 'adb-claw type "hello world"', comment: 'Input text' },
+          { cmd: 'adb-claw scroll down --pages 3', comment: 'Smart scroll' },
+          { cmd: 'adb-claw open "weixin://dl/scan"', comment: 'Deep link' },
+          { cmd: 'adb-claw clear-field --index 2', comment: 'Clear input' },
         ],
       },
       {
         title: 'Wait & Screen',
         commands: [
-          { cmd: 'adbclaw wait --text "Done"', comment: 'Wait for element' },
-          { cmd: 'adbclaw wait --text "Loading" --gone', comment: 'Wait until gone' },
-          { cmd: 'adbclaw screen status', comment: 'On/off/lock/rotation' },
-          { cmd: 'adbclaw screen unlock', comment: 'Wake + swipe unlock' },
+          { cmd: 'adb-claw wait --text "Done"', comment: 'Wait for element' },
+          { cmd: 'adb-claw wait --text "Loading" --gone', comment: 'Wait until gone' },
+          { cmd: 'adb-claw screen status', comment: 'On/off/lock/rotation' },
+          { cmd: 'adb-claw screen unlock', comment: 'Wake + swipe unlock' },
         ],
       },
       {
         title: 'Apps & System',
         commands: [
-          { cmd: 'adbclaw app launch com.example', comment: 'Launch app' },
-          { cmd: 'adbclaw app install ./app.apk', comment: 'Install APK' },
-          { cmd: 'adbclaw shell "pm list packages"', comment: 'Raw shell' },
-          { cmd: 'adbclaw file pull /sdcard/log.txt .', comment: 'Pull file' },
+          { cmd: 'adb-claw app launch com.example', comment: 'Launch app' },
+          { cmd: 'adb-claw app install ./app.apk', comment: 'Install APK' },
+          { cmd: 'adb-claw shell "pm list packages"', comment: 'Raw shell' },
+          { cmd: 'adb-claw file pull /sdcard/log.txt .', comment: 'Pull file' },
         ],
       },
     ],
@@ -250,7 +250,7 @@ export default {
       {
         name: 'OpenClaw',
         url: 'https://github.com/openclaw/openclaw',
-        description: 'Local-first personal AI assistant platform. adbclaw is published as an OpenClaw Skill on ClawHub.',
+        description: 'Local-first personal AI assistant platform. adb-claw is published as an OpenClaw Skill on ClawHub.',
         stars: '',
         highlight: true,
       },

@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 #
-# setup.sh — Download pre-built adbclaw binary from GitHub Releases.
+# setup.sh — Download pre-built adb-claw binary from GitHub Releases.
 # Called by the SessionStart hook to ensure the binary is available.
 # Falls back to building from source if Go is installed.
 #
 
 set -euo pipefail
 
-REPO="llm-net/adbclaw"
+REPO="llm-net/adb-claw"
 
 # Resolve plugin root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BIN_DIR="$PLUGIN_ROOT/bin"
-BINARY="$BIN_DIR/adbclaw"
+BINARY="$BIN_DIR/adb-claw"
 
 # Colors
 RED='\033[0;31m'
@@ -21,9 +21,9 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 NC='\033[0m'
 
-info()  { echo -e "${GREEN}[adbclaw]${NC} $*" >&2; }
-warn()  { echo -e "${YELLOW}[adbclaw]${NC} $*" >&2; }
-error() { echo -e "${RED}[adbclaw]${NC} $*" >&2; }
+info()  { echo -e "${GREEN}[adb-claw]${NC} $*" >&2; }
+warn()  { echo -e "${YELLOW}[adb-claw]${NC} $*" >&2; }
+error() { echo -e "${RED}[adb-claw]${NC} $*" >&2; }
 
 # --- Detect OS and Arch ---
 detect_platform() {
@@ -94,7 +94,7 @@ verify_checksum() {
         checksums="$(wget -qO- "$checksums_url" 2>/dev/null)" || { warn "Checksum file not available, skipping."; return 0; }
     fi
 
-    expected="$(echo "$checksums" | grep "adbclaw-${platform}" | awk '{print $1}')"
+    expected="$(echo "$checksums" | grep "adb-claw-${platform}" | awk '{print $1}')"
     if [ -z "$expected" ]; then return 0; fi
 
     if command -v sha256sum &>/dev/null; then
@@ -117,10 +117,10 @@ verify_checksum() {
 download_binary() {
     local platform="$1"
     local version="$2"
-    local asset_name="adbclaw-${platform}"
+    local asset_name="adb-claw-${platform}"
     local download_url="https://github.com/${REPO}/releases/download/${version}/${asset_name}"
 
-    info "Downloading adbclaw ${version} for ${platform}..."
+    info "Downloading adb-claw ${version} for ${platform}..."
 
     mkdir -p "$BIN_DIR"
 
@@ -156,7 +156,7 @@ build_from_source() {
     local version
     version="$(git describe --tags --always --dirty 2>/dev/null || echo 'dev')"
     go mod tidy
-    go build -ldflags "-X github.com/llm-net/adbclaw/cmd.Version=${version}" -o "$BINARY" .
+    go build -ldflags "-X github.com/llm-net/adb-claw/cmd.Version=${version}" -o "$BINARY" .
 
     info "Built from source: $BINARY"
 }
@@ -165,7 +165,7 @@ build_from_source() {
 main() {
     # Already installed?
     if [ -f "$BINARY" ]; then
-        info "adbclaw is ready: $BINARY"
+        info "adb-claw is ready: $BINARY"
         check_adb
         exit 0
     fi
@@ -177,7 +177,7 @@ main() {
     local version
     if version="$(get_latest_version)"; then
         if download_binary "$platform" "$version"; then
-            info "adbclaw ${version} is ready."
+            info "adb-claw ${version} is ready."
             check_adb
             exit 0
         else
@@ -189,12 +189,12 @@ main() {
 
     # Fallback: build from source
     if build_from_source; then
-        info "adbclaw is ready (built from source)."
+        info "adb-claw is ready (built from source)."
         check_adb
         exit 0
     fi
 
-    error "Failed to install adbclaw. Please check your network or install Go to build from source."
+    error "Failed to install adb-claw. Please check your network or install Go to build from source."
     exit 1
 }
 

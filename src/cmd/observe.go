@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/observe"
+	"github.com/llm-net/adb-claw/pkg/observe"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +27,7 @@ var observeCmd = &cobra.Command{
 		if result.Screenshot == nil && result.UI == nil {
 			writer.Fail("observe", "OBSERVE_FAILED",
 				"Both screenshot and UI tree failed",
-				"Check device connection: adbclaw device list", start)
+				"Check device connection: adb-claw device list", start)
 			return nil
 		}
 

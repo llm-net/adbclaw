@@ -122,7 +122,7 @@ var appLaunchCmd = &cobra.Command{
 		if strings.Contains(result.Stdout, "No activities found") {
 			writer.Fail("app launch", "LAUNCH_FAILED",
 				"No launcher activity found for "+pkg,
-				"Check the package name: adbclaw app list", start)
+				"Check the package name: adb-claw app list", start)
 			return nil
 		}
 
@@ -211,7 +211,7 @@ var appUninstallCmd = &cobra.Command{
 		output := strings.TrimSpace(result.Stdout + result.Stderr)
 		if !strings.Contains(output, "Success") {
 			writer.Fail("app uninstall", "UNINSTALL_FAILED", output,
-				"Check the package name: adbclaw app list", start)
+				"Check the package name: adb-claw app list", start)
 			return nil
 		}
 
@@ -240,7 +240,7 @@ var appClearCmd = &cobra.Command{
 		output := strings.TrimSpace(result.Stdout)
 		if !strings.Contains(output, "Success") {
 			writer.Fail("app clear", "CLEAR_FAILED", output,
-				"Check the package name: adbclaw app list", start)
+				"Check the package name: adb-claw app list", start)
 			return nil
 		}
 

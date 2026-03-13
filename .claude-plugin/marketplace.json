@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "adbclaw-marketplace",
+  "name": "adb-claw-marketplace",
   "description": "Android device control CLI for AI agent automation — tap, scroll, screenshot, deep links, UI wait, screen/app management, shell, and file transfer via ADB",
   "owner": {
     "name": "llm-net",
@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "adbclaw",
+      "name": "adb-claw",
       "source": "."
     }
   ]

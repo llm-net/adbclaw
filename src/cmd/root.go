@@ -5,12 +5,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
-	"github.com/llm-net/adbclaw/pkg/output"
+	"github.com/llm-net/adb-claw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/output"
 	"github.com/spf13/cobra"
 )
 
-// Version is set via ldflags at build time: -ldflags "-X github.com/llm-net/adbclaw/cmd.Version=v1.4.1"
+// Version is set via ldflags at build time: -ldflags "-X github.com/llm-net/adb-claw/cmd.Version=v1.5.0"
 var Version = "dev"
 
 var (
@@ -24,9 +24,9 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "adbclaw",
+	Use:     "adb-claw",
 	Short:   "Android device control CLI for AI agents",
-	Long:    "adbclaw is a CLI tool for controlling Android devices via ADB, designed for AI agent automation.",
+	Long:    "adb-claw is a CLI tool for controlling Android devices via ADB, designed for AI agent automation.",
 	Version: Version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		writer = output.NewWriter(flagOutput, flagVerbose)

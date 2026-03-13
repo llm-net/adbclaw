@@ -1,8 +1,8 @@
-# adbclaw — 产品目标与技术调研
+# adb-claw — 产品目标与技术调研
 
 ## 1. 产品定位
 
-adbclaw 是一个**纯 CLI 工具层**的 Android 设备控制工具，类似 `kubectl` 之于 Kubernetes、`gh` 之于 GitHub：
+adb-claw 是一个**纯 CLI 工具层**的 Android 设备控制工具，类似 `kubectl` 之于 Kubernetes、`gh` 之于 GitHub：
 
 - 提供完整的 Android 设备操作 CLI，所有命令输出结构化 JSON
 - 通过 `adb` 命令与 Android 设备通信，无需在手机上安装任何 App 或服务
@@ -19,7 +19,7 @@ adbclaw 是一个**纯 CLI 工具层**的 Android 设备控制工具，类似 `k
 
 ### 与竞品的核心差异
 
-| | DroidRun | mobile-use | adbclaw |
+| | DroidRun | mobile-use | adb-claw |
 |---|---|---|---|
 | 定位 | LLM Agent + 设备控制一体 | LLM Agent + 设备控制一体 | **纯设备控制工具** |
 | 语言 | Python | Python | Go |
@@ -84,12 +84,12 @@ Appdome、Promon、Guardsquare 等商业 SDK 综合数十个信号 + ML 分析 +
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  Claude Code / OpenClaw Agent / 其他 Bot                  │
-│  (读 Skill 描述知道 adbclaw 能做什么，                      │
+│  (读 Skill 描述知道 adb-claw 能做什么，                      │
 │   调用 CLI 命令，解析 JSON stdout)                         │
 └────────────────────┬────────────────────────────────────┘
                      │ 子进程调用
 ┌────────────────────▼────────────────────────────────────┐
-│  adbclaw CLI (Go binary, Mac/Linux)                      │
+│  adb-claw CLI (Go binary, Mac/Linux)                      │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────────┐ │
 │  │ device   │ │ input    │ │ observe  │ │ app        │ │
 │  │ 设备管理  │ │ 输入操作  │ │ 屏幕/UI  │ │ App 管理   │ │
@@ -118,7 +118,7 @@ Appdome、Promon、Guardsquare 等商业 SDK 综合数十个信号 + ML 分析 +
 
 ### 5.1 从 DroidRun 借鉴
 
-- **采纳**：`DeviceDriver` 抽象接口 → adbclaw 的 Commander 接口；UI 元素编号 → `ui tree` 带 index；`tap --index` 按编号点击
+- **采纳**：`DeviceDriver` 抽象接口 → adb-claw 的 Commander 接口；UI 元素编号 → `ui tree` 带 index；`tap --index` 按编号点击
 - **不采纳**：Portal APK 依赖、llama-index 编排
 
 ### 5.2 从 mobile-use 借鉴
@@ -134,7 +134,7 @@ Appdome、Promon、Guardsquare 等商业 SDK 综合数十个信号 + ML 分析 +
 
 ### 6.1 MCP Server 集成
 
-将 adbclaw 的所有命令暴露为 MCP tools，让 Claude Desktop / OpenClaw 通过标准 MCP 协议调用，替代子进程方式。
+将 adb-claw 的所有命令暴露为 MCP tools，让 Claude Desktop / OpenClaw 通过标准 MCP 协议调用，替代子进程方式。
 
 ### 6.2 Unicode 文字输入
 

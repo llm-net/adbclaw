@@ -3,7 +3,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/input"
+	"github.com/llm-net/adb-claw/pkg/input"
 	"github.com/spf13/cobra"
 )
 
@@ -18,9 +18,9 @@ var clearFieldCmd = &cobra.Command{
 	Short: "Clear text in the focused input field",
 	Long: `Clear the text in the currently focused input field.
 Can optionally tap an element first to focus it:
-  - By index: adbclaw clear-field --index 3
-  - By resource ID: adbclaw clear-field --id "input_name"
-  - By text: adbclaw clear-field --text "Username"`,
+  - By index: adb-claw clear-field --index 3
+  - By resource ID: adb-claw clear-field --id "input_name"
+  - By text: adb-claw clear-field --text "Username"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
 
@@ -32,7 +32,7 @@ Can optionally tap an element first to focus it:
 			el, err := resolveElementByIndex(clearFieldIndex)
 			if err != nil {
 				writer.Fail("clear-field", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			targetInfo = elementInfo(el)
@@ -46,7 +46,7 @@ Can optionally tap an element first to focus it:
 			el, err := resolveElementByID(clearFieldID)
 			if err != nil {
 				writer.Fail("clear-field", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			targetInfo = elementInfo(el)
@@ -60,7 +60,7 @@ Can optionally tap an element first to focus it:
 			el, err := resolveElementByText(clearFieldText)
 			if err != nil {
 				writer.Fail("clear-field", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			targetInfo = elementInfo(el)

@@ -3,7 +3,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/observe"
+	"github.com/llm-net/adb-claw/pkg/observe"
 	"github.com/spf13/cobra"
 )
 
@@ -59,7 +59,7 @@ var uiFindCmd = &cobra.Command{
 			el, err := tree.FindByIndex(uiFindIndex)
 			if err != nil {
 				writer.Fail("ui find", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			writer.Success("ui find", map[string]interface{}{
@@ -75,7 +75,7 @@ var uiFindCmd = &cobra.Command{
 			if len(results) == 0 {
 				writer.Fail("ui find", "ELEMENT_NOT_FOUND",
 					"No element found with text '"+uiFindText+"'",
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			writer.Success("ui find", map[string]interface{}{
@@ -91,7 +91,7 @@ var uiFindCmd = &cobra.Command{
 			if len(results) == 0 {
 				writer.Fail("ui find", "ELEMENT_NOT_FOUND",
 					"No element found with id '"+uiFindID+"'",
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			writer.Success("ui find", map[string]interface{}{
@@ -103,7 +103,7 @@ var uiFindCmd = &cobra.Command{
 
 		writer.Fail("ui find", "MISSING_ARGS",
 			"Specify --text, --id, or --index to search",
-			"Example: adbclaw ui find --text Login", start)
+			"Example: adb-claw ui find --text Login", start)
 		return nil
 	},
 }

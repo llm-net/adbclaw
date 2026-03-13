@@ -1,6 +1,6 @@
-BINARY_NAME := adbclaw
+BINARY_NAME := adb-claw
 BUILD_DIR := ../bin
-MODULE := github.com/llm-net/adbclaw
+MODULE := github.com/llm-net/adb-claw
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 GO := go
 LDFLAGS := -ldflags "-X $(MODULE)/cmd.Version=$(VERSION)"

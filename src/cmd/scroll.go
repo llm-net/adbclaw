@@ -3,7 +3,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/input"
+	"github.com/llm-net/adb-claw/pkg/input"
 	"github.com/spf13/cobra"
 )
 
@@ -19,10 +19,10 @@ var scrollCmd = &cobra.Command{
 	Short: "Scroll the screen or a scrollable element",
 	Long: `Scroll in a direction: up, down, left, right.
 Examples:
-  adbclaw scroll down                  # Scroll down one screen
-  adbclaw scroll up --pages 3          # Scroll up 3 screens
-  adbclaw scroll down --index 5        # Scroll within element at index 5
-  adbclaw scroll left --distance 500   # Scroll left by 500 pixels`,
+  adb-claw scroll down                  # Scroll down one screen
+  adb-claw scroll up --pages 3          # Scroll up 3 screens
+  adb-claw scroll down --index 5        # Scroll within element at index 5
+  adb-claw scroll left --distance 500   # Scroll left by 500 pixels`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
@@ -42,7 +42,7 @@ Examples:
 			el, err := resolveElementByIndex(scrollIndex)
 			if err != nil {
 				writer.Fail("scroll", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			targetInfo = elementInfo(el)

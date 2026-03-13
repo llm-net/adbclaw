@@ -9,7 +9,7 @@ allowed-tools: "Bash, Read, Edit, Grep, Glob, Write, Agent"
 
 - **GitHub Releases** — CI 自动构建 4 平台二进制（darwin/linux × arm64/amd64）
 - **ClawHub** — OpenClaw 技能市场（https://clawhub.ai/dionren/adb-claw）
-- **GitHub Pages** — 官网 adbclaw.com
+- **GitHub Pages** — 官网 adb-claw.llm.net
 
 ---
 
@@ -43,12 +43,12 @@ src/cmd/root.go                  → 注释中的 ldflags 示例版本
 
 - **禁止** `kind: "script"` + `curl | bash` 模式 — 这会被标记为 Suspicious
 - **必须**使用 `kind: "download"` 直接下载二进制，或 `kind: "brew"` 包管理器安装
-- 所有 download URL 必须指向 `github.com/llm-net/adbclaw`（不是 AdbClaw 或其他旧 URL）
-- 确认 frontmatter `homepage` 字段为 `https://github.com/llm-net/adbclaw`
+- 所有 download URL 必须指向 `github.com/llm-net/adb-claw`（不是 AdbClaw 或其他旧 URL）
+- 确认 frontmatter `homepage` 字段为 `https://github.com/llm-net/adb-claw`
 
 ```
 # 合规示例
-{ "kind": "download", "url": "https://github.com/llm-net/adbclaw/releases/latest/download/adbclaw-darwin-arm64" }
+{ "kind": "download", "url": "https://github.com/llm-net/adb-claw/releases/latest/download/adb-claw-darwin-arm64" }
 { "kind": "brew", "formula": "android-platform-tools" }
 
 # 违规示例（会触发告警）
@@ -58,11 +58,11 @@ src/cmd/root.go                  → 注释中的 ldflags 示例版本
 ### 3.2 Purpose & Capability
 
 - `name` / `description` 必须与运行时功能一致
-- `requires.bins` 只列必需的二进制（adbclaw, adb）
+- `requires.bins` 只列必需的二进制（adb-claw, adb）
 
 ### 3.3 Instruction Scope
 
-- SKILL.md 正文只包含 adbclaw/adb 命令指引
+- SKILL.md 正文只包含 adb-claw/adb 命令指引
 - 不能有读取无关本地文件、网络请求、数据外传的指令
 
 ### 3.4 Credentials
@@ -111,7 +111,7 @@ git push origin v$ARGUMENTS
 推送 tag 后 GitHub Actions 自动执行：
 
 - **Release** workflow：test → 交叉编译 4 平台 → 创建 GitHub Release（含 6 个 assets）
-- **Deploy Website** workflow：构建 website/ → 部署到 GitHub Pages（adbclaw.com）
+- **Deploy Website** workflow：构建 website/ → 部署到 GitHub Pages（adb-claw.llm.net）
 
 ## Step 7: 发布到 ClawHub
 
@@ -130,23 +130,23 @@ clawhub publish skills/adb-claw --version $ARGUMENTS --changelog "变更摘要"
 
 ```bash
 # GitHub CI 进度
-gh run list --repo llm-net/adbclaw --limit 2
+gh run list --repo llm-net/adb-claw --limit 2
 
 # GitHub Release assets（应有 6 个文件）
-gh release view v$ARGUMENTS --repo llm-net/adbclaw
+gh release view v$ARGUMENTS --repo llm-net/adb-claw
 
 # ClawHub 版本确认（安全扫描中会暂时 hidden）
 clawhub inspect adb-claw
 
 # 官网部署确认
-gh run list --repo llm-net/adbclaw --workflow deploy-website.yml --limit 1
+gh run list --repo llm-net/adb-claw --workflow deploy-website.yml --limit 1
 ```
 
 向用户汇报三个平台的发布状态。
 
 ## 注意事项
 
-- Git remote：`origin → llm-net/adbclaw`（主仓库，CI 和 Release 在此）
+- Git remote：`origin → llm-net/adb-claw`（主仓库，CI 和 Release 在此）
 - 每步执行前确认上一步成功，不要跳步
 - 如果 `clawhub publish` 报 "Version already exists"，说明该版本已发布过，需要 bump 版本号
 - 如果 ClawHub 安全扫描标记为 Suspicious，检查 Step 3 的规则并修复后 bump 版本重发

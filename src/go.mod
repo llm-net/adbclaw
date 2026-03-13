@@ -1,4 +1,4 @@
-module github.com/llm-net/adbclaw
+module github.com/llm-net/adb-claw
 
 go 1.24.0
 

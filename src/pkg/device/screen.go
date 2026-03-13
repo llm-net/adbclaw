@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
-	"github.com/llm-net/adbclaw/pkg/input"
+	"github.com/llm-net/adb-claw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/input"
 )
 
 // ScreenStatus holds the current screen state.

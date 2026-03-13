@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/adb"
 )
 
 type mockCommander struct {

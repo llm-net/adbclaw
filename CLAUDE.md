@@ -1,10 +1,10 @@
-# adbclaw
+# adb-claw
 
 Android 设备控制 CLI，供 AI agent 自动化调用。纯工具层，不含 LLM/Agent 逻辑。
 
 ## 发布渠道
 
-adbclaw 同时作为两个平台的 Skill 发布，**共用一份 `skills/adb-claw/SKILL.md`**：
+adb-claw 同时作为两个平台的 Skill 发布，**共用一份 `skills/adb-claw/SKILL.md`**：
 
 - **Claude Code**：通过插件市场安装（`.claude-plugin/`），按 `## Triggers` 触发，`## Binary` 指示二进制位置
 - **OpenClaw**：通过 ClawHub 安装，读取 YAML frontmatter 中的 `metadata.openclaw`（OS 要求、依赖、安装脚本）
@@ -29,7 +29,7 @@ skills/
 
 App Profile 是针对具体 App 的操作知识库，Agent 运行时按需读取：
 
-1. `adbclaw app current` → 获取当前 App 包名
+1. `adb-claw app current` → 获取当前 App 包名
 2. 检查 `skills/apps/` 下有无对应 Profile
 3. 有 → 按 Profile 操作（深度链接、已知布局）；无 → 常规 observe 探索
 
@@ -91,7 +91,7 @@ website/                # React + Vite + Tailwind 官网
 
 ```bash
 cd src
-make build     # 产物 → bin/adbclaw（项目根目录）
+make build     # 产物 → bin/adb-claw（项目根目录）
 make test      # go test ./...
 make lint      # go vet
 make clean
@@ -106,12 +106,12 @@ Go 1.24，依赖 cobra v1.10.2 + golang.org/x/image v0.36.0。构建产物在项
 开发完成后，编译并加载到 Claude Code：
 
 ```bash
-cd src && make build   # 编译到 bin/adbclaw
+cd src && make build   # 编译到 bin/adb-claw
 claude --plugin-dir .  # 在项目根目录启动，加载当前目录为插件
 ```
 
-- `make build` 产物输出到项目根目录 `bin/adbclaw`，与插件 SKILL.md 和 `setup.sh` 引用的路径一致
-- SessionStart hook 检测到 `bin/adbclaw` 已存在会跳过下载，直接使用本地编译版本
+- `make build` 产物输出到项目根目录 `bin/adb-claw`，与插件 SKILL.md 和 `setup.sh` 引用的路径一致
+- SessionStart hook 检测到 `bin/adb-claw` 已存在会跳过下载，直接使用本地编译版本
 - 已有会话中修改代码后，重新 `make build` + 重启 Claude Code 即可生效
 
 ## 架构要点
@@ -119,7 +119,7 @@ claude --plugin-dir .  # 在项目根目录启动，加载当前目录为插件
 - **Commander 接口** (`pkg/adb/shell.go`) — 所有 pkg 通过 `Commander` 接口调用 ADB，测试用 mock。包含 `Shell()`、`ExecOut()`（二进制安全）、`RawCommand()` 三个方法
 - **JSON Envelope** (`pkg/output/envelope.go`) — 统一 `{ok, command, data, error, duration_ms, timestamp}`。error 含 `{code, message, suggestion}`。支持 json/text/quiet 三种输出模式
 - **UI 树过滤** (`pkg/observe/uitree.go`) — 只索引有 text/resource-id/content-desc 或 clickable/scrollable 的节点，减少 agent 噪音。Element 带 index/bounds/center
-- **输入为顶级命令** — `adbclaw tap` 而非 `adbclaw input tap`
+- **输入为顶级命令** — `adb-claw tap` 而非 `adb-claw input tap`
 - **observe 部分失败容忍** — 截屏和 UI 树并行（sync.WaitGroup），互不阻塞
 - **输入命令支持元素定位** — tap/long-press 支持 `--index`/`--id`/`--text` 直接定位 UI 元素
 - **文本输入安全** — `type` 命令转义 shell 特殊字符，拒绝非 ASCII 字符
@@ -127,7 +127,7 @@ claude --plugin-dir .  # 在项目根目录启动，加载当前目录为插件
 ## 命令树
 
 ```
-adbclaw
+adb-claw
 ├── device list                    # 列出已连接设备
 ├── device info                    # 设备详情（型号/版本/屏幕尺寸/密度）
 ├── observe [--width px]           # 截屏 + UI 树并行
@@ -190,13 +190,13 @@ adbclaw
 
 ## 音频采集与 ASR 协作
 
-adbclaw 提供 `audio capture` 命令采集 Android 系统音频（REMOTE_SUBMIX，Android 11+），输出 WAV 流到 stdout。语音识别由独立项目 **asrclaw** 负责（ClawHub 发布名 `asr-claw`），两者通过 Unix pipe 协作：
+adb-claw 提供 `audio capture` 命令采集 Android 系统音频（REMOTE_SUBMIX，Android 11+），输出 WAV 流到 stdout。语音识别由独立项目 **asrclaw** 负责（ClawHub 发布名 `asr-claw`），两者通过 Unix pipe 协作：
 
 ```bash
-adbclaw audio capture --stream | asrclaw transcribe --stream --lang zh
+adb-claw audio capture --stream | asrclaw transcribe --stream --lang zh
 ```
 
-- adbclaw 只做音频采集（设备 → PCM 流），不做 ASR，与 screenshot 只输出图片不做 OCR 同理
+- adb-claw 只做音频采集（设备 → PCM 流），不做 ASR，与 screenshot 只输出图片不做 OCR 同理
 - 设备端使用 `ADBClawAudio.dex`（`helper/ADBClawAudio.java`），通过 `app_process` 运行，采集系统混音输出
 - 流协议：44 字节 WAV header + 连续 raw PCM 16kHz mono 16-bit
 - asrclaw 设计文档见 `docs/asr-claw-design.md`
@@ -220,10 +220,10 @@ adbclaw audio capture --stream | asrclaw transcribe --stream --lang zh
 
 ## 发布流程
 
-使用 `/adbclaw-release <版本号>` 命令执行完整发布流程（GitHub Releases + ClawHub + 官网），详见 `.claude/commands/adbclaw-release.md`。
+使用 `/adb-claw-release <版本号>` 命令执行完整发布流程（GitHub Releases + ClawHub + 官网），详见 `.claude/commands/adb-claw-release.md`。
 
 ```
-Git remote: origin → llm-net/adbclaw（主仓库，CI 和 Release 在此）
+Git remote: origin → llm-net/adb-claw（主仓库，CI 和 Release 在此）
 ClawHub:    https://clawhub.ai/dionren/adb-claw
-官网:       https://adbclaw.com
+官网:       https://adb-claw.llm.net
 ```

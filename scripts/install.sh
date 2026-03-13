@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# install.sh — Download and install pre-built adbclaw binary.
+# install.sh — Download and install pre-built adb-claw binary.
 #
 # Usage:
-#   curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
+#   curl -fsSL https://github.com/llm-net/adb-claw/releases/latest/download/install.sh | bash
 #   curl -fsSL .../install.sh | INSTALL_DIR=/custom/path bash
 #
 # Environment variables:
@@ -13,7 +13,7 @@
 
 set -euo pipefail
 
-REPO="llm-net/adbclaw"
+REPO="llm-net/adb-claw"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
 RED='\033[0;31m'
@@ -22,9 +22,9 @@ YELLOW='\033[0;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-info()  { echo -e "${GREEN}[adbclaw]${NC} $*"; }
-warn()  { echo -e "${YELLOW}[adbclaw]${NC} $*"; }
-error() { echo -e "${RED}[adbclaw]${NC} $*" >&2; }
+info()  { echo -e "${GREEN}[adb-claw]${NC} $*"; }
+warn()  { echo -e "${YELLOW}[adb-claw]${NC} $*"; }
+error() { echo -e "${RED}[adb-claw]${NC} $*" >&2; }
 
 # --- Detect OS and Arch ---
 detect_platform() {
@@ -35,13 +35,13 @@ detect_platform() {
     case "$os" in
         darwin) os="darwin" ;;
         linux)  os="linux" ;;
-        *)      error "Unsupported OS: $os (adbclaw supports darwin and linux)"; exit 1 ;;
+        *)      error "Unsupported OS: $os (adb-claw supports darwin and linux)"; exit 1 ;;
     esac
 
     case "$arch" in
         x86_64|amd64)  arch="amd64" ;;
         aarch64|arm64) arch="arm64" ;;
-        *)             error "Unsupported architecture: $arch (adbclaw supports amd64 and arm64)"; exit 1 ;;
+        *)             error "Unsupported architecture: $arch (adb-claw supports amd64 and arm64)"; exit 1 ;;
     esac
 
     echo "${os}-${arch}"
@@ -86,9 +86,9 @@ verify_checksum() {
         checksums="$(wget -qO- "$checksums_url" 2>/dev/null)" || { warn "Checksum file not available, skipping verification."; return 0; }
     fi
 
-    expected="$(echo "$checksums" | grep "adbclaw-${platform}" | awk '{print $1}')"
+    expected="$(echo "$checksums" | grep "adb-claw-${platform}" | awk '{print $1}')"
     if [ -z "$expected" ]; then
-        warn "No checksum found for adbclaw-${platform}, skipping verification."
+        warn "No checksum found for adb-claw-${platform}, skipping verification."
         return 0
     fi
 
@@ -117,10 +117,10 @@ download_binary() {
     local platform="$1"
     local version="$2"
     local dest="$3"
-    local asset_name="adbclaw-${platform}"
+    local asset_name="adb-claw-${platform}"
     local download_url="https://github.com/${REPO}/releases/download/${version}/${asset_name}"
 
-    info "Downloading adbclaw ${version} for ${platform}..."
+    info "Downloading adb-claw ${version} for ${platform}..."
 
     if command -v curl &>/dev/null; then
         curl -fSL --progress-bar -o "$dest" "$download_url"
@@ -137,7 +137,7 @@ check_adb() {
         info "adb found: $(command -v adb)"
     else
         echo ""
-        warn "adb not found in PATH. adbclaw requires adb to work."
+        warn "adb not found in PATH. adb-claw requires adb to work."
         warn "Install Android SDK Platform-Tools:"
         warn "  macOS:   brew install android-platform-tools"
         warn "  Linux:   sudo apt install android-tools-adb"
@@ -149,7 +149,7 @@ check_adb() {
 main() {
     local platform version dest
 
-    echo -e "${BOLD}adbclaw installer${NC}"
+    echo -e "${BOLD}adb-claw installer${NC}"
     echo ""
 
     platform="$(detect_platform)"
@@ -163,7 +163,7 @@ main() {
     fi
 
     mkdir -p "$INSTALL_DIR"
-    dest="${INSTALL_DIR}/adbclaw"
+    dest="${INSTALL_DIR}/adb-claw"
 
     # Download
     download_binary "$platform" "$version" "$dest"
@@ -191,7 +191,7 @@ main() {
     check_adb
 
     echo ""
-    info "Done! Run 'adbclaw doctor' to verify your setup."
+    info "Done! Run 'adb-claw doctor' to verify your setup."
 }
 
 main

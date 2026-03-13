@@ -13,8 +13,8 @@ var shellCmd = &cobra.Command{
 	Long: `Execute a raw command on the device via adb shell.
 The command output is captured and returned in the JSON envelope.
 Example:
-  adbclaw shell "ls /sdcard/"
-  adbclaw shell "getprop ro.build.version.release"`,
+  adb-claw shell "ls /sdcard/"
+  adb-claw shell "getprop ro.build.version.release"`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()

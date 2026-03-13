@@ -3,7 +3,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/device"
+	"github.com/llm-net/adb-claw/pkg/device"
 	"github.com/spf13/cobra"
 )
 

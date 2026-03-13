@@ -13,7 +13,7 @@ var skillJSON string
 var skillCmd = &cobra.Command{
 	Use:   "skill",
 	Short: "Output the skill description (for AI agent integration)",
-	Long:  "Prints the skill.json file that describes adbclaw's capabilities for AI agents.",
+	Long:  "Prints the skill.json file that describes adb-claw's capabilities for AI agents.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print(skillJSON)
 	},

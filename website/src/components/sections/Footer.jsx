@@ -12,7 +12,7 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-3">
               <span className="text-xl">🦀</span>
               <span className="font-display text-lg font-bold tracking-tight text-stone-200">
-                adbclaw
+                adb-claw
               </span>
             </div>
             <p className="max-w-xs text-sm text-stone-600 leading-relaxed">
@@ -27,22 +27,22 @@ export default function Footer() {
               <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">{t.footer.project}</h4>
               <ul className="space-y-2.5">
                 <li>
-                  <a href="https://github.com/llm-net/adbclaw" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
+                  <a href="https://github.com/llm-net/adb-claw" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
                     GitHub
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/llm-net/adbclaw/releases" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
+                  <a href="https://github.com/llm-net/adb-claw/releases" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
                     {t.footer.releases}
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/llm-net/adbclaw/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
+                  <a href="https://github.com/llm-net/adb-claw/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
                     {t.footer.documentation}
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/llm-net/adbclaw/issues" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
+                  <a href="https://github.com/llm-net/adb-claw/issues" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
                     {t.footer.issues}
                   </a>
                 </li>
@@ -72,10 +72,10 @@ export default function Footer() {
           <span className="text-xs text-stone-700 font-mono">MIT License</span>
           <div className="flex items-center gap-4">
             <a
-              href="https://adbclaw.com"
+              href="https://adb-claw.llm.net"
               className="text-xs text-stone-700 hover:text-stone-500 transition-colors font-mono"
             >
-              adbclaw.com
+              adb-claw.llm.net
             </a>
             <span className="text-stone-800">·</span>
             <a

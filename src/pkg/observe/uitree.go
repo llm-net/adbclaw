@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/adb"
 )
 
 // Bounds represents the bounding box of a UI element.

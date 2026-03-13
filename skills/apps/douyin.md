@@ -8,8 +8,8 @@
 优先使用深度链接，可跳过多步 UI 操作，且天然支持中文参数（adb input text 不支持中文）。
 
 ```bash
-# 通用调用方式（推荐使用 adbclaw open）
-adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
+# 通用调用方式（推荐使用 adb-claw open）
+adb-claw open 'snssdk1128://search/result?keyword=遥控车&type=0'
 ```
 
 | 动作 | 链接 | 参数说明 |
@@ -130,18 +130,18 @@ adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
 ### 搜索内容
 
 ```
-1. adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
-2. adbclaw wait --text "综合" --timeout 5000    # 等待搜索结果加载
+1. adb-claw open 'snssdk1128://search/result?keyword=遥控车&type=0'
+2. adb-claw wait --text "综合" --timeout 5000    # 等待搜索结果加载
 3. 根据需要点击分类 Tab（视频/直播/图文等）
 ```
 
-不要尝试用 `adbclaw type` 输入中文，直接用深度链接。
+不要尝试用 `adb-claw type` 输入中文，直接用深度链接。
 
 ### 搜索直播
 
 ```
-1. adbclaw open 'snssdk1128://search/result?keyword={关键词}&type=0'
-2. adbclaw wait --text "直播" --timeout 5000
+1. adb-claw open 'snssdk1128://search/result?keyword={关键词}&type=0'
+2. adb-claw wait --text "直播" --timeout 5000
 3. 手动点击"直播"Tab 切换（type=1 参数可能不生效）
 4. 纵向滚动浏览直播列表
 ```
@@ -149,18 +149,18 @@ adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
 ### 浏览推荐 Feed
 
 ```
-1. adbclaw app launch com.ss.android.ugc.aweme
-2. adbclaw wait --text "推荐" --timeout 5000    # 等待首页加载
-3. adbclaw scroll up                             # 切换下一个视频
-4. adbclaw scroll up --pages 3                   # 连续看 3 个视频
+1. adb-claw app launch com.ss.android.ugc.aweme
+2. adb-claw wait --text "推荐" --timeout 5000    # 等待首页加载
+3. adb-claw scroll up                             # 切换下一个视频
+4. adb-claw scroll up --pages 3                   # 连续看 3 个视频
 ```
 
 ### 获取当前视频信息
 
 ```
-1. adbclaw tap {屏幕中心}     → 暂停视频（重要！否则 UI dump 会失败）
+1. adb-claw tap {屏幕中心}     → 暂停视频（重要！否则 UI dump 会失败）
 2. sleep 1
-3. adbclaw ui tree             → 获取 UI 元素
+3. adb-claw ui tree             → 获取 UI 元素
 4. 查找：
    - resource_id 含 "title" → 用户名（如 "@Rouoii."）
    - resource_id 含 "desc" → 视频描述
@@ -173,16 +173,16 @@ adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
 ### 监控直播间聊天
 
 ```
-1. adbclaw open 'snssdk1128://live?room_id={room_id}'   # 打开直播间
-2. adbclaw wait --text "说点什么" --timeout 10000         # 等待直播间加载
-3. adbclaw monitor --duration 30000 --interval 2000      # 持续读取 30 秒 UI 文本
+1. adb-claw open 'snssdk1128://live?room_id={room_id}'   # 打开直播间
+2. adb-claw wait --text "说点什么" --timeout 10000         # 等待直播间加载
+3. adb-claw monitor --duration 30000 --interval 2000      # 持续读取 30 秒 UI 文本
 ```
 
 直播间视频播放时 `ui tree` 会超时失败。`monitor` 命令通过 accessibility 框架直接读取文本，跳过视频表面节点，可在直播间正常工作。
 
 流式模式适合长时间监控：
 ```
-adbclaw monitor --stream --duration 60000   # 60 秒流式输出，逐条 JSON line
+adb-claw monitor --stream --duration 60000   # 60 秒流式输出，逐条 JSON line
 ```
 
 ### 录制直播间音频
@@ -190,33 +190,33 @@ adbclaw monitor --stream --duration 60000   # 60 秒流式输出，逐条 JSON l
 录制直播间音频（需要 Android 11+）：
 
 ```
-1. adbclaw open 'snssdk1128://live?room_id={room_id}'   # 打开直播间
-2. adbclaw wait --text "说点什么" --timeout 10000         # 等待直播间加载
-3. adbclaw audio capture --file live_audio.wav --duration 60000  # 录制 60 秒
+1. adb-claw open 'snssdk1128://live?room_id={room_id}'   # 打开直播间
+2. adb-claw wait --text "说点什么" --timeout 10000         # 等待直播间加载
+3. adb-claw audio capture --file live_audio.wav --duration 60000  # 录制 60 秒
 ```
 
 注意：录制期间设备扬声器会静音。结合 `monitor` 可同时获取弹幕文本和主播语音：
 
 ```
 # 终端 1：采集音频
-adbclaw audio capture --file live_audio.wav --duration 60000
+adb-claw audio capture --file live_audio.wav --duration 60000
 
 # 终端 2：采集弹幕
-adbclaw monitor --stream --duration 60000
+adb-claw monitor --stream --duration 60000
 ```
 
 如果安装了 asrclaw，可实时转写主播语音：
 
 ```
-adbclaw audio capture --stream --duration 60000 | asrclaw transcribe --stream --lang zh
+adb-claw audio capture --stream --duration 60000 | asrclaw transcribe --stream --lang zh
 ```
 
 ### 清空搜索框并重新输入
 
 ```
 1. 点击搜索框获得焦点
-2. adbclaw clear-field                            # 清空已有文本
-3. adbclaw type "new search"                       # 仅限 ASCII
+2. adb-claw clear-field                            # 清空已有文本
+3. adb-claw type "new search"                       # 仅限 ASCII
 4. 或者直接用深度链接搜索新关键词（推荐）
 ```
 
@@ -224,29 +224,29 @@ adbclaw audio capture --stream --duration 60000 | asrclaw transcribe --stream --
 
 | 能力 | 命令 | 用途 | 状态 |
 |------|------|------|------|
-| 直播文本监控 | `adbclaw monitor` | 读取直播间弹幕和 UI 文本 | 内置 |
-| 系统音频采集 | `adbclaw audio capture` | 录制直播间音频 | 内置（需 Android 11+） |
+| 直播文本监控 | `adb-claw monitor` | 读取直播间弹幕和 UI 文本 | 内置 |
+| 系统音频采集 | `adb-claw audio capture` | 录制直播间音频 | 内置（需 Android 11+） |
 | 语音识别 | `asrclaw transcribe` | 直播语音转文字 | 需另装 `claw install asr-claw` |
 
 ## 已知问题
 
 ### UI dump 在视频播放时失败
 
-**现象**: `adbclaw ui tree` 或 `adbclaw observe` 返回 `UI_DUMP_FAILED`。
+**现象**: `adb-claw ui tree` 或 `adb-claw observe` 返回 `UI_DUMP_FAILED`。
 
 **原因**: 视频播放动画导致 uiautomator dump 超时。
 
 **解决**: 先 tap 屏幕中心暂停视频，等待 1 秒后再 dump。
 
 ```bash
-adbclaw tap 540 1170    # Phone 屏幕中心（根据 device info 调整）
+adb-claw tap 540 1170    # Phone 屏幕中心（根据 device info 调整）
 sleep 1
-adbclaw ui tree
+adb-claw ui tree
 ```
 
 ### UI dump 在搜索结果页失败
 
-**现象**: 搜索结果页执行 `adbclaw ui tree` 返回 `UI_DUMP_FAILED`。
+**现象**: 搜索结果页执行 `adb-claw ui tree` 返回 `UI_DUMP_FAILED`。
 
 **原因**: 搜索结果页的视频预览卡片会自动播放，导致 uiautomator dump 超时。
 
@@ -258,11 +258,11 @@ adbclaw ui tree
 
 **原因**: 连续 tap 或在视频已暂停状态再次 tap 可能触发评论面板。
 
-**解决**: 如果打开了评论面板，按 `adbclaw key BACK` 关闭。首次 tap 暂停视频后不要再次 tap 同一位置。
+**解决**: 如果打开了评论面板，按 `adb-claw key BACK` 关闭。首次 tap 暂停视频后不要再次 tap 同一位置。
 
 ### 中文输入不可用
 
-**现象**: `adbclaw type "中文"` 报错或输入乱码。
+**现象**: `adb-claw type "中文"` 报错或输入乱码。
 
 **原因**: `adb shell input text` 不支持非 ASCII 字符。
 
@@ -274,7 +274,7 @@ adbclaw ui tree
 
 **解决**:
 1. 如果通过深度链接搜索则无此问题
-2. 如果必须手动输入，用 `adbclaw clear-field` 清空输入框后再输入
+2. 如果必须手动输入，用 `adb-claw clear-field` 清空输入框后再输入
 
 ### 搜索深度链接 type 参数可能不生效
 

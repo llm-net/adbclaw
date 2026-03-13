@@ -56,13 +56,13 @@ jobs:
           VERSION="${GITHUB_REF_NAME}"
           mkdir -p bin
           go mod tidy
-          go build -ldflags "-s -w -X github.com/llm-net/adbclaw/cmd.Version=${VERSION}" \
-            -o "bin/adbclaw-${{ matrix.goos }}-${{ matrix.goarch }}" .
+          go build -ldflags "-s -w -X github.com/llm-net/adb-claw/cmd.Version=${VERSION}" \
+            -o "bin/adb-claw-${{ matrix.goos }}-${{ matrix.goarch }}" .
 
       - uses: actions/upload-artifact@v4
         with:
-          name: adbclaw-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: src/bin/adbclaw-${{ matrix.goos }}-${{ matrix.goarch }}
+          name: adb-claw-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: src/bin/adb-claw-${{ matrix.goos }}-${{ matrix.goarch }}
 
   release:
     needs: build
@@ -79,15 +79,15 @@ jobs:
           mkdir -p release
 
           # Collect binaries
-          find artifacts -type f -name 'adbclaw-*' -exec cp {} release/ \;
-          chmod +x release/adbclaw-*
+          find artifacts -type f -name 'adb-claw-*' -exec cp {} release/ \;
+          chmod +x release/adb-claw-*
 
           # Copy install script
           cp scripts/install.sh release/install.sh
 
           # Generate SHA256 checksums
           cd release
-          sha256sum adbclaw-* > checksums.txt
+          sha256sum adb-claw-* > checksums.txt
           echo ""
           echo "=== Release Assets ==="
           ls -lh
@@ -104,20 +104,20 @@ jobs:
 
             ```bash
             # One-line install (macOS / Linux)
-            curl -fsSL https://github.com/llm-net/adbclaw/releases/latest/download/install.sh | bash
+            curl -fsSL https://github.com/llm-net/adb-claw/releases/latest/download/install.sh | bash
 
             # Or download binary directly
             # macOS Apple Silicon:
-            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-darwin-arm64
+            curl -fSL -o adb-claw https://github.com/llm-net/adb-claw/releases/download/${{ github.ref_name }}/adb-claw-darwin-arm64
             # macOS Intel:
-            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-darwin-amd64
+            curl -fSL -o adb-claw https://github.com/llm-net/adb-claw/releases/download/${{ github.ref_name }}/adb-claw-darwin-amd64
             # Linux x86_64:
-            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-linux-amd64
+            curl -fSL -o adb-claw https://github.com/llm-net/adb-claw/releases/download/${{ github.ref_name }}/adb-claw-linux-amd64
             # Linux ARM64:
-            curl -fSL -o adbclaw https://github.com/llm-net/adbclaw/releases/download/${{ github.ref_name }}/adbclaw-linux-arm64
+            curl -fSL -o adb-claw https://github.com/llm-net/adb-claw/releases/download/${{ github.ref_name }}/adb-claw-linux-arm64
 
-            chmod +x adbclaw
-            ./adbclaw doctor
+            chmod +x adb-claw
+            ./adb-claw doctor
             ```
 
             Also requires `adb` — install via `brew install android-platform-tools` (macOS) or `apt install android-tools-adb` (Linux).

@@ -94,7 +94,7 @@ export default {
   howItWorks: {
     label: '架构',
     title: '工作原理',
-    description: '命令从 AI Agent 经由 adbclaw 流向设备。每个响应都是结构化 JSON。',
+    description: '命令从 AI Agent 经由 adb-claw 流向设备。每个响应都是结构化 JSON。',
     agentLoop: '推荐的 Agent 循环',
     architectureSteps: [
       {
@@ -103,7 +103,7 @@ export default {
         description: '读取技能描述，发送结构化命令，解析 JSON 响应以决定下一步操作',
       },
       {
-        label: 'adbclaw',
+        label: 'adb-claw',
         sublabel: 'Go CLI · v1.4.1',
         description: '将 30+ 条命令转换为 ADB 操作。返回带有错误码和建议的结构化 JSON',
       },
@@ -135,38 +135,38 @@ export default {
       {
         title: '观察与检查',
         commands: [
-          { cmd: 'adbclaw observe', comment: '截屏 + UI 树' },
-          { cmd: 'adbclaw screenshot --width 720', comment: '缩放截屏' },
-          { cmd: 'adbclaw ui tree', comment: '索引化元素' },
-          { cmd: 'adbclaw ui find --text "Login"', comment: '按文本查找' },
+          { cmd: 'adb-claw observe', comment: '截屏 + UI 树' },
+          { cmd: 'adb-claw screenshot --width 720', comment: '缩放截屏' },
+          { cmd: 'adb-claw ui tree', comment: '索引化元素' },
+          { cmd: 'adb-claw ui find --text "Login"', comment: '按文本查找' },
         ],
       },
       {
         title: '输入与导航',
         commands: [
-          { cmd: 'adbclaw tap --index 5', comment: '按元素索引点击' },
-          { cmd: 'adbclaw type "hello world"', comment: '输入文本' },
-          { cmd: 'adbclaw scroll down --pages 3', comment: '智能滚动' },
-          { cmd: 'adbclaw open "weixin://dl/scan"', comment: '深度链接' },
-          { cmd: 'adbclaw clear-field --index 2', comment: '清空输入框' },
+          { cmd: 'adb-claw tap --index 5', comment: '按元素索引点击' },
+          { cmd: 'adb-claw type "hello world"', comment: '输入文本' },
+          { cmd: 'adb-claw scroll down --pages 3', comment: '智能滚动' },
+          { cmd: 'adb-claw open "weixin://dl/scan"', comment: '深度链接' },
+          { cmd: 'adb-claw clear-field --index 2', comment: '清空输入框' },
         ],
       },
       {
         title: '等待与屏幕',
         commands: [
-          { cmd: 'adbclaw wait --text "Done"', comment: '等待元素出现' },
-          { cmd: 'adbclaw wait --text "Loading" --gone', comment: '等待元素消失' },
-          { cmd: 'adbclaw screen status', comment: '亮屏/灭屏/锁定/旋转' },
-          { cmd: 'adbclaw screen unlock', comment: '唤醒 + 滑动解锁' },
+          { cmd: 'adb-claw wait --text "Done"', comment: '等待元素出现' },
+          { cmd: 'adb-claw wait --text "Loading" --gone', comment: '等待元素消失' },
+          { cmd: 'adb-claw screen status', comment: '亮屏/灭屏/锁定/旋转' },
+          { cmd: 'adb-claw screen unlock', comment: '唤醒 + 滑动解锁' },
         ],
       },
       {
         title: '应用与系统',
         commands: [
-          { cmd: 'adbclaw app launch com.example', comment: '启动应用' },
-          { cmd: 'adbclaw app install ./app.apk', comment: '安装 APK' },
-          { cmd: 'adbclaw shell "pm list packages"', comment: '原始 shell' },
-          { cmd: 'adbclaw file pull /sdcard/log.txt .', comment: '拉取文件' },
+          { cmd: 'adb-claw app launch com.example', comment: '启动应用' },
+          { cmd: 'adb-claw app install ./app.apk', comment: '安装 APK' },
+          { cmd: 'adb-claw shell "pm list packages"', comment: '原始 shell' },
+          { cmd: 'adb-claw file pull /sdcard/log.txt .', comment: '拉取文件' },
         ],
       },
     ],
@@ -248,7 +248,7 @@ export default {
       {
         name: 'OpenClaw',
         url: 'https://github.com/openclaw/openclaw',
-        description: '本地优先的个人 AI 助手平台。adbclaw 作为 OpenClaw Skill 发布在 ClawHub 上。',
+        description: '本地优先的个人 AI 助手平台。adb-claw 作为 OpenClaw Skill 发布在 ClawHub 上。',
         stars: '',
         highlight: true,
       },

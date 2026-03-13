@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react'
 import { useLanguage } from '../../i18n/context'
 
 const terminalLines = [
-  { cmd: 'adbclaw observe --width 720', delay: 0 },
+  { cmd: 'adb-claw observe --width 720', delay: 0 },
   { out: '{"ok":true,"command":"observe","data":{...}}', delay: 800 },
-  { cmd: 'adbclaw tap --text "Search"', delay: 1600 },
+  { cmd: 'adb-claw tap --text "Search"', delay: 1600 },
   { out: '{"ok":true,"command":"tap","duration_ms":38}', delay: 2200 },
-  { cmd: 'adbclaw type "cat videos"', delay: 3000 },
+  { cmd: 'adb-claw type "cat videos"', delay: 3000 },
   { out: '{"ok":true,"command":"type","duration_ms":52}', delay: 3600 },
-  { cmd: 'adbclaw scroll down --pages 2', delay: 4400 },
+  { cmd: 'adb-claw scroll down --pages 2', delay: 4400 },
   { out: '{"ok":true,"command":"scroll","duration_ms":680}', delay: 5000 },
-  { cmd: 'adbclaw wait --text "Results" --timeout 5000', delay: 5800 },
+  { cmd: 'adb-claw wait --text "Results" --timeout 5000', delay: 5800 },
   { out: '{"ok":true,"command":"wait","data":{"found":true}}', delay: 6600 },
 ]
 
@@ -34,7 +34,7 @@ function TerminalAnimation() {
             <span className="w-3 h-3 rounded-full bg-stone-700 hover:bg-yellow-500/80 transition-colors" />
             <span className="w-3 h-3 rounded-full bg-stone-700 hover:bg-green-500/80 transition-colors" />
           </div>
-          <span className="text-[11px] text-stone-600 ml-2 font-mono tracking-wider uppercase">adbclaw</span>
+          <span className="text-[11px] text-stone-600 ml-2 font-mono tracking-wider uppercase">adb-claw</span>
         </div>
         <div className="p-5 font-mono text-[13px] leading-[1.8] min-h-[260px] scanline">
           {terminalLines.slice(0, visibleLines).map((line, i) => (
@@ -108,7 +108,7 @@ export default function Hero() {
           <div className="flex items-center gap-3">
             <span className="text-2xl">🦀</span>
             <span className="font-display text-lg font-bold tracking-tight text-stone-100">
-              adbclaw
+              adb-claw
             </span>
           </div>
           <div className="flex items-center gap-6">
@@ -126,7 +126,7 @@ export default function Hero() {
             </a>
             <LanguageSwitcher />
             <a
-              href="https://github.com/llm-net/adbclaw"
+              href="https://github.com/llm-net/adb-claw"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg border border-stone-800 bg-surface-900/80 px-4 py-2 text-sm text-stone-400 hover:border-amber-500/30 hover:text-stone-200 transition-all font-mono"
@@ -164,7 +164,7 @@ export default function Hero() {
             {/* Version badge */}
             <div className="mb-8 flex items-center gap-3">
               <a
-                href="https://github.com/llm-net/adbclaw/releases/tag/v1.4.1"
+                href="https://github.com/llm-net/adb-claw/releases/tag/v1.4.1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-2 transition-all hover:border-amber-500/40 hover:bg-amber-500/10"
@@ -181,7 +181,7 @@ export default function Hero() {
 
             <div className="flex flex-wrap gap-4">
               <a
-                href="https://github.com/llm-net/adbclaw"
+                href="https://github.com/llm-net/adb-claw"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 rounded-lg bg-amber-500 px-6 py-3 text-sm font-semibold text-surface-950 transition-all hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
@@ -202,7 +202,7 @@ export default function Hero() {
             {/* Quick install */}
             <div className="mt-10 flex items-center gap-3 rounded-lg border border-stone-800/60 bg-surface-900/50 px-4 py-2.5 max-w-lg">
               <span className="text-amber-500/60 font-mono text-sm select-none">$</span>
-              <code className="text-sm font-mono text-stone-400 truncate">curl -fsSL https://adbclaw.com/install.sh | bash</code>
+              <code className="text-sm font-mono text-stone-400 truncate">curl -fsSL https://github.com/llm-net/adb-claw/releases/latest/download/install.sh | bash</code>
               <span className="ml-auto text-[10px] text-stone-600 font-mono uppercase tracking-wider shrink-0">v1.4.1</span>
             </div>
           </div>

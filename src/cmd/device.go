@@ -64,7 +64,7 @@ var deviceInfoCmd = &cobra.Command{
 		info, err := getDeviceInfo()
 		if err != nil {
 			writer.Fail("device info", "ADB_ERROR", err.Error(),
-				"Ensure a device is connected: adbclaw device list", start)
+				"Ensure a device is connected: adb-claw device list", start)
 			return nil
 		}
 		writer.Success("device info", info, start)

@@ -3,7 +3,7 @@ package observe
 import (
 	"sync"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/adb"
 )
 
 // ObserveResult holds the combined output of screenshot + UI tree.

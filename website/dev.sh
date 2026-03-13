@@ -30,15 +30,15 @@ do_start() {
     kill_port
   fi
   echo "Starting dev server on port $PORT..."
-  nohup npx vite --port "$PORT" --host > /tmp/adbclaw-dev.log 2>&1 &
+  nohup npx vite --port "$PORT" --host > /tmp/adb-claw-dev.log 2>&1 &
   disown
   sleep 1
   local new_pid
   new_pid=$(get_pid)
   if [ -n "$new_pid" ]; then
-    echo "Dev server started (PID: $new_pid), log: /tmp/adbclaw-dev.log"
+    echo "Dev server started (PID: $new_pid), log: /tmp/adb-claw-dev.log"
   else
-    echo "Failed to start. Check /tmp/adbclaw-dev.log"
+    echo "Failed to start. Check /tmp/adb-claw-dev.log"
     exit 1
   fi
 }

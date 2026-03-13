@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llm-net/adbclaw/pkg/adb"
+	"github.com/llm-net/adb-claw/pkg/adb"
 )
 
 var wmSizeRe = regexp.MustCompile(`(\d+)x(\d+)`)

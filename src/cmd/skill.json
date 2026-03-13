@@ -1,5 +1,5 @@
 {
-  "name": "adbclaw",
+  "name": "adb-claw",
   "version": "1.2.0",
   "description": "Android device control CLI for AI agent automation",
   "capabilities": {
@@ -12,93 +12,93 @@
     {
       "name": "observe",
       "description": "Capture screenshot + UI element tree + device state in one call.",
-      "usage": "adbclaw observe",
+      "usage": "adb-claw observe",
       "returns": "screenshot (base64 PNG), UI elements with index/id/text/bounds",
       "when_to_use": "Before deciding any action. After every action to verify the result."
     },
     {
       "name": "screenshot",
       "description": "Capture a screenshot of the device screen.",
-      "usage": "adbclaw screenshot [-f file.png]",
+      "usage": "adb-claw screenshot [-f file.png]",
       "returns": "PNG image as base64 or saved to file",
       "when_to_use": "When you only need the visual state without UI element data."
     },
     {
       "name": "tap",
       "description": "Tap on a UI element or coordinate. Prefer --index (from observe) for reliability.",
-      "usage": "adbclaw tap {--index N | --id RESOURCE_ID | --text TEXT | X Y}",
+      "usage": "adb-claw tap {--index N | --id RESOURCE_ID | --text TEXT | X Y}",
       "when_to_use": "To click buttons, links, input fields, or any interactive element."
     },
     {
       "name": "long_press",
       "description": "Long press on a coordinate.",
-      "usage": "adbclaw long-press X Y [--duration 1000]",
+      "usage": "adb-claw long-press X Y [--duration 1000]",
       "when_to_use": "For context menus, drag initiation, or special long-press actions."
     },
     {
       "name": "swipe",
       "description": "Swipe from one point to another.",
-      "usage": "adbclaw swipe X1 Y1 X2 Y2 [--duration 300]",
+      "usage": "adb-claw swipe X1 Y1 X2 Y2 [--duration 300]",
       "when_to_use": "To scroll content, dismiss notifications, or navigate between pages."
     },
     {
       "name": "type",
       "description": "Input text into the currently focused field.",
-      "usage": "adbclaw type TEXT",
+      "usage": "adb-claw type TEXT",
       "when_to_use": "After tapping an input field to focus it."
     },
     {
       "name": "key",
       "description": "Press a system key.",
-      "usage": "adbclaw key {HOME|BACK|ENTER|TAB|DEL|POWER|VOLUME_UP|VOLUME_DOWN}",
+      "usage": "adb-claw key {HOME|BACK|ENTER|TAB|DEL|POWER|VOLUME_UP|VOLUME_DOWN}",
       "when_to_use": "To navigate back, go home, confirm input, or control device."
     },
     {
       "name": "app_launch",
       "description": "Launch an app by package name.",
-      "usage": "adbclaw app launch PACKAGE_NAME",
+      "usage": "adb-claw app launch PACKAGE_NAME",
       "when_to_use": "To open a specific app. Use 'app list' first to find the package name."
     },
     {
       "name": "app_stop",
       "description": "Force stop an app.",
-      "usage": "adbclaw app stop PACKAGE_NAME",
+      "usage": "adb-claw app stop PACKAGE_NAME",
       "when_to_use": "To close an app completely."
     },
     {
       "name": "app_current",
       "description": "Get the currently focused app and activity.",
-      "usage": "adbclaw app current",
+      "usage": "adb-claw app current",
       "when_to_use": "To check which app is in the foreground."
     },
     {
       "name": "app_list",
       "description": "List installed apps on the device.",
-      "usage": "adbclaw app list [--all]",
+      "usage": "adb-claw app list [--all]",
       "when_to_use": "To find package names of installed apps."
     },
     {
       "name": "device_info",
       "description": "Get device details: model, screen size, Android version, battery.",
-      "usage": "adbclaw device info",
+      "usage": "adb-claw device info",
       "when_to_use": "At the start of a session to understand the device."
     },
     {
       "name": "device_list",
       "description": "List all connected Android devices.",
-      "usage": "adbclaw device list",
+      "usage": "adb-claw device list",
       "when_to_use": "To see available devices before starting."
     },
     {
       "name": "ui_tree",
       "description": "Get the full UI element tree with indexed elements.",
-      "usage": "adbclaw ui tree",
+      "usage": "adb-claw ui tree",
       "when_to_use": "When you need detailed UI structure without a screenshot."
     },
     {
       "name": "ui_find",
       "description": "Search for UI elements by text, resource-id, or index.",
-      "usage": "adbclaw ui find {--text TEXT | --id ID | --index N}",
+      "usage": "adb-claw ui find {--text TEXT | --id ID | --index N}",
       "when_to_use": "To find specific elements without dumping the full tree."
     }
   ],

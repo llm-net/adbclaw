@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/llm-net/adbclaw/pkg/input"
-	"github.com/llm-net/adbclaw/pkg/observe"
+	"github.com/llm-net/adb-claw/pkg/input"
+	"github.com/llm-net/adb-claw/pkg/observe"
 	"github.com/spf13/cobra"
 )
 
@@ -20,10 +20,10 @@ var tapCmd = &cobra.Command{
 	Use:   "tap [x y]",
 	Short: "Tap on a coordinate or UI element",
 	Long: `Tap on a specific location. Can target by:
-  - Coordinates: adbclaw tap 540 1200
-  - Element index: adbclaw tap --index 3
-  - Resource ID: adbclaw tap --id "btn_login"
-  - Text content: adbclaw tap --text "Login"`,
+  - Coordinates: adb-claw tap 540 1200
+  - Element index: adb-claw tap --index 3
+  - Resource ID: adb-claw tap --id "btn_login"
+  - Text content: adb-claw tap --text "Login"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
 
@@ -36,7 +36,7 @@ var tapCmd = &cobra.Command{
 			el, err := resolveElementByIndex(tapIndex)
 			if err != nil {
 				writer.Fail("tap", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			x, y = el.Center.X, el.Center.Y
@@ -46,7 +46,7 @@ var tapCmd = &cobra.Command{
 			el, err := resolveElementByID(tapID)
 			if err != nil {
 				writer.Fail("tap", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			x, y = el.Center.X, el.Center.Y
@@ -56,7 +56,7 @@ var tapCmd = &cobra.Command{
 			el, err := resolveElementByText(tapText)
 			if err != nil {
 				writer.Fail("tap", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			x, y = el.Center.X, el.Center.Y
@@ -66,7 +66,7 @@ var tapCmd = &cobra.Command{
 			if len(args) < 2 {
 				writer.Fail("tap", "MISSING_ARGS",
 					"Specify coordinates (x y) or use --index/--id/--text",
-					"Example: adbclaw tap 540 1200", start)
+					"Example: adb-claw tap 540 1200", start)
 				return nil
 			}
 			var err error
@@ -112,10 +112,10 @@ var longPressCmd = &cobra.Command{
 	Use:   "long-press [x y]",
 	Short: "Long press at a coordinate or UI element",
 	Long: `Long press on a specific location. Can target by:
-  - Coordinates: adbclaw long-press 540 1200
-  - Element index: adbclaw long-press --index 3
-  - Resource ID: adbclaw long-press --id "btn_login"
-  - Text content: adbclaw long-press --text "Login"`,
+  - Coordinates: adb-claw long-press 540 1200
+  - Element index: adb-claw long-press --index 3
+  - Resource ID: adb-claw long-press --id "btn_login"
+  - Text content: adb-claw long-press --text "Login"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()
 
@@ -127,7 +127,7 @@ var longPressCmd = &cobra.Command{
 			el, err := resolveElementByIndex(longPressIndex)
 			if err != nil {
 				writer.Fail("long-press", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			x, y = el.Center.X, el.Center.Y
@@ -137,7 +137,7 @@ var longPressCmd = &cobra.Command{
 			el, err := resolveElementByID(longPressID)
 			if err != nil {
 				writer.Fail("long-press", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			x, y = el.Center.X, el.Center.Y
@@ -147,7 +147,7 @@ var longPressCmd = &cobra.Command{
 			el, err := resolveElementByText(longPressText)
 			if err != nil {
 				writer.Fail("long-press", "ELEMENT_NOT_FOUND", err.Error(),
-					"Use 'adbclaw ui tree' to see available elements", start)
+					"Use 'adb-claw ui tree' to see available elements", start)
 				return nil
 			}
 			x, y = el.Center.X, el.Center.Y
@@ -157,7 +157,7 @@ var longPressCmd = &cobra.Command{
 			if len(args) < 2 {
 				writer.Fail("long-press", "MISSING_ARGS",
 					"Specify coordinates (x y) or use --index/--id/--text",
-					"Example: adbclaw long-press 540 1200", start)
+					"Example: adb-claw long-press 540 1200", start)
 				return nil
 			}
 			var err error

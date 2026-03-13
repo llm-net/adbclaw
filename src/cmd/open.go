@@ -12,9 +12,9 @@ var openCmd = &cobra.Command{
 	Short: "Open a URI via Android intent (deep link, URL, etc.)",
 	Long: `Open a URI using Android's ACTION_VIEW intent.
 Examples:
-  adbclaw open https://www.google.com
-  adbclaw open myapp://path/to/screen
-  adbclaw open "market://details?id=com.example"`,
+  adb-claw open https://www.google.com
+  adb-claw open myapp://path/to/screen
+  adb-claw open "market://details?id=com.example"`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		start := time.Now()

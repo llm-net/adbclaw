@@ -1,4 +1,8 @@
+import { useLanguage } from '../../i18n/context'
+
 export default function Install() {
+  const { t } = useLanguage()
+
   return (
     <section id="install" className="relative py-28">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
@@ -6,13 +10,13 @@ export default function Install() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-16">
           <span className="inline-block mb-4 text-[11px] font-mono uppercase tracking-[0.2em] text-amber-500/60">
-            Install
+            {t.install.label}
           </span>
           <h2 className="text-3xl font-display font-bold tracking-tight text-stone-100 sm:text-4xl">
-            Get started in seconds
+            {t.install.title}
           </h2>
           <p className="mt-4 max-w-xl text-stone-500 leading-relaxed">
-            Pre-built binaries for macOS and Linux. No Go toolchain required. Just download and run.
+            {t.install.description}
           </p>
         </div>
 
@@ -21,10 +25,10 @@ export default function Install() {
           <div className="group relative rounded-xl border border-amber-500/30 bg-surface-900/40 p-6 transition-all duration-300 hover:border-amber-500/40">
             <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-amber-500/[0.03] to-transparent" />
             <div className="relative">
-              <span className="inline-block mb-3 text-[10px] font-mono text-amber-500/80 uppercase tracking-wider">Recommended</span>
-              <h3 className="mb-2 text-base font-semibold text-stone-100 font-display">One-liner Install</h3>
+              <span className="inline-block mb-3 text-[10px] font-mono text-amber-500/80 uppercase tracking-wider">{t.install.recommended}</span>
+              <h3 className="mb-2 text-base font-semibold text-stone-100 font-display">{t.install.oneLiner}</h3>
               <p className="mb-5 text-sm text-stone-500 leading-relaxed">
-                Auto-detects your OS and architecture. Downloads the latest binary to <code className="text-stone-400">~/.local/bin</code>.
+                {t.install.oneLinerDesc} <code className="text-stone-400">~/.local/bin</code>.
               </p>
               <div className="rounded-lg border border-stone-800/60 bg-surface-950/80 p-3 overflow-x-auto">
                 <code className="text-[13px] font-mono text-stone-300 whitespace-nowrap">
@@ -38,10 +42,10 @@ export default function Install() {
           {/* Option B: Direct download */}
           <div className="group relative rounded-xl border border-stone-800/60 bg-surface-900/30 p-6 transition-all duration-300 hover:border-amber-500/20">
             <div className="relative">
-              <span className="inline-block mb-3 text-[10px] font-mono text-stone-600 uppercase tracking-wider">Manual</span>
-              <h3 className="mb-2 text-base font-semibold text-stone-100 font-display">Download Binary</h3>
+              <span className="inline-block mb-3 text-[10px] font-mono text-stone-600 uppercase tracking-wider">{t.install.manual}</span>
+              <h3 className="mb-2 text-base font-semibold text-stone-100 font-display">{t.install.downloadBinary}</h3>
               <p className="mb-5 text-sm text-stone-500 leading-relaxed">
-                Grab the pre-built binary for your platform from GitHub Releases.
+                {t.install.downloadBinaryDesc}
               </p>
               <div className="space-y-2">
                 {['darwin-arm64', 'darwin-amd64', 'linux-arm64', 'linux-amd64'].map((platform) => (
@@ -63,10 +67,10 @@ export default function Install() {
           {/* Option C: Build from source */}
           <div className="group relative rounded-xl border border-stone-800/60 bg-surface-900/30 p-6 transition-all duration-300 hover:border-amber-500/20">
             <div className="relative">
-              <span className="inline-block mb-3 text-[10px] font-mono text-stone-600 uppercase tracking-wider">From source</span>
-              <h3 className="mb-2 text-base font-semibold text-stone-100 font-display">Build with Go</h3>
+              <span className="inline-block mb-3 text-[10px] font-mono text-stone-600 uppercase tracking-wider">{t.install.fromSource}</span>
+              <h3 className="mb-2 text-base font-semibold text-stone-100 font-display">{t.install.buildWithGo}</h3>
               <p className="mb-5 text-sm text-stone-500 leading-relaxed">
-                Clone the repo and build. Requires Go 1.24+.
+                {t.install.buildWithGoDesc}
               </p>
               <div className="rounded-lg border border-stone-800/60 bg-surface-950/80 p-3 space-y-1">
                 <div><code className="text-[13px] font-mono text-stone-400"><span className="text-amber-500/60 select-none">$ </span>git clone https://github.com/llm-net/adbclaw</code></div>
@@ -79,9 +83,9 @@ export default function Install() {
         {/* Prerequisites note */}
         <div className="mt-8 rounded-lg border border-stone-800/40 bg-surface-900/20 px-5 py-4">
           <p className="text-xs text-stone-600 leading-relaxed">
-            <span className="text-stone-500 font-semibold">Prerequisite:</span> ADB (Android Debug Bridge) must be installed and in your PATH.
-            On macOS: <code className="text-stone-500">brew install android-platform-tools</code>.
-            On Linux: <code className="text-stone-500">apt install adb</code> or <code className="text-stone-500">pacman -S android-tools</code>.
+            <span className="text-stone-500 font-semibold">{t.install.prerequisite}</span> {t.install.prerequisiteText}
+            {' '}macOS: <code className="text-stone-500">brew install android-platform-tools</code>.
+            {' '}Linux: <code className="text-stone-500">apt install adb</code> / <code className="text-stone-500">pacman -S android-tools</code>.
           </p>
         </div>
       </div>

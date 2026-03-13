@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLanguage } from '../../i18n/context'
 
 const terminalLines = [
   { cmd: 'adbclaw observe --width 720', delay: 0 },
@@ -60,7 +61,30 @@ function TerminalAnimation() {
   )
 }
 
+function LanguageSwitcher() {
+  const { lang, setLang } = useLanguage()
+  return (
+    <div className="flex items-center rounded-lg border border-stone-800 bg-surface-900/80 overflow-hidden text-xs font-mono">
+      <button
+        onClick={() => setLang('en')}
+        className={`px-2.5 py-1.5 transition-colors ${lang === 'en' ? 'text-amber-500 bg-amber-500/10' : 'text-stone-500 hover:text-stone-300'}`}
+      >
+        EN
+      </button>
+      <span className="w-px h-4 bg-stone-800" />
+      <button
+        onClick={() => setLang('zh')}
+        className={`px-2.5 py-1.5 transition-colors ${lang === 'zh' ? 'text-amber-500 bg-amber-500/10' : 'text-stone-500 hover:text-stone-300'}`}
+      >
+        中文
+      </button>
+    </div>
+  )
+}
+
 export default function Hero() {
+  const { t } = useLanguage()
+
   return (
     <section className="relative overflow-hidden">
       {/* Background effects */}
@@ -89,17 +113,18 @@ export default function Hero() {
           </div>
           <div className="flex items-center gap-6">
             <a href="#features" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
-              features
+              {t.nav.features}
             </a>
             <a href="#install" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
-              install
+              {t.nav.install}
             </a>
             <a href="#commands" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
-              commands
+              {t.nav.commands}
             </a>
             <a href="#usage" className="text-sm text-stone-500 hover:text-stone-300 transition-colors font-mono">
-              usage
+              {t.nav.usage}
             </a>
+            <LanguageSwitcher />
             <a
               href="https://github.com/llm-net/adbclaw"
               target="_blank"
@@ -128,12 +153,12 @@ export default function Hero() {
             </div>
 
             <h1 className="mb-6 font-display text-5xl font-bold tracking-tight text-stone-50 sm:text-6xl lg:text-7xl leading-[1.05]">
-              Android control<br />
-              <span className="text-gradient">for AI agents</span>
+              {t.hero.title}<br />
+              <span className="text-gradient">{t.hero.titleHighlight}</span>
             </h1>
 
             <p className="mb-10 max-w-lg text-lg leading-relaxed text-stone-400 font-body">
-              30+ commands over ADB — observe screens, tap by element index, scroll smartly, open deep links, wait for UI state, manage apps, transfer files. Structured JSON in, structured JSON out. Available as a Claude Code plugin and OpenClaw skill.
+              {t.hero.description}
             </p>
 
             {/* Version badge */}
@@ -151,7 +176,7 @@ export default function Hero() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
               </a>
-              <span className="text-xs text-stone-600 font-mono">monitor + Meituan profile + ClawHub</span>
+              <span className="text-xs text-stone-600 font-mono">{t.hero.versionNote}</span>
             </div>
 
             <div className="flex flex-wrap gap-4">
@@ -161,7 +186,7 @@ export default function Hero() {
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 rounded-lg bg-amber-500 px-6 py-3 text-sm font-semibold text-surface-950 transition-all hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
               >
-                <span>Get Started</span>
+                <span>{t.hero.getStarted}</span>
                 <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
@@ -170,7 +195,7 @@ export default function Hero() {
                 href="#usage"
                 className="inline-flex items-center gap-2 rounded-lg border border-stone-800 px-6 py-3 text-sm font-medium text-stone-400 transition-all hover:border-stone-700 hover:text-stone-200"
               >
-                See examples
+                {t.hero.seeExamples}
               </a>
             </div>
 

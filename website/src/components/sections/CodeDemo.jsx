@@ -1,7 +1,9 @@
 import CodeBlock from '../ui/CodeBlock'
-import { cliExamples } from '../../data/content'
+import { useLanguage } from '../../i18n/context'
 
 export default function CodeDemo() {
+  const { t } = useLanguage()
+
   return (
     <section id="usage" className="relative py-28">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
@@ -9,17 +11,17 @@ export default function CodeDemo() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-16">
           <span className="inline-block mb-4 text-[11px] font-mono uppercase tracking-[0.2em] text-amber-500/60">
-            Usage
+            {t.codeDemo.label}
           </span>
           <h2 className="text-3xl font-display font-bold tracking-tight text-stone-100 sm:text-4xl">
-            30+ commands, one binary
+            {t.codeDemo.title}
           </h2>
           <p className="mt-4 max-w-xl text-stone-500 leading-relaxed">
-            Observe, navigate, wait, and manage — all as top-level commands with structured JSON output. Prefer element index over coordinates.
+            {t.codeDemo.description}
           </p>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {cliExamples.map((example) => (
+          {t.codeDemo.examples.map((example) => (
             <CodeBlock key={example.title} title={example.title} commands={example.commands} />
           ))}
         </div>
@@ -27,8 +29,8 @@ export default function CodeDemo() {
         {/* JSON output example */}
         <div className="mt-8 rounded-xl border border-stone-800/60 bg-surface-900/40 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3 border-b border-stone-800/40">
-            <span className="text-xs text-stone-400 font-mono tracking-wide">JSON Envelope</span>
-            <span className="text-[10px] text-stone-600 font-mono uppercase tracking-wider">Every command returns this</span>
+            <span className="text-xs text-stone-400 font-mono tracking-wide">{t.codeDemo.jsonEnvelope}</span>
+            <span className="text-[10px] text-stone-600 font-mono uppercase tracking-wider">{t.codeDemo.everyCommand}</span>
           </div>
           <div className="p-5 overflow-x-auto scanline">
             <pre className="text-[13px] font-mono leading-[1.9]">

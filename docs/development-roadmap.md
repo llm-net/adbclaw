@@ -20,7 +20,6 @@
 
 ### 第二轮迭代 — 高级命令 (v0.2.0)
 
-详细方案见 `docs/iteration-2-advanced-commands.md`。
 
 | Phase | 内容 | 状态 |
 |-------|------|------|

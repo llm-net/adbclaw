@@ -1,6 +1,8 @@
-import { relatedProjects } from '../../data/content'
+import { useLanguage } from '../../i18n/context'
 
 export default function RelatedProjects() {
+  const { t } = useLanguage()
+
   return (
     <section className="relative py-28">
       <div className="absolute inset-0 bg-gradient-to-b from-surface-950 via-surface-900/20 to-surface-950" />
@@ -9,17 +11,17 @@ export default function RelatedProjects() {
       <div className="relative mx-auto max-w-6xl px-6">
         <div className="mb-16">
           <span className="inline-block mb-4 text-[11px] font-mono uppercase tracking-[0.2em] text-amber-500/60">
-            Ecosystem
+            {t.relatedProjects.label}
           </span>
           <h2 className="text-3xl font-display font-bold tracking-tight text-stone-100 sm:text-4xl">
-            Related projects
+            {t.relatedProjects.title}
           </h2>
           <p className="mt-4 max-w-xl text-stone-500 leading-relaxed">
-            Other tools in the Android automation and AI agent space.
+            {t.relatedProjects.description}
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {relatedProjects.map((project) => (
+          {t.relatedProjects.items.map((project) => (
             <a
               key={project.name}
               href={project.url}
@@ -39,7 +41,7 @@ export default function RelatedProjects() {
                     {project.stars}
                   </span>
                 ) : project.highlight ? (
-                  <span className="text-[10px] font-mono text-amber-500/60 uppercase tracking-wider">Skill Platform</span>
+                  <span className="text-[10px] font-mono text-amber-500/60 uppercase tracking-wider">{t.relatedProjects.skillPlatform}</span>
                 ) : null}
               </div>
               <p className="text-xs leading-relaxed text-stone-600 group-hover:text-stone-500 transition-colors">{project.description}</p>

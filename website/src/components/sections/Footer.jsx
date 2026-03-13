@@ -1,4 +1,8 @@
+import { useLanguage } from '../../i18n/context'
+
 export default function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className="relative border-t border-stone-800/30 py-16">
       <div className="mx-auto max-w-6xl px-6">
@@ -12,7 +16,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="max-w-xs text-sm text-stone-600 leading-relaxed">
-              Android device control CLI for AI agent automation. 30+ commands over ADB. Pure tool layer — no LLM/Agent logic included.
+              {t.footer.description}
             </p>
             <span className="inline-block mt-3 text-[10px] font-mono text-stone-700 tracking-wider">v1.4.1 · darwin-arm64 · darwin-amd64 · linux-arm64 · linux-amd64</span>
           </div>
@@ -20,7 +24,7 @@ export default function Footer() {
           {/* Links */}
           <div className="flex gap-16">
             <div>
-              <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">Project</h4>
+              <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">{t.footer.project}</h4>
               <ul className="space-y-2.5">
                 <li>
                   <a href="https://github.com/llm-net/adbclaw" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
@@ -29,31 +33,31 @@ export default function Footer() {
                 </li>
                 <li>
                   <a href="https://github.com/llm-net/adbclaw/releases" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
-                    Releases
+                    {t.footer.releases}
                   </a>
                 </li>
                 <li>
                   <a href="https://github.com/llm-net/adbclaw/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
-                    Documentation
+                    {t.footer.documentation}
                   </a>
                 </li>
                 <li>
                   <a href="https://github.com/llm-net/adbclaw/issues" target="_blank" rel="noopener noreferrer" className="text-sm text-stone-500 hover:text-stone-300 transition-colors">
-                    Issues
+                    {t.footer.issues}
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">Available on</h4>
+              <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">{t.footer.availableOn}</h4>
               <ul className="space-y-2.5">
-                <li><span className="text-sm text-stone-500">Claude Code Plugin</span></li>
-                <li><span className="text-sm text-stone-500">OpenClaw / ClawHub</span></li>
-                <li><span className="text-sm text-stone-500">Standalone CLI</span></li>
+                <li><span className="text-sm text-stone-500">{t.footer.claudeCodePlugin}</span></li>
+                <li><span className="text-sm text-stone-500">{t.footer.openClawClawHub}</span></li>
+                <li><span className="text-sm text-stone-500">{t.footer.standaloneCli}</span></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">Stack</h4>
+              <h4 className="text-[11px] font-mono uppercase tracking-[0.2em] text-stone-600 mb-4">{t.footer.stack}</h4>
               <ul className="space-y-2.5">
                 <li><span className="text-sm text-stone-600">Go 1.24</span></li>
                 <li><span className="text-sm text-stone-600">Cobra CLI</span></li>

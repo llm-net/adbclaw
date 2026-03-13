@@ -1,7 +1,7 @@
 ---
 name: adb-claw
 version: 1.4.1
-description: "Your eyes and hands on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, monitor live UI text via accessibility framework (works during video playback), manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps."
+description: "Your eyes, hands, and ears on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, monitor live UI text via accessibility framework (works during video playback), capture system audio (Android 11+, WAV stream for piping to ASR tools), manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps."
 homepage: https://github.com/llm-net/adbclaw
 metadata:
   {
@@ -60,7 +60,7 @@ metadata:
 
 # ADB Claw — Android Device Control
 
-Your eyes and hands on Android. See what's on screen, tap any element, scroll through content, open deep links, wait for UI changes, manage apps, and more — all through a single CLI with structured JSON output.
+Your eyes, hands, and ears on Android. See what's on screen, tap any element, scroll through content, open deep links, wait for UI changes, capture system audio, manage apps, and more — all through a single CLI with structured JSON output.
 
 ## Why ADB Claw
 
@@ -71,7 +71,8 @@ Your eyes and hands on Android. See what's on screen, tap any element, scroll th
 - **App Profiles** — pre-built knowledge (deep links, layouts, known issues) for popular apps like Douyin; load once, skip trial-and-error
 - **Full app lifecycle** — install, launch, stop, uninstall, clear data — no raw `adb` needed
 - **Live stream monitoring** — `monitor` reads UI text via accessibility framework, works during video playback where `uiautomator dump` fails
-- **Minimal device footprint** — nearly all operations are pure ADB commands; only `monitor` pushes a temporary ~7KB helper that auto-exits
+- **System audio capture** — `audio capture` records device audio via REMOTE_SUBMIX (Android 11+); streams WAV to stdout for piping to ASR tools or saves to file
+- **Minimal device footprint** — nearly all operations are pure ADB commands; only `monitor` and `audio capture` push temporary ~7KB helpers that auto-exit
 - **Agent-optimized JSON** — every command returns `{ok, command, data, error, duration_ms}` with actionable `suggestion` on errors
 
 ## Getting Started
@@ -119,6 +120,7 @@ These patterns tell the agent when to activate this skill:
 - User wants to manage screen state (on/off/unlock/rotation) on Android
 - User wants to push/pull files to/from an Android device
 - User wants to monitor live stream chat or read UI text during video playback on Android
+- User wants to capture or record audio from an Android device
 - User wants to run shell commands on an Android device
 
 ## Binary
@@ -383,6 +385,38 @@ Default duration: 10s. Default poll interval: 2s.
 
 Note: This command pushes a small (~7KB) DEX helper to the device on first use. The helper runs temporarily via `app_process` and exits when monitoring completes.
 
+### audio capture — System Audio Capture (Android 11+)
+
+Capture system audio via REMOTE_SUBMIX. Streams WAV (16kHz mono 16-bit PCM) to stdout for piping to external tools, or saves to a file.
+
+**WARNING**: Device speakers are muted while capturing.
+
+```bash
+adbclaw audio capture                            # Stream WAV to stdout (10s)
+adbclaw audio capture --duration 30000           # Stream 30s
+adbclaw audio capture --duration 0               # Stream until killed (Ctrl+C)
+adbclaw audio capture --file recording.wav       # Save to file, returns JSON envelope
+adbclaw audio capture --rate 44100               # Custom sample rate
+```
+
+**Stream mode** (default): outputs WAV to stdout — designed for piping:
+
+```bash
+adbclaw audio capture --stream --duration 30000 | asrclaw transcribe --stream --lang zh
+```
+
+**File mode** (`--file`): saves to local file and returns JSON envelope with file path, byte count, and duration.
+
+Default duration: 10s. Default sample rate: 16000 Hz.
+
+Requires Android 11+ (API 30). Like `monitor`, this command pushes a small DEX helper to the device on first use.
+
+**When to use audio capture vs monitor**:
+- `monitor` — read UI text (chat messages, labels, captions) as structured data
+- `audio capture` — record what's being heard (speech, music, sound effects) as audio
+
+For live streams, they complement each other: `monitor` captures on-screen chat text while `audio capture` captures the streamer's voice.
+
 ### shell — Run Raw Shell Command
 
 Escape hatch for anything `adbclaw` doesn't have a dedicated command for.
@@ -479,6 +513,28 @@ Use `adbclaw device info` to get screen size, then determine form factor:
 
 Swipe coordinates and UI layouts differ between Phone and Pad. App Profiles document these differences.
 
+### Audio Capture
+
+First check if the device supports it:
+
+```
+1. adbclaw device info              → Check Android version (need 11+ / SDK 30+)
+```
+
+To record audio to a file for the user:
+
+```
+1. adbclaw audio capture --file recording.wav --duration 30000   → Record 30s
+```
+
+To transcribe live audio (requires `asrclaw` installed separately):
+
+```
+1. adbclaw audio capture --stream --duration 60000 | asrclaw transcribe --stream --lang zh
+```
+
+**Important**: Device speakers are muted during capture. Inform the user before starting. For live streams, combine with `monitor` for complete context (audio + chat text).
+
 ### Error Recovery
 
 If an action fails or produces unexpected results:
@@ -518,14 +574,14 @@ On error:
 **What adbclaw is**: A pure CLI wrapper around standard `adb` commands. It translates high-level instructions (e.g., `adbclaw tap --index 3`) into `adb shell input tap ...` calls. That's it.
 
 **What adbclaw does NOT do**:
-- Does not install APKs or persistent services on the device — `monitor` pushes a temporary ~7KB DEX that runs briefly and auto-exits
+- Does not install APKs or persistent services on the device — `monitor` and `audio capture` each push a temporary ~7KB DEX that runs briefly and auto-exits
 - Does not collect or transmit data — no telemetry, no analytics, no network requests
 - Does not request credentials or environment variables
 - Does not modify your host system beyond placing the binary
 
 **Source code is fully open**: [github.com/llm-net/adbclaw](https://github.com/llm-net/adbclaw). If you don't trust pre-built binaries, you can **audit the source code and build from source** — see the [README](https://github.com/llm-net/adbclaw#readme) for instructions. Every release also includes SHA256 checksums for binary verification.
 
-**Device sensitivity**: adbclaw can capture screenshots and control apps on the connected device — this is the core purpose of the tool. Only connect devices you trust, and disable USB debugging when not actively using adbclaw.
+**Device sensitivity**: adbclaw can capture screenshots, record system audio, and control apps on the connected device — this is the core purpose of the tool. Only connect devices you trust, and disable USB debugging when not actively using adbclaw.
 
 **Agent scope**: adbclaw commands are the only commands this skill should execute. Do not run install scripts, download binaries, or modify the host system. If adbclaw or adb is not available, inform the user.
 
@@ -544,3 +600,6 @@ On error:
 | Command timeout | Increase with `--timeout 60000` |
 | Permission dialog | Use `observe` to see it, tap the allow/skip button |
 | Screen is off | `adbclaw screen on` or `adbclaw screen unlock` |
+| Audio capture fails | Requires Android 11+ (API 30); check with `adbclaw device info` |
+| No audio captured | REMOTE_SUBMIX may not be available on all devices/ROMs |
+| Speakers muted during capture | Expected behavior — REMOTE_SUBMIX redirects audio output |

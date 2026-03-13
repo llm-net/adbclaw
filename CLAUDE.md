@@ -56,6 +56,7 @@ src/                    # Go 代码根目录（go.mod 在此）
 │   ├── file.go         # file push / pull
 │   ├── app.go          # app list / current / launch / stop / install / uninstall / clear
 │   ├── monitor.go      # monitor（持续 UI 文本监控）
+│   ├── audio.go        # audio capture（系统音频采集）
 │   ├── doctor.go       # 环境检查
 │   ├── skill.go        # 输出 skill.json (go:embed)
 │   └── skill.json      # 嵌入的 AI agent 能力描述
@@ -65,6 +66,10 @@ src/                    # Go 代码根目录（go.mod 在此）
     │   ├── monitor.go      # DEX 推送 + 进程管理 + 行解析
     │   ├── monitor_test.go # 单元测试
     │   └── classes.dex     # 嵌入的 DEX（go:embed）
+    ├── audio/
+    │   ├── audio.go        # DEX 推送 + 进程管理 + 二进制流
+    │   ├── audio_test.go   # 单元测试
+    │   └── classes.dex     # 嵌入的音频采集 DEX（go:embed）
     ├── input/
     │   ├── adbinput.go     # Tap/Swipe/LongPress/Key/Type
     │   ├── clearfield.go   # ClearField/KeyCombination/GetSDKLevel
@@ -86,10 +91,12 @@ website/                # React + Vite + Tailwind 官网
 
 ```bash
 cd src
-make build   # 产物 → bin/adbclaw（项目根目录）
-make test    # go test ./...
-make lint    # go vet
+make build     # 产物 → bin/adbclaw（项目根目录）
+make test      # go test ./...
+make lint      # go vet
 make clean
+make dex       # 重新编译 monitor DEX（需要 Android SDK）
+make audio-dex # 重新编译 audio DEX（需要 Android SDK）
 ```
 
 Go 1.24，依赖 cobra v1.10.2 + golang.org/x/image v0.36.0。构建产物在项目根目录 `bin/`（已 gitignore）。
@@ -150,6 +157,8 @@ adbclaw
 ├── app install <apk> [--replace]  # 安装 APK
 ├── app uninstall <package>        # 卸载应用
 ├── app clear <package>            # 清除应用数据
+├── audio capture [--file path]         # 采集系统音频（Android 11+）
+│   [--duration ms] [--rate Hz] [--stream]
 ├── shell <command>                # 执行 adb shell 命令
 ├── file push <local> <remote>     # 推送文件到设备
 ├── file pull <remote> <local>     # 从设备拉取文件
@@ -179,9 +188,22 @@ adbclaw
 
 绝大多数操作通过标准 `adb` 命令完成（`adb shell input`、`adb exec-out screencap`、`adb shell uiautomator dump` 等），无需在设备上安装任何 APK。唯一例外是 `monitor` 命令：它将一个 ~7KB DEX 文件推送到设备 `/data/local/tmp/`，通过 `app_process` 运行，直接连接 Android accessibility 框架读取 UI 文本，绕过视频播放时 uiautomator dump 的超时问题。该 DEX 不是常驻服务，运行结束即退出。产品目标与技术调研见 `docs/product-and-research.md`，开发计划见 `docs/development-roadmap.md`。
 
+## 音频采集与 ASR 协作
+
+adbclaw 提供 `audio capture` 命令采集 Android 系统音频（REMOTE_SUBMIX，Android 11+），输出 WAV 流到 stdout。语音识别由独立项目 **asrclaw** 负责（ClawHub 发布名 `asr-claw`），两者通过 Unix pipe 协作：
+
+```bash
+adbclaw audio capture --stream | asrclaw transcribe --stream --lang zh
+```
+
+- adbclaw 只做音频采集（设备 → PCM 流），不做 ASR，与 screenshot 只输出图片不做 OCR 同理
+- 设备端使用 `ADBClawAudio.dex`（`helper/ADBClawAudio.java`），通过 `app_process` 运行，采集系统混音输出
+- 流协议：44 字节 WAV header + 连续 raw PCM 16kHz mono 16-bit
+- asrclaw 设计文档见 `docs/asr-claw-design.md`
+
 ## 第二轮迭代（已完成）
 
-详细方案见 `docs/iteration-2-advanced-commands.md`，分 5 个 Phase：
+分 5 个 Phase：
 
 1. **Phase 1 — 文本输入增强**：clear-field、key 别名扩展 ✅
 2. **Phase 2 — 导航增强**：open（深度链接）、scroll（智能滚动） ✅

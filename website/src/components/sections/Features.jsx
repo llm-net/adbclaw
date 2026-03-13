@@ -1,7 +1,9 @@
 import FeatureCard from '../ui/FeatureCard'
-import { features } from '../../data/content'
+import { useLanguage } from '../../i18n/context'
 
 export default function Features() {
+  const { t } = useLanguage()
+
   return (
     <section id="features" className="relative py-28">
       {/* Subtle divider */}
@@ -10,18 +12,17 @@ export default function Features() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-16">
           <span className="inline-block mb-4 text-[11px] font-mono uppercase tracking-[0.2em] text-amber-500/60">
-            Capabilities
+            {t.features.label}
           </span>
           <h2 className="text-3xl font-display font-bold tracking-tight text-stone-100 sm:text-4xl">
-            Everything an AI agent needs
+            {t.features.title}
           </h2>
           <p className="mt-4 max-w-xl text-stone-500 leading-relaxed">
-            Pure tool layer. No LLM logic. No agent framework. Just reliable, structured commands
-            that any AI can call over adb shell.
+            {t.features.description}
           </p>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, i) => (
+          {t.features.items.map((feature, i) => (
             <FeatureCard key={feature.title} {...feature} index={i} />
           ))}
         </div>

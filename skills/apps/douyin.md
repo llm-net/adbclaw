@@ -185,6 +185,32 @@ adbclaw open 'snssdk1128://search/result?keyword=遥控车&type=0'
 adbclaw monitor --stream --duration 60000   # 60 秒流式输出，逐条 JSON line
 ```
 
+### 录制直播间音频
+
+录制直播间音频（需要 Android 11+）：
+
+```
+1. adbclaw open 'snssdk1128://live?room_id={room_id}'   # 打开直播间
+2. adbclaw wait --text "说点什么" --timeout 10000         # 等待直播间加载
+3. adbclaw audio capture --file live_audio.wav --duration 60000  # 录制 60 秒
+```
+
+注意：录制期间设备扬声器会静音。结合 `monitor` 可同时获取弹幕文本和主播语音：
+
+```
+# 终端 1：采集音频
+adbclaw audio capture --file live_audio.wav --duration 60000
+
+# 终端 2：采集弹幕
+adbclaw monitor --stream --duration 60000
+```
+
+如果安装了 asrclaw，可实时转写主播语音：
+
+```
+adbclaw audio capture --stream --duration 60000 | asrclaw transcribe --stream --lang zh
+```
+
 ### 清空搜索框并重新输入
 
 ```
@@ -193,6 +219,14 @@ adbclaw monitor --stream --duration 60000   # 60 秒流式输出，逐条 JSON l
 3. adbclaw type "new search"                       # 仅限 ASCII
 4. 或者直接用深度链接搜索新关键词（推荐）
 ```
+
+## 推荐能力
+
+| 能力 | 命令 | 用途 | 状态 |
+|------|------|------|------|
+| 直播文本监控 | `adbclaw monitor` | 读取直播间弹幕和 UI 文本 | 内置 |
+| 系统音频采集 | `adbclaw audio capture` | 录制直播间音频 | 内置（需 Android 11+） |
+| 语音识别 | `asrclaw transcribe` | 直播语音转文字 | 需另装 `claw install asr-claw` |
 
 ## 已知问题
 

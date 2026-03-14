@@ -105,7 +105,7 @@ export default {
       },
       {
         label: 'adb-claw',
-        sublabel: 'Go CLI · v1.5.4',
+        sublabel: 'Go CLI · v1.6.0',
         description: 'Translates 30+ commands to ADB operations. Returns structured JSON with error codes and suggestions',
       },
       {
@@ -241,6 +241,7 @@ export default {
         items: [
           { cmd: 'monitor', desc: 'Live UI text via accessibility (video-safe)', flags: '--duration, --interval, --stream' },
           { cmd: 'audio capture', desc: 'System audio → WAV stream (Android 11+)', flags: '--file, --duration, --rate, --stream' },
+          { cmd: 'live cart', desc: 'Douyin shopping cart product capture', flags: '--count' },
         ],
       },
       {

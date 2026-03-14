@@ -159,6 +159,7 @@ adb-claw
 ├── app clear <package>            # 清除应用数据
 ├── audio capture [--file path]         # 采集系统音频（Android 11+）
 │   [--duration ms] [--rate Hz] [--stream]
+├── live cart [--count N]          # 抖音直播间小黄车商品抓取（默认前 10）
 ├── shell <command>                # 执行 adb shell 命令
 ├── file push <local> <remote>     # 推送文件到设备
 ├── file pull <remote> <local>     # 从设备拉取文件

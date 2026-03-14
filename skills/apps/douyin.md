@@ -211,6 +211,17 @@ adb-claw monitor --stream --duration 60000
 adb-claw audio capture --stream --duration 60000 | asrclaw transcribe --stream --lang zh
 ```
 
+### 抓取直播间购物车商品
+
+```
+1. 进入一个带货直播间
+2. adb-claw live cart                    # 抓取前 10 个商品 + 讲解中商品
+3. adb-claw live cart --count 20         # 抓取前 20 个商品
+```
+
+`live cart` 自动完成：读取讲解中商品 → 打开小黄车 → 滚动采集 → 关闭。
+输出结构化 JSON，包含商品编号、标题、价格、销量、标签。
+
 ### 清空搜索框并重新输入
 
 ```
@@ -225,6 +236,7 @@ adb-claw audio capture --stream --duration 60000 | asrclaw transcribe --stream -
 | 能力 | 命令 | 用途 | 状态 |
 |------|------|------|------|
 | 直播文本监控 | `adb-claw monitor` | 读取直播间弹幕和 UI 文本 | 内置 |
+| 小黄车抓取 | `adb-claw live cart` | 抓取直播间购物车商品数据 | 内置 |
 | 系统音频采集 | `adb-claw audio capture` | 录制直播间音频 | 内置（需 Android 11+） |
 | 语音识别 | `asrclaw transcribe` | 直播语音转文字 | 需另装 `claw install asr-claw` |
 

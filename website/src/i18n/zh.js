@@ -104,7 +104,7 @@ export default {
       },
       {
         label: 'adb-claw',
-        sublabel: 'Go CLI · v1.5.4',
+        sublabel: 'Go CLI · v1.6.0',
         description: '将 30+ 条命令转换为 ADB 操作。返回带有错误码和建议的结构化 JSON',
       },
       {
@@ -239,6 +239,7 @@ export default {
         items: [
           { cmd: 'monitor', desc: '无障碍实时 UI 文本（视频安全）', flags: '--duration, --interval, --stream' },
           { cmd: 'audio capture', desc: '系统音频 → WAV 流（Android 11+）', flags: '--file, --duration, --rate, --stream' },
+          { cmd: 'live cart', desc: '抖音小黄车商品抓取', flags: '--count' },
         ],
       },
       {

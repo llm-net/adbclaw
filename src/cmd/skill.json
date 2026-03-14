@@ -100,6 +100,12 @@
       "description": "Search for UI elements by text, resource-id, or index.",
       "usage": "adb-claw ui find {--text TEXT | --id ID | --index N}",
       "when_to_use": "To find specific elements without dumping the full tree."
+    },
+    {
+      "name": "live_cart",
+      "description": "Grab products from Douyin live stream shopping cart (小黄车). Captures the currently explaining product and the first N products. Douyin-specific.",
+      "usage": "adb-claw live cart [--count 10]",
+      "when_to_use": "When viewing a Douyin live stream and need to extract shopping cart product data."
     }
   ],
   "workflow_hints": {

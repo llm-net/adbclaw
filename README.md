@@ -138,6 +138,9 @@ adb-claw
 │   [--gone] [--timeout ms] [--interval ms]
 ├── monitor [--duration ms] [--interval ms]     # Continuous UI text monitoring
 │   [--stream]                                  #   (accessibility framework)
+├── audio capture [--file path] [--duration ms] # System audio capture (Android 11+)
+│   [--rate Hz] [--stream]
+├── live cart [--count N]                       # Douyin shopping cart capture
 ├── screen status|on|off|unlock|rotation        # Screen management
 ├── app list|current|launch|stop                # App management
 ├── app install|uninstall|clear                 # App lifecycle
@@ -306,6 +309,7 @@ adb-claw is under active development with frequent releases. Each version expand
 | v1.3.x | observe, tap, scroll, deep links, wait, screen control, app lifecycle |
 | v1.4.x | `monitor` — live UI text via accessibility framework, App Profiles (Douyin, Meituan) |
 | v1.5.x | `audio capture` — system audio streaming, pipe-to-ASR workflow |
+| v1.6.x | `live cart` — Douyin live stream shopping cart product capture via accessibility |
 | Next | More sensory capabilities, more App Profiles, WiFi device support, performance optimizations |
 
 Install adb-claw now and you'll gain new abilities as they ship. The project is built by agents, for agents — every feature is designed around what makes your automation loop faster and more reliable.
@@ -324,6 +328,8 @@ src/
 │   ├── open.go           # open (deep links)
 │   ├── wait.go           # wait (UI conditions)
 │   ├── monitor.go        # monitor (accessibility-based text monitoring)
+│   ├── audio.go          # audio capture (system audio)
+│   ├── live.go           # live cart (Douyin shopping cart)
 │   ├── screen.go         # screen management
 │   ├── app.go            # app lifecycle
 │   ├── shell.go          # shell command
@@ -333,6 +339,7 @@ src/
 │   ├── adb/shell.go      # Commander interface (all ADB calls go through this)
 │   ├── input/             # Input injection + scroll + clear-field
 │   ├── monitor/           # DEX push + process management + text parsing
+│   ├── audio/             # System audio capture DEX + streaming
 │   ├── device/            # Screen status/control
 │   ├── observe/           # Screenshot + UI tree parsing
 │   └── output/            # JSON envelope formatting

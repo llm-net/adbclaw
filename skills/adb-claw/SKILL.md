@@ -1,6 +1,6 @@
 ---
 name: adb-claw
-version: 1.5.4
+version: 1.6.0
 description: "Your eyes, hands, and ears on Android. See the screen (screenshot + indexed UI tree), interact (tap, swipe, scroll, type, clear-field), navigate via deep links (bypass CJK text input limits), wait for UI state changes instead of polling, monitor live UI text via accessibility framework (works during video playback), capture system audio (Android 11+, WAV stream for piping to ASR tools), manage full app lifecycle (install/uninstall/clear), control screen (on/off/unlock/rotation), run shell commands, and transfer files. Agent-optimized: structured JSON output, indexed element targeting, and App Profiles with pre-built deep links and layouts for popular apps."
 homepage: https://github.com/llm-net/adb-claw
 metadata:
@@ -8,7 +8,7 @@ metadata:
     "openclaw":
       {
         "emoji": "📱",
-        "version": "1.5.4",
+        "version": "1.6.0",
         "os": ["darwin", "linux"],
         "tags": ["android", "adb", "mobile", "automation", "ui-testing", "device-control", "deep-link", "screenshot", "accessibility", "monitoring"],
         "requires": { "bins": ["adb-claw", "adb"] },
@@ -126,6 +126,7 @@ These patterns tell the agent when to activate this skill:
 - User wants to push/pull files to/from an Android device
 - User wants to monitor live stream chat or read UI text during video playback on Android
 - User wants to capture or record audio from an Android device
+- User wants to grab shopping cart products from a Douyin live stream
 - User wants to run shell commands on an Android device
 
 ## Binary
@@ -157,12 +158,33 @@ sudo apt install android-tools-adb
 
 ### Connect device
 
-The Android device must have **USB debugging enabled** and be connected via USB.
+**The Android device must have USB debugging enabled and be connected via USB.** This is the most common blocker — most users haven't turned it on. When a user first asks to control their phone, **always check connection first** (`adb-claw doctor`) and if it fails, **walk them through the setup steps below** before attempting any other commands.
+
+#### How to enable USB debugging (guide the user through this)
+
+1. **Open Settings** on the Android phone
+2. Go to **About phone** (some phones: Settings → My device)
+3. Tap **Build number** (or MIUI version) **7 times** — a toast "You are now a developer!" will appear
+4. Go back to **Settings → Additional settings → Developer options** (path varies by brand):
+   - Xiaomi/Redmi: Settings → Additional settings → Developer options
+   - Samsung: Settings → Developer options
+   - Pixel/Stock: Settings → System → Developer options
+   - OPPO/Vivo: Settings → System management → Developer options
+5. Enable **USB debugging** toggle
+6. Connect phone to computer via USB cable
+7. A dialog "Allow USB debugging?" will appear on the phone — tap **Allow** (check "Always allow from this computer" for convenience)
+
+#### Verify connection
 
 ```bash
-# Verify everything is working
-adb-claw doctor
+adb-claw doctor    # Checks adb, device connection, and capabilities
 ```
+
+If `doctor` reports no device, ask the user to:
+- Check the USB cable (some cables are charge-only, no data)
+- Try a different USB port
+- Re-authorize USB debugging on the phone (revoke and re-allow)
+- On some phones, change USB mode from "Charging" to "File Transfer" in the notification shade
 
 ## Quick Start
 
@@ -422,6 +444,29 @@ Requires Android 11+ (API 30). Like `monitor`, this command pushes a small DEX h
 
 For live streams, they complement each other: `monitor` captures on-screen chat text while `audio capture` captures the streamer's voice.
 
+### live cart — Douyin Shopping Cart Capture (抖音小黄车)
+
+Grab product information from a Douyin live stream shopping cart. Captures the currently explaining product (without opening the cart) and the first N products in the cart list.
+
+This command is **Douyin-specific** — it relies on Douyin's UI patterns and accessibility node structure.
+
+```bash
+adb-claw live cart              # Top 10 products + explaining product
+adb-claw live cart --count 5    # Top 5 products
+adb-claw live cart --count 20   # Top 20 products
+```
+
+**How it works**:
+1. Reads the "讲解中" floating card via accessibility (no cart open needed)
+2. Taps the shopping cart button to open the panel
+3. Scrolls slowly through products with continuous accessibility polling
+4. Stops when products 1..N are all captured (consecutive, no gaps)
+5. Closes the cart and outputs structured JSON
+
+Returns: product number, title, price, sold count, shop name, tags for each product, plus the currently explaining product if any.
+
+**Must be used while viewing a Douyin live stream with a shopping cart.**
+
 ### shell — Run Raw Shell Command
 
 Escape hatch for anything `adb-claw` doesn't have a dedicated command for.
@@ -540,6 +585,18 @@ To transcribe live audio (requires `asrclaw` installed separately):
 
 **Important**: Device speakers are muted during capture. Inform the user before starting. For live streams, combine with `monitor` for complete context (audio + chat text).
 
+### Douyin Live Cart
+
+Grab shopping cart products from a Douyin live stream:
+
+```
+1. Enter a Douyin live stream with a shopping cart (小黄车)
+2. adb-claw live cart                    → Capture top 10 products + explaining product
+3. adb-claw live cart --count 20         → Capture more products
+```
+
+The command handles everything automatically: opens cart, scrolls, captures, closes. No manual tapping needed.
+
 ### Error Recovery
 
 If an action fails or produces unexpected results:
@@ -594,7 +651,7 @@ On error:
 
 | Problem | Solution |
 |---------|----------|
-| No devices found | Connect device via USB with USB debugging enabled |
+| No devices found | Walk the user through: Settings → About phone → tap Build number 7x → Developer options → enable USB debugging → reconnect USB → approve the "Allow USB debugging" dialog on phone. See Setup section for full guide |
 | adb not found | `brew install android-platform-tools` (macOS) |
 | Tap hits wrong element | Use `--index` instead of coordinates; re-run `observe` |
 | `type` doesn't work | Tap input field first to focus; ASCII only |

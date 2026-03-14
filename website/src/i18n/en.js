@@ -105,7 +105,7 @@ export default {
       },
       {
         label: 'adb-claw',
-        sublabel: 'Go CLI · v1.6.0',
+        sublabel: 'Go CLI · v1.6.1',
         description: 'Translates 30+ commands to ADB operations. Returns structured JSON with error codes and suggestions',
       },
       {
